@@ -20,7 +20,7 @@
     let screenSize = ref("md");
     let footmarks = reactive([]);
     // 圖標類型
-    let googleMapMarkerType = reactive(["ByGogoro", "WithFamily"]);
+    let googleMapMarkerType = reactive([]);
     // google map 初始中心點 - 台灣地理中心碑
     let googleMapCenter = reactive({
         lat: 23.974174340321614, lng: 120.97984968163026
@@ -60,6 +60,12 @@
             screenSize.value = "sm";
         }else{
             screenSize.value = "xs";
+        }
+        // 圖標類型預設值
+        if(props.account.toUpperCase() === "BRYANT"){
+            googleMapMarkerType.push("ByGogoro");
+        }else{
+            googleMapMarkerType.push("WithFamily");
         }
 
         fetchFootmark();
