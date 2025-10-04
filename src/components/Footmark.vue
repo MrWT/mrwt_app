@@ -18,6 +18,9 @@
     
     // screen size
     let screenSize = ref("md");
+    let footmarks = reactive([]);
+    // 圖標類型
+    let googleMapMarkerType = reactive(["ByGogoro", "WithFamily"]);
     // google map 初始中心點 - 台灣地理中心碑
     let googleMapCenter = reactive({
         lat: 23.974174340321614, lng: 120.97984968163026
@@ -75,7 +78,21 @@
         Promise.all([fetchFootmarkPromise]).then((values) => {
             console.log("fetchFootmarkPromise.values=", values);
 
-            values[0].forEach((fmObj, fm_i) => {
+            footmarks = values[0];
+
+            drawGoogleMapMarker();
+
+            //console.log("googleMapMarks=", googleMapMarks);
+            //console.log("googleMapMarkPins=", googleMapMarkPins);
+        });
+    }
+    // 畫出圖標
+    function drawGoogleMapMarker(){
+        googleMapMarks.splice(0, googleMapMarks.length);
+        googleMapMarkPins.splice(0, googleMapMarkPins.length);
+
+        footmarks.forEach((fmObj, fm_i) => {
+            if(googleMapMarkerType.includes(fmObj["type"])){
                 googleMapMarks.push({
                     location_name: fmObj["location_name"],
                     mark_date: fmObj["mark_date"],
@@ -90,11 +107,21 @@
                 googleMapMarkPins.push({
                     background: fmObj["type"] === "ByGogoro" ? "red" : "pink",
                 });
-            });
-
-            //console.log("googleMapMarks=", googleMapMarks);
-            //console.log("googleMapMarkPins=", googleMapMarkPins);
+            }
         });
+    }
+    // 切換圖標類型
+    function changeMarkerType(e){
+        e.preventDefault();
+        console.log("changeMarkerType.event=", e);
+        if(e.target.checked){
+            googleMapMarkerType.push(e.target.value);
+        }else{
+            googleMapMarkerType.splice(googleMapMarkerType.indexOf(e.target.value), 1);
+        }
+        console.log("googleMapMarkerType=", googleMapMarkerType);
+
+        drawGoogleMapMarker();
     }
     // 開啟編輯 modal
     function openEditModal(){
@@ -137,7 +164,21 @@
 
 <template>
 
-    <div class="w-10/10 h-10/10 p-1">
+    <div class="w-10/10 h-1/10 flex flex-row gap-4 justify-center p-1">
+        <label class="label">
+            圖標類型:
+        </label>
+        <label class="label">
+            <input type="checkbox" class="checkbox checkbox-error" value="ByGogoro" :checked="googleMapMarkerType.includes('ByGogoro')" @change="changeMarkerType" />
+            騎車旅行
+        </label>
+        <label class="label">
+            <input type="checkbox" class="checkbox checkbox-secondary" value="WithFamily" :checked="googleMapMarkerType.includes('WithFamily')" @change="changeMarkerType" />
+            家庭旅遊
+        </label>
+    </div>
+
+    <div class="w-10/10 h-9/10 p-1">
         <GoogleMap class="w-10/10 h-10/10"
             mapId="DEMO_MAP_ID"
             :api-key="props.googleMapApiKey"
