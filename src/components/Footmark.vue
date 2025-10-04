@@ -19,6 +19,8 @@
     // screen size
     let screenSize = ref("md");
     let footmarks = reactive([]);
+    // InfoWindow options
+    let infoWindowObj = reactive({});
     // 圖標類型
     let googleMapMarkerType = reactive([]);
     // google map 初始中心點 - 台灣地理中心碑
@@ -116,6 +118,18 @@
             }
         });
     }
+    // 開啟 InfoWindow
+    function openInfoWindow(markObj){
+        //console.log("openInfoWindow.markObj=", markObj);
+        infoWindowObj.isOpen = true;
+        infoWindowObj.options = {
+            position: markObj.marker.position,
+        };
+        infoWindowObj.location_name = markObj.location_name;
+        infoWindowObj.mark_date = markObj.mark_date;
+        infoWindowObj.type = markObj.type;
+        infoWindowObj.memo = markObj.memo;
+    }
     // 切換圖標類型
     function changeMarkerType(e){
         e.preventDefault();
@@ -194,12 +208,13 @@
             :streetViewControl = "false"
             >
             
-            <AdvancedMarker v-for="(markObj, m_i) in googleMapMarks" :options="markObj.marker" :pin-options="googleMapMarkPins[m_i]">
-                <InfoWindow class="flex flex-col gap-2 pr-5">
-                    <h3 class="text-lg text-black">{{ markObj.mark_date }}</h3>    
-                    <h1 class="text-2xl text-black">{{ markObj.location_name }}</h1>    
-                    <h3 class="text-base text-black">{{ markObj.memo }}</h3>    
-                </InfoWindow>
+            <InfoWindow class="flex flex-col gap-2 pr-5" :options="infoWindowObj.options" v-model:opened="infoWindowObj.isOpen">
+                <h3 class="text-lg text-black">{{ infoWindowObj.mark_date }}</h3>    
+                <h1 class="text-2xl text-black">{{ infoWindowObj.location_name }}</h1>    
+                <h3 class="text-base text-black">{{ infoWindowObj.memo }}</h3>    
+            </InfoWindow>
+
+            <AdvancedMarker v-for="(markObj, m_i) in googleMapMarks" :options="markObj.marker" :pin-options="googleMapMarkPins[m_i]" @click="openInfoWindow(markObj)">
             </AdvancedMarker>        
         
             <CustomControl v-if="true" position="TOP_LEFT">
