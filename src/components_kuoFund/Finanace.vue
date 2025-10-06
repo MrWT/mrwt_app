@@ -59,6 +59,21 @@
 
             });
 
+            funds_202510.sort((x, y) => {
+                if(moment(x["date"]).format("YYYYMMDD") > moment(y["date"]).format("YYYYMMDD")){
+                    return 1;
+                }else{
+                    return -1;
+                }
+            });
+            funds_202511.sort((x, y) => {
+                if(moment(x["date"]).format("YYYYMMDD") > moment(y["date"]).format("YYYYMMDD")){
+                    return 1;
+                }else{
+                    return -1;
+                }
+            });
+
             console.log("funds_202510=", funds_202510);
             console.log("funds_202511=", funds_202511);
             console.log("total_fund=", total_fund.value);
