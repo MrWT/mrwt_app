@@ -15,6 +15,9 @@
     import LockLucky from './components/LockLucky.vue'
     import PopupMessage from './components/PopupMessage.vue'
 
+    // 郭家基金相關 component - 先寄生於此專案, 待成熟後, 再分家出去
+    import Finanace_KF from './components_kuoFund/Finanace.vue'
+
     onMounted(() => {
         console.log("App mounted.");
         init();
@@ -183,8 +186,8 @@
                 };
 
                 // user info
+                let userInfoObj = values[1];
                 {
-                    let userInfoObj = values[1];
                     console.log("userInfoObj=", userInfoObj);
                     userInfo.account = userInfoObj["account"];
                     userInfo.name = userInfoObj["name"];
@@ -210,6 +213,12 @@
 
                 // close signinModal
                 document.getElementById("signinModal").close();
+
+                // 郭家基金成員 - 預設開啟基金明細 component
+                if(userInfoObj["account"].toUpperCase() === "KUOFAMILY")
+                {
+                    gotoPage("finance_kf");
+                }
             });
         }
     }
@@ -332,6 +341,8 @@
         <button v-if="userInfo.funcs.indexOf('chat') !== -1" class="btn btn-ghost" @click="gotoPage('chat')">{{ userInfo.languages.chat }}</button>
         <button v-if="userInfo.funcs.indexOf('lockLucky') !== -1" class="btn btn-ghost" @click="gotoPage('lockLucky')">{{ userInfo.languages.lockLucky }}</button>
         <button v-if="userInfo.funcs.indexOf('readme') !== -1" class="btn btn-ghost" @click="gotoPage('readme')">{{ userInfo.languages.readme }}</button>
+
+        <button v-if="userInfo.funcs.indexOf('finance_kf') !== -1" class="btn btn-ghost" @click="gotoPage('finance_kf')">{{ userInfo.languages.finance_kf }}</button>
     </div>
     <!-- 功能 component -->
     <div class="p-4 h-8/10 mt-30">
@@ -344,6 +355,8 @@
         <Chat v-else-if="appSetting.contentComponent === 'chat'" :title="appSetting.title" :account="userInfo.account" />
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
         <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
+
+        <Finanace_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" />
     </div>
 
     <!-- signin modal -->
@@ -382,14 +395,14 @@
             <li v-if="userInfo.mail" class="text-white text-lg">{{ userInfo.mail }}</li>
             <div class="divider"></div>
             <li class="flex flex-row gap-2 w-10/10">
-                <button v-if="userInfo.account" class="btn w-5/10" @click="gotoPage('set_person')">
+                <button v-if="userInfo.funcs.indexOf('setting') !== -1" class="btn w-5/10" @click="gotoPage('set_person')">
                     <svg class="w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z"/>
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
                     </svg>
                     {{ userInfo.languages["user_setting"] }}
                 </button>
-                <button class="btn w-5/10" @click="signout">
+                <button class="btn" :class="{'w-5/10': userInfo.funcs.indexOf('setting') !== -1, 'w-10/10': userInfo.funcs.indexOf('setting') === -1}" @click="signout">
                     <span v-if="userInfo.account">
                         {{ userInfo.languages["signout"] }}
                     </span>
