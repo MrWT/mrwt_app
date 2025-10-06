@@ -79,6 +79,14 @@
         selectedOption: 'EN' // 預設選項
     });
 
+    let financeKuoFunds = reactive({
+        name: "",
+        type: "",
+        money: 0,
+        date: "",
+        memo: "",
+    });
+
     // 初始化 component
     function init(){
         console.log("setting.init");
@@ -339,6 +347,30 @@
             emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
         });
     }
+    // 新增 financeKuoFunds 資料
+    function newFinanceKuoFunds(){
+        console.log("newFinanceKuoFunds");
+
+        let newFinanceKFPromise = fetchData({
+            api: "new_kuo_funds",
+            data: {
+                finance: financeKuoFunds,
+            }
+        });
+        Promise.all([newFinanceKFPromise]).then((values) => {
+            console.log("newFinanceKFPromise.values=", values);
+
+            opObj.status = values[0]["result"];
+            if(values[0]["result"] === true){
+                opObj.message = "儲存成功";
+            }else{
+                opObj.message = values[0]["message"];
+            }
+
+            emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
+        });
+    }
+
 </script>
 
 <template>
@@ -569,6 +601,43 @@
             </button>
         </div>
     </div>
+
+    <!-- Finance - 郭家基金 -->
+    <input v-if="appState === 'SET_SYSTEM'" type="radio" name="setting_tabs" class="tab" aria-label="設定郭家基金" />
+    <div v-if="appState === 'SET_SYSTEM'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
+        <div class="divider">
+            郭家基金資料
+        </div>
+        <div class="w-10/10 flex flex-col gap-3 text-center">
+                <label class="label">
+                    人員姓名:
+                    <input type="text" class="input" placeholder="" v-model="financeKuoFunds.name" />
+                </label>
+            <div class="w-10/10 md:w-5/10">
+                <label class="label">類型(IN/OUT)</label>
+                <input type="text" class="input" placeholder="" v-model="financeKuoFunds.type" />
+            </div>
+            <div class="w-10/10 md:w-5/10">
+                <label class="label">金額</label>
+                <input type="number" min="0" class="input" placeholder="" v-model="financeKuoFunds.money" />
+            </div>
+            <div class="w-10/10 md:w-5/10">
+                <label class="label">日期</label>
+                <input type="date" class="input" placeholder="" v-model="financeKuoFunds.date" />
+            </div>
+            <div class="w-10/10 md:w-5/10">
+                <label class="label">備註</label>
+                <input type="text" class="input" placeholder="" v-model="financeKuoFunds.memo" />
+            </div>
+
+        </div>
+        <div class="w-10/10 flex flex-col md:flex-row-reverse mt-5 justify-center">
+            <button class="btn btn-neutral w-10/10 md:w-5/10" @click="newFinanceKuoFunds">
+                New
+            </button>
+        </div>
+    </div>
+
 </div>
 
 </template>
