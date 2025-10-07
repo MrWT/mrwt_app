@@ -48,6 +48,10 @@
         resources: [],
         quiz: {},
     });
+    let kf_funSetting = reactive({
+        bank_info: {},
+        excel_info: {},
+    });
     // 使用者資訊
     let signinError = ref(false);
     const tempAccount = ref("");
@@ -165,6 +169,10 @@
                 // appSetting.googleMapApiKey
                 appSetting.googleMapApiKey = appSettingObj["google_map_api_key"];
 
+                // 郭家基金 - 功能設定值
+                kf_funSetting.bank_info = appSettingObj["kf_bank_info"];
+                kf_funSetting.excel_info = appSettingObj["kf_excel_info"];
+
                 // appSetting.resources
                 {
                     appSetting.resources = [];
@@ -212,6 +220,8 @@
 
                         userInfo.languages[w_key] = w_display;
                     });
+
+                    console.log("user language=", userInfo.languages);
                 }
 
                 // close signinModal
@@ -347,7 +357,7 @@
 
         <button v-if="userInfo.funcs.indexOf('finance_kf') !== -1" class="btn btn-ghost" @click="gotoPage('finance_kf')">{{ userInfo.languages.finance_kf }}</button>
         <button v-if="userInfo.funcs.indexOf('rule_kf') !== -1" class="btn btn-ghost" @click="gotoPage('rule_kf')">{{ userInfo.languages.rule_kf }}</button>
-         <button v-if="userInfo.funcs.indexOf('member_kf') !== -1" class="btn btn-ghost" @click="gotoPage('member_kf')">{{ userInfo.languages.member_kf }}</button>
+        <button v-if="userInfo.funcs.indexOf('member_kf') !== -1 && false" class="btn btn-ghost" @click="gotoPage('member_kf')">{{ userInfo.languages.member_kf }}</button>
     </div>
     <!-- 功能 component -->
     <div class="p-4 h-8/10 mt-30">
@@ -362,7 +372,7 @@
         <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
 
         <Finance_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" />
-        <Rule_KF v-else-if="appSetting.contentComponent === 'rule_kf'" :title="appSetting.title" :account="userInfo.account" />
+        <Rule_KF v-else-if="appSetting.contentComponent === 'rule_kf'" :title="appSetting.title" :account="userInfo.account" :funSetting="kf_funSetting" />
         <Member_KF v-else-if="appSetting.contentComponent === 'member_kf'" :title="appSetting.title" :account="userInfo.account" />
     </div>
 
