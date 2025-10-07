@@ -77,35 +77,40 @@
 
 <template>
 
-<div class="tabs tabs-border">
-    <template v-for="(fundKey, fk_i) in fundKeys">
-        <input type="radio" name="funds_tabs" class="tab" :aria-label="fundKey.substr(0, 4) + '-' + fundKey.substr(4)" :checked="fk_i === 0 ? true : false" />
-        <div class="tab-content border-base-300 bg-base-100 pt-1 px-5">
-            <div class="flex flex-col w-10/10 h-8/10 overflow-y-auto">
-                <div v-for="(fundObj, fund_i) in funds[fundKey]" class="chat"
-                    :class="{ 'chat-start': fundObj.type === 'IN', 'chat-end': fundObj.type === 'OUT' }">
-                    <div class="chat-image avatar">
-                        <div class="avatar avatar-placeholder">
-                            <div class="w-12 rounded-full"
-                                :class="{'bg-green-900': fundObj.type === 'IN', 'bg-red-900': fundObj.type === 'OUT'}">
-                                <span v-if="fundObj.type === 'IN'" class="text-lg text-white">存款</span>
-                                <span v-if="fundObj.type === 'OUT'" class="text-lg text-white">提領</span>
+<div class="w-10/10 md:w-6/10 h-9/10 md:h-8/10 justify-self-center">
+    <div class="tabs tabs-border w-10/10 h-10/10">
+        <template v-for="(fundKey, fk_i) in fundKeys">
+            <input type="radio" name="funds_tabs" class="tab" :aria-label="fundKey.substr(0, 4) + '-' + fundKey.substr(4)" :checked="fk_i === 0 ? true : false" />
+            <div class="tab-content border-base-300 bg-base-100 pt-1 px-5">
+                <div class="flex flex-col w-10/10 h-10/10 overflow-y-auto">
+                    <div v-for="(fundObj, fund_i) in funds[fundKey]" class="chat"
+                        :class="{ 'chat-start': fundObj.type === 'IN', 'chat-end': fundObj.type === 'OUT' }">
+                        <div class="chat-image avatar">
+                            <div class="avatar avatar-placeholder">
+                                <div class="w-12 rounded-full"
+                                    :class="{'bg-green-900': fundObj.type === 'IN', 'bg-red-900': fundObj.type === 'OUT'}">
+                                    <span v-if="fundObj.type === 'IN'" class="text-lg text-white">存款</span>
+                                    <span v-if="fundObj.type === 'OUT'" class="text-lg text-white">提領</span>
+                                </div>
                             </div>
                         </div>
+                        <div class="chat-header">
+                            <span class="text-base">{{ fundObj.name }}</span>
+                            <time class="text-base opacity-50">{{ fundObj.date }}</time>
+                        </div>
+                        <div class="chat-bubble">
+                            {{ new Intl.NumberFormat().format( fundObj.money ) }}
+                            <span v-if="fundObj.memo !== ''">( {{ fundObj.memo }} )</span>
+                        </div>
                     </div>
-                    <div class="chat-header">
-                        <span class="text-base">{{ fundObj.name }}</span>
-                        <time class="text-base opacity-50">{{ fundObj.date }}</time>
-                    </div>
-                    <div class="chat-bubble">{{ fundObj.money }}</div>
                 </div>
-            </div>
-        </div>    
-    </template>
+            </div>    
+        </template>
+    </div>
 </div>
 
-<div class="w-10/10 h-2/10 flex flex-col text-3xl justify-center items-center" :class="{'bg-gray-200': total_fund === 0, 'bg-green-200': total_fund > 0, 'bg-red-200': total_fund < 0}">
-    帳戶餘額：{{ total_fund }}
+<div class="absolute bottom-2 left-0 w-10/10 h-1/10 flex flex-col text-3xl justify-center items-center" :class="{'bg-gray-200': total_fund === 0, 'bg-green-200': total_fund > 0, 'bg-red-200': total_fund < 0}">
+    結餘：{{ new Intl.NumberFormat().format( total_fund ) }}
 </div>
 
 </template>
