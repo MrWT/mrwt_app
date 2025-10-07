@@ -17,6 +17,8 @@
 
     // 郭家基金相關 component - 先寄生於此專案, 待成熟後, 再分家出去
     import Finance_KF from './components_kuoFund/Finance.vue'
+    import Rule_KF from './components_kuoFund/Rule.vue'
+    import Member_KF from './components_kuoFund/Member.vue'
 
     onMounted(() => {
         console.log("App mounted.");
@@ -344,6 +346,8 @@
         <button v-if="userInfo.funcs.indexOf('readme') !== -1" class="btn btn-ghost" @click="gotoPage('readme')">{{ userInfo.languages.readme }}</button>
 
         <button v-if="userInfo.funcs.indexOf('finance_kf') !== -1" class="btn btn-ghost" @click="gotoPage('finance_kf')">{{ userInfo.languages.finance_kf }}</button>
+        <button v-if="userInfo.funcs.indexOf('rule_kf') !== -1" class="btn btn-ghost" @click="gotoPage('rule_kf')">{{ userInfo.languages.rule_kf }}</button>
+         <button v-if="userInfo.funcs.indexOf('member_kf') !== -1" class="btn btn-ghost" @click="gotoPage('member_kf')">{{ userInfo.languages.member_kf }}</button>
     </div>
     <!-- 功能 component -->
     <div class="p-4 h-8/10 mt-30">
@@ -358,6 +362,8 @@
         <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
 
         <Finance_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" />
+        <Rule_KF v-else-if="appSetting.contentComponent === 'rule_kf'" :title="appSetting.title" :account="userInfo.account" />
+        <Member_KF v-else-if="appSetting.contentComponent === 'member_kf'" :title="appSetting.title" :account="userInfo.account" />
     </div>
 
     <!-- signin modal -->
