@@ -125,7 +125,7 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div>帳戶細項 CSV 共享檔案</div>
+                    <div>帳戶細項 PDF 共享檔案</div>
                     <div class="text-xs uppercase font-semibold opacity-60">檔案名稱: {{ excelInfo.file_name }} / 共享連結: <a class="link" target="_blank" :href="excelInfo.link">{{ excelInfo.link }}</a></div>
                 </div>
             </li>
