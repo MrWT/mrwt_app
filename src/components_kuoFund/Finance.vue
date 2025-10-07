@@ -77,7 +77,7 @@
 
 <template>
 
-<div class="w-10/10 md:w-6/10 h-9/10 md:h-8/10 justify-self-center">
+<div class="w-10/10 md:w-6/10 h-8/10 md:h-8/10 justify-self-center">
     <div class="tabs tabs-border w-10/10 h-10/10">
         <template v-for="(fundKey, fk_i) in fundKeys">
             <input type="radio" name="funds_tabs" class="tab" :aria-label="fundKey.substr(0, 4) + '-' + fundKey.substr(4)" :checked="fk_i === 0 ? true : false" />
@@ -109,7 +109,11 @@
     </div>
 </div>
 
-<div class="absolute bottom-2 left-0 w-10/10 h-1/10 flex flex-col text-3xl justify-center items-center" :class="{'bg-gray-200': total_fund === 0, 'bg-green-200': total_fund > 0, 'bg-red-200': total_fund < 0}">
+<div class="w-10/10 h-1/10">
+    &nbsp;
+</div>
+
+<div class="w-10/10 h-1/10 flex flex-col text-3xl justify-center items-center" :class="{'bg-gray-200': total_fund === 0, 'bg-green-200': total_fund > 0, 'bg-red-200': total_fund < 0}">
     結餘：{{ new Intl.NumberFormat().format( total_fund ) }}
 </div>
 
