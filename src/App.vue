@@ -16,7 +16,7 @@
     import PopupMessage from './components/PopupMessage.vue'
 
     // 郭家基金相關 component - 先寄生於此專案, 待成熟後, 再分家出去
-    import Finanace_KF from './components_kuoFund/Finanace.vue'
+    import Finance_KF from './components_kuoFund/Finance.vue'
 
     onMounted(() => {
         console.log("App mounted.");
@@ -191,6 +191,7 @@
                     console.log("userInfoObj=", userInfoObj);
                     userInfo.account = userInfoObj["account"];
                     userInfo.name = userInfoObj["name"];
+                    userInfo.cname = userInfoObj["cname"];
                     userInfo.shortName = userInfo.name.substr(0, 1);
                     userInfo.mail = userInfoObj["mail"];
                     userInfo.role = userInfoObj["role"];
@@ -356,7 +357,7 @@
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
         <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
 
-        <Finanace_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" />
+        <Finance_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" />
     </div>
 
     <!-- signin modal -->
@@ -391,7 +392,7 @@
     <!-- userInfo modal -->
     <dialog id="userInfoModal" class="modal">
         <div class="modal-box bg-gray-800/80 rounded-box p-2 w-80 md:w-120">
-            <li class="text-white text-lg">{{ userInfo.name }}</li>
+            <li class="text-white text-lg">{{ userInfo.cname }}</li>
             <li v-if="userInfo.mail" class="text-white text-lg">{{ userInfo.mail }}</li>
             <div class="divider"></div>
             <li class="flex flex-row gap-2 w-10/10">
