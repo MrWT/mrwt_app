@@ -9,6 +9,7 @@
         title: String,
         account: String,
         quiz_setting: Object,
+        kf_funSetting: Object,
     })
 
     onMounted(() => {
@@ -348,7 +349,7 @@
             emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
         });
     }
-    // 新增 financeKuoFunds 資料
+    // 新增 financeKuoFunds 單筆資料
     function newFinanceKuoFunds(){
         console.log("newFinanceKuoFunds");
 
@@ -370,6 +371,46 @@
 
             emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
         });
+    }
+    // 新增 financeKuoFunds 單月多筆資料
+    function new_oneMonthManyFinance_KuoFunds(){
+        console.log("new_oneMonthManyFinance_KuoFunds");
+
+        let members = props.kf_funSetting.member.value1.split(",");
+        console.log("members=", members);
+        
+        members.forEach((memObj, mem_i) => {
+            let newFundObj = {
+                name: memObj,
+                type: "IN",
+                money: 500,
+                date: financeKuoFunds.date,
+                memo: "測試",
+            };
+
+            console.log("newFundObj=", newFundObj);
+            /*
+            let newFinanceKFPromise = fetchData({
+                api: "new_kuo_funds",
+                data: {
+                    finance: newFundObj,
+                }
+            });
+            Promise.all([newFinanceKFPromise]).then((values) => {
+                console.log("newFinanceKFPromise.values=", values);
+
+                opObj.status = values[0]["result"];
+                if(values[0]["result"] === true){
+                    opObj.message = "儲存成功";
+                }else{
+                    opObj.message = values[0]["message"];
+                }
+
+                emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
+            });
+            */
+        });
+        
     }
 
 </script>
@@ -607,7 +648,7 @@
     <input v-if="appState === 'SET_SYSTEM'" type="radio" name="setting_tabs" class="tab" aria-label="設定郭家基金" />
     <div v-if="appState === 'SET_SYSTEM'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
         <div class="divider">
-            郭家基金資料
+            新增單筆資料
         </div>
         <div class="w-10/10 flex flex-col gap-3 place-items-center">
             <div class="flex flex-row gap-2 w-7/10">
@@ -645,6 +686,21 @@
         <div class="w-10/10 flex flex-col md:flex-row-reverse mt-5 justify-center">
             <button class="btn btn-neutral w-10/10 md:w-5/10" @click="newFinanceKuoFunds">
                 New
+            </button>
+        </div>
+
+        <div class="divider">
+            新增單月多筆資料
+        </div>
+        <div class="w-10/10 flex flex-col gap-3 place-items-center">
+            <div class="w-7/10 flex flex-col">
+                <label class="label">日期:</label>
+                <input type="date" class="input w-10/10" placeholder="" v-model="financeKuoFunds.date" />
+            </div>
+        </div>
+        <div class="w-10/10 flex flex-col md:flex-row-reverse mt-5 justify-center">
+            <button class="btn btn-neutral w-10/10 md:w-5/10" @click="new_oneMonthManyFinance_KuoFunds">
+                Run
             </button>
         </div>
     </div>

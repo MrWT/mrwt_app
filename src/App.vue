@@ -51,6 +51,7 @@
     let kf_funSetting = reactive({
         bank_info: {},
         excel_info: {},
+        member: {},
     });
     // 使用者資訊
     let signinError = ref(false);
@@ -172,6 +173,7 @@
                 // 郭家基金 - 功能設定值
                 kf_funSetting.bank_info = appSettingObj["kf_bank_info"];
                 kf_funSetting.excel_info = appSettingObj["kf_excel_info"];
+                kf_funSetting.member = appSettingObj["kf_member"];
 
                 // appSetting.resources
                 {
@@ -345,7 +347,7 @@
     <div class="navbar bg-white opacity-50 h-[10px] fixed top-15 left-0 z-50">
     </div>
     <!-- 功能 menu -->
-    <div class="navbar shadow-lg h-[10px] fixed top-15 left-0 z-50 flex flex-row content-center gap-5 overflow-x-auto">
+    <div class="navbar shadow-lg h-[10px] fixed top-15 left-0 z-50 flex flex-row content-center gap-5 overflow-x-auto overflow-y-hidden">
         <button v-if="userInfo.funcs.indexOf('quiz') !== -1" class="btn btn-ghost text-black font-black" @click="gotoPage('quiz')">{{ userInfo.languages.quiz }}</button>
         <button v-if="userInfo.funcs.indexOf('footmark') !== -1" class="btn btn-ghost" @click="gotoPage('footmark')">{{ userInfo.languages.footmark }}</button>
         <button v-if="userInfo.funcs.indexOf('finance') !== -1" class="btn btn-ghost" @click="gotoPage('finance')">{{ userInfo.languages.finance }}</button>
@@ -364,7 +366,7 @@
         <Readme v-else-if="appSetting.contentComponent === 'readme'" :title="appSetting.title" :resources="appSetting.resources"  @introduce-author="gotoIntroduceAuthor" />
         <Footmark v-else-if="appSetting.contentComponent === 'footmark'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <Finance v-else-if="appSetting.contentComponent === 'finance'" :title="appSetting.title" :account="userInfo.account" />
-        <Setting v-else-if="appSetting.contentComponent === 'setting'" :title="appSetting.title" :account="userInfo.account" :quiz_setting="appSetting.quiz" :app_state="appState" @popup-message="popupMessage" />
+        <Setting v-else-if="appSetting.contentComponent === 'setting'" :title="appSetting.title" :account="userInfo.account" :quiz_setting="appSetting.quiz" :app_state="appState" :kf_funSetting="kf_funSetting" @popup-message="popupMessage" />
         <Chat v-else-if="appSetting.contentComponent === 'chat'" :title="appSetting.title" :account="userInfo.account" />
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
         <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
