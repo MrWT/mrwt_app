@@ -202,7 +202,7 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div class="text-base">直接給于現金代為轉入</div>
+                    <div class="text-base">直接給予現金代為轉入</div>
                     <div class="list-col-wrap text-xs">
                         <span class="text-red-900 font-black">* 最不推薦的方式</span>
                     </div>
