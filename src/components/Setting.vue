@@ -389,7 +389,6 @@
             };
 
             console.log("newFundObj=", newFundObj);
-            /*
             let newFinanceKFPromise = fetchData({
                 api: "new_kuo_funds",
                 data: {
@@ -408,7 +407,6 @@
 
                 emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
             });
-            */
         });
         
     }
