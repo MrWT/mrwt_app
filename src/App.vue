@@ -149,7 +149,7 @@
             let fetchUserLanguage = fetchData({
                 api: "get_language",
                 data: {
-                    account: tempAccount.value
+                    account: tempAccount.value.trim()
                 }
             });
 
@@ -220,8 +220,6 @@
 
                         userInfo.languages[w_key] = w_display;
                     });
-
-                    console.log("user language=", userInfo.languages);
                 }
 
                 // close signinModal
