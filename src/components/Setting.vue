@@ -1,5 +1,6 @@
 <script setup>
     import { ref, reactive, onMounted } from 'vue'
+    import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
 
     const emit = defineEmits(['popupMessage']);
@@ -81,9 +82,9 @@
 
     let financeKuoFunds = reactive({
         name: "",
-        type: "",
+        type: "IN",
         money: 0,
-        date: "",
+        date: moment().format("YYYY-MM-DD"),
         memo: "",
     });
 
@@ -608,28 +609,38 @@
         <div class="divider">
             郭家基金資料
         </div>
-        <div class="w-10/10 flex flex-col gap-3 text-center">
-                <label class="label">
-                    人員姓名:
-                    <input type="text" class="input" placeholder="" v-model="financeKuoFunds.name" />
+        <div class="w-10/10 flex flex-col gap-3 place-items-center">
+            <div class="flex flex-row gap-2 w-7/10">
+                <label class="text-green-900 text-lg w-5/10">
+                    <input type="radio" v-model="financeKuoFunds.type" value="IN" />
+                    存款
                 </label>
-            <div class="w-10/10 md:w-5/10">
-                <label class="label">類型(IN/OUT)</label>
-                <input type="text" class="input" placeholder="" v-model="financeKuoFunds.type" />
-            </div>
-            <div class="w-10/10 md:w-5/10">
-                <label class="label">金額</label>
-                <input type="number" min="0" class="input" placeholder="" v-model="financeKuoFunds.money" />
-            </div>
-            <div class="w-10/10 md:w-5/10">
-                <label class="label">日期</label>
-                <input type="date" class="input" placeholder="" v-model="financeKuoFunds.date" />
-            </div>
-            <div class="w-10/10 md:w-5/10">
-                <label class="label">備註</label>
-                <input type="text" class="input" placeholder="" v-model="financeKuoFunds.memo" />
+                <label class="text-red-900 text-lg w-5/10">
+                    <input type="radio" v-model="financeKuoFunds.type" value="OUT" />
+                    提領
+                </label>
             </div>
 
+            <div class="w-7/10 flex flex-col">
+                <label class="label">人員姓名:</label>
+                <input type="text" class="input w-10/10" placeholder="" v-model="financeKuoFunds.name" />
+            </div>
+
+
+            <div class="w-7/10 flex flex-col">
+                <label class="label">金額:</label>
+                <input type="number" min="0" class="input w-10/10" placeholder="" v-model="financeKuoFunds.money" />
+            </div>
+
+            <div class="w-7/10 flex flex-col">
+                <label class="label">日期:</label>
+                <input type="date" class="input w-10/10" placeholder="" v-model="financeKuoFunds.date" />
+            </div>
+            
+            <div class="w-7/10 flex flex-col">
+                <label class="label">備註</label>
+                <input type="text" class="input w-10/10" placeholder="" v-model="financeKuoFunds.memo" />
+            </div>
         </div>
         <div class="w-10/10 flex flex-col md:flex-row-reverse mt-5 justify-center">
             <button class="btn btn-neutral w-10/10 md:w-5/10" @click="newFinanceKuoFunds">
