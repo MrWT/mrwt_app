@@ -18,7 +18,7 @@
     // 郭家基金相關 component - 先寄生於此專案, 待成熟後, 再分家出去
     import Finance_KF from './components_kuoFund/Finance.vue'
     import Rule_KF from './components_kuoFund/Rule.vue'
-    import Member_KF from './components_kuoFund/Member.vue'
+    import Activity_KF from './components_kuoFund/Activity.vue'
 
     onMounted(() => {
         console.log("App mounted.");
@@ -232,7 +232,7 @@
                     // 郭家基金-專屬功能
                     appSetting.funButtons.push({ key: "finance_kf", display_text: userInfo.languages["finance_kf"] });
                     appSetting.funButtons.push({ key: "rule_kf", display_text: userInfo.languages["rule_kf"] });
-                    //appSetting.funButtons.push({ key: "member_kf", display_text: userInfo.languages["member_kf"] });
+                    appSetting.funButtons.push({ key: "activity_kf", display_text: userInfo.languages["activity_kf"] });
                 }
 
                 // close signinModal
@@ -374,7 +374,7 @@
 
         <Finance_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" />
         <Rule_KF v-else-if="appSetting.contentComponent === 'rule_kf'" :title="appSetting.title" :account="userInfo.account" :funSetting="kf_funSetting" />
-        <Member_KF v-else-if="appSetting.contentComponent === 'member_kf'" :title="appSetting.title" :account="userInfo.account" />
+        <Activity_KF v-else-if="appSetting.contentComponent === 'activity_kf'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" />
     </div>
 
     <!-- signin modal -->
