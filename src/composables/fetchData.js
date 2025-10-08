@@ -36,13 +36,17 @@ export function fetchData(postData) {
             return response.json();
         })
         .then(data => {
-            $("#loading").hide();
+            setTimeout(() => {
+                $("#loading").hide();
+            }, 1000);
 
             //console.log('Success:', data);
             resolve(data);
         })
         .catch(error => {
-            $("#loading").hide();
+            setTimeout(() => {
+                $("#loading").hide();
+            }, 1000);
 
             console.error('Error:', error);
             reject('Error:' + error);

@@ -39,7 +39,6 @@
     // 系統資訊
     let appState = ref("SET_SYSTEM");
     let screenSize = ref("md");
-    let switchMenu = ref(true);
     let appSetting = reactive({
         state: "",
         contentComponent: "gallery",
@@ -77,17 +76,13 @@
         // w-md 約等於 448px
         if(window.innerWidth > 448){
             screenSize.value = "md";
-            switchMenu.value = true;
         }else if(304 < window.innerWidth && window.innerWidth < 448 ){
             screenSize.value = "sm";
-            switchMenu.value = false;
         }else{
             screenSize.value = "xs";
-            switchMenu.value = false;
         }
         console.log("window.innerWidth=" + window.innerWidth);
         console.log("screenSize.value=" + screenSize.value);
-        console.log("switchMenu.value=" + switchMenu.value);
     }
     // 重設系統設定
     function resetAppSetting(){
@@ -98,7 +93,6 @@
     function gotoPage(page) {
         // close userInfoModal
         document.getElementById("userInfoModal").close();
-        switchMenu.value = false;
 
         appSetting.contentComponent = "reset";
 
@@ -256,7 +250,6 @@
     function signout(){
         // close userInfoModal
         document.getElementById("userInfoModal").close();
-        switchMenu.value = false;
 
         resetUserInfo();
         resetAppSetting();
@@ -269,10 +262,6 @@
     function gotoIntroduceAuthor(data){
         console.log("gotoIntroduceAuthor.data=", data);
         gotoPage("author");
-    }
-    // 開關 menu
-    function toggleMenu(){
-        switchMenu.value = !switchMenu.value;
     }
     // 使用者資訊
     function openUserInfoModal(){
@@ -329,7 +318,7 @@
 <template>
     <!-- 系統 loading mask -->
     <div id="loading" class="w-full h-full flex justify-center items-center bg-gray-700/70 absolute top-0 left-0 z-999" style="display:none;">
-        <progress class="w-5/10 progress progress-neutral" max="100"></progress>
+        <span class="loading loading-bars loading-xl"></span>
     </div>
     <!-- 功能 component -->
     <div class="navbar bg-slate-200/100 h-[10px] fixed top-0 left-0 z-50">
@@ -361,7 +350,7 @@
         </div>
     </div>
     <!-- 為了製造出"功能 menu 白霧底效果" -->
-    <div class="navbar bg-white opacity-50 h-[10px] fixed top-15 left-0 z-50">
+    <div class="navbar bg-white opacity-70 h-[10px] fixed top-15 left-0 z-50">
     </div>
     <!-- 功能 menu -->
     <div class="navbar shadow-lg h-[10px] fixed top-15 left-0 z-50 flex flex-row content-center gap-5 overflow-x-auto overflow-y-hidden">
