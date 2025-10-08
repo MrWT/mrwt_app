@@ -89,6 +89,12 @@
         memo: "",
     });
 
+    let manual_kuoFunds = reactive({
+        location_name: "",
+        page: "",
+        memo: "",
+    });
+
     // 初始化 component
     function init(){
         console.log("setting.init");
@@ -114,6 +120,7 @@
             fetchUser();
         }else{
             fetchAward();
+            get_activity_kuoFunds();
         }
     }
     // 取得使用者個人 finance 資料
@@ -410,12 +417,70 @@
         });
         
     }
+    // 取得活動清單
+    function get_activity_kuoFunds(){
+         let getActivityKFPromise = fetchData({
+            api: "get_activiy_kf",
+        });
+        Promise.all([getActivityKFPromise]).then((values) => {
+            console.log("getActivityKFPromise.values=", values);
+            manual_kuoFunds.location_name = values[0][0]["location_name"];
+        });
+    }
+    // 轉換活動圖檔成 base64
+    function change_activity_manual_KuoFunds(event){
+        console.log("change_activity_manual_KuoFunds");
+        const file = event.target.files[0];
 
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                console.log("Base64 encoded string:", reader.result);
+                // The reader.result will be a data URL like:
+                // "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
+
+                manual_kuoFunds.page = reader.result;
+            };
+
+            reader.onerror = (error) => {
+                console.error("Error reading file:", error);
+            };
+
+            reader.readAsDataURL(file);
+        } else {
+            console.log("No file selected.");
+        }
+    }
+    // 新增活動手冊頁面
+    function new_activity_manual_KuoFunds(){
+        console.log("new_activity_manual_KuoFunds.manual_kuoFunds=", manual_kuoFunds);
+
+        let newActivityManualPageKFPromise = fetchData({
+            api: "new_activity_manual_page_kf",
+            data: {
+                manual: manual_kuoFunds,
+            }
+        });
+        Promise.all([newActivityManualPageKFPromise]).then((values) => {
+            console.log("newActivityManualPageKFPromise.values=", values);
+
+            opObj.status = values[0]["result"];
+            if(values[0]["result"] === true){
+                opObj.message = "儲存成功";
+            }else{
+                opObj.message = values[0]["message"];
+            }
+
+            emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
+        });
+        
+    }
 </script>
 
 <template>
 
-<div class="tabs tabs-border">
+<div class="tabs tabs-border w-10/10">
     <!-- Finance -->
     <input v-if="appState === 'SET_PERSON'" type="radio" name="setting_tabs" class="tab" aria-label="設定 Finance" />
     <div v-if="appState === 'SET_PERSON'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
@@ -643,7 +708,7 @@
     </div>
 
     <!-- Finance - 郭家基金 -->
-    <input v-if="appState === 'SET_SYSTEM'" type="radio" name="setting_tabs" class="tab" aria-label="設定郭家基金" />
+    <input v-if="appState === 'SET_SYSTEM'" type="radio" name="setting_tabs" class="tab" aria-label="設定存款/提領款項-KF" />
     <div v-if="appState === 'SET_SYSTEM'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
         <div class="divider">
             新增單筆資料
@@ -699,6 +764,39 @@
         <div class="w-10/10 flex flex-col md:flex-row-reverse mt-5 justify-center">
             <button class="btn btn-neutral w-10/10 md:w-5/10" @click="new_oneMonthManyFinance_KuoFunds">
                 Run
+            </button>
+        </div>
+    </div>
+
+    <!-- 活動手冊建立 - 郭家基金 -->
+    <input v-if="appState === 'SET_SYSTEM'" type="radio" name="setting_tabs" class="tab" aria-label="上傳活動手冊-KF" />
+    <div v-if="appState === 'SET_SYSTEM'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
+        <div class="w-10/10 flex flex-col gap-3 place-items-center">
+            <div class="w-7/10 flex flex-col">
+                <label class="label">
+                    地點名稱:
+                    <input type="text" class="input w-10/10" placeholder="" v-model="manual_kuoFunds.location_name" />
+                </label>
+            </div>
+
+            <div class="w-7/10 flex flex-col">
+                <label class="label">
+                    金額:
+                    <input type="file" id="fileInput" @change="change_activity_manual_KuoFunds" />
+                </label>
+            </div>
+
+            <div class="w-7/10 flex flex-col">
+                <label class="label">
+                    備註:
+                    <input type="text" class="input w-10/10" placeholder="" v-model="manual_kuoFunds.memo" />
+                </label>
+            </div>
+
+        </div>
+        <div class="w-10/10 flex flex-col md:flex-row-reverse mt-5 justify-center">
+            <button class="btn btn-neutral w-10/10 md:w-5/10" @click="new_activity_manual_KuoFunds">
+                New
             </button>
         </div>
     </div>
