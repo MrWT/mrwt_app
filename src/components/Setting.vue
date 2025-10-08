@@ -774,14 +774,14 @@
         <div class="w-10/10 flex flex-col gap-3 place-items-center">
             <div class="w-7/10 flex flex-col">
                 <label class="label">
-                    地點名稱:
+                    地點:
                     <input type="text" class="input w-10/10" placeholder="" v-model="manual_kuoFunds.location_name" />
                 </label>
             </div>
 
             <div class="w-7/10 flex flex-col">
                 <label class="label">
-                    金額:
+                    圖檔:
                     <input type="file" id="fileInput" @change="change_activity_manual_KuoFunds" />
                 </label>
             </div>
