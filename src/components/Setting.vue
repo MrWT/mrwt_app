@@ -388,7 +388,7 @@
                 memo: "測試",
             };
 
-            console.log("newFundObj=", newFundObj);
+            //console.log("newFundObj=", newFundObj);
             let newFinanceKFPromise = fetchData({
                 api: "new_kuo_funds",
                 data: {
