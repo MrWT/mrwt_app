@@ -97,9 +97,17 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div>月費繳交期限: <span class="text-red-900 font-black text-base">每月 10 號</span></div>
+                    <div>月費儲值期限: <span class="text-red-900 font-black text-base">每月 10 號</span></div>
                     <div class="text-xs uppercase font-semibold opacity-60">
-                        每戶負責人請於每月 10 號前繳交月費。( 日期可再討論 )<br />
+                        每戶代表人請於每月 10 號前儲值月費。
+
+                        <div class="mt-5">
+                            * 額外說明: 
+                            <ul>
+                                <li>1. 期限日期可再討論</li>
+                                <li>2. 儲值方式請見最下方說明</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </li>
@@ -113,7 +121,16 @@
                 <div class="list-col-grow">
                     <div>帳戶資料彙整: <span class="text-blue-900 font-black text-base">每月 20 號</span></div>
                     <div class="text-xs uppercase font-semibold opacity-60">
-                        帳戶管理人於每月 20 號前進行該月份帳戶資料彙整，並公告於共享 Excel、網站和 Line 群組"跟著家族去旅行"。
+                        輪值管理人於每月 20 號前進行當月份儲值資料彙整，並公告於共享檔案(PDF)、網站和 Line 群組"跟著家族去旅行"。
+
+                        <div class="mt-5">
+                            * 管理工具角色定義: 
+                            <ul>
+                                <li>1. 共享檔案(PDF): 詳細記載儲值細項、提領細項(包含日期、目的和收據照片)</li>
+                                <li>2. 網站: 方便查詢儲值、提領等款項，以及管理方式</li>
+                                <li>3. Line 群組"跟著家族去旅行": 即時通知資料彙整進度</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </li>
@@ -121,21 +138,36 @@
             <li class="list-row">
                 <div>
                     <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m2.665 9H6.647A1.647 1.647 0 0 1 5 15.353v-1.706A1.647 1.647 0 0 1 6.647 12h1.018M16 12l1.443 4.773L19 12m-6.057-.152-.943-.02a1.34 1.34 0 0 0-1.359 1.22 1.32 1.32 0 0 0 1.172 1.421l.536.059a1.273 1.273 0 0 1 1.226 1.718c-.2.571-.636.754-1.337.754h-1.13"/>
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m6 4v5h1.375A1.627 1.627 0 0 0 14 15.375v-1.75A1.627 1.627 0 0 0 12.375 12H11Z"/>
                     </svg>
                 </div>
                 <div class="list-col-grow">
                     <div>帳戶細項 PDF 共享檔案</div>
-                    <div class="text-xs uppercase font-semibold opacity-60">檔案名稱: {{ excelInfo.file_name }} / 共享連結: <a class="link" target="_blank" :href="excelInfo.link">{{ excelInfo.link }}</a></div>
+                    <div class="text-xs font-semibold opacity-60">檔案名稱: {{ excelInfo.file_name }}</div>
+                    <div class="text-xs font-semibold opacity-60">共享連結: <a class="link" target="_blank" :href="excelInfo.link">{{ excelInfo.link }}</a></div>
                 </div>
             </li>
 
+            <li class="list-row">
+                <div>
+                    <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5713 5h7v9h-7m-6.00001-4-3 4.5m3-4.5v5m0-5h3.00001m0 0h5m-5 0v5m-3.00001 0h3.00001m-3.00001 0v5m3.00001-5v5m6-6 2.5 6m-3-6-2.5 6m-3-14.5c0 .82843-.67158 1.5-1.50001 1.5-.82843 0-1.5-.67157-1.5-1.5s.67157-1.5 1.5-1.5 1.50001.67157 1.50001 1.5Z"/>
+                    </svg>
+                </div>
+                <div class="list-col-grow">
+                    <div>輪值管理人資訊</div>
+                    <div class="text-xs font-semibold opacity-60">期間: {{ "2025-11-01~2026-10-31" }}</div>
+                    <div class="text-xs font-semibold opacity-60">姓名: {{ "郭威廷" }}</div>
+                    <div class="text-xs font-semibold opacity-60">電話: {{ "0929-701-600" }}</div>
+                    <div class="text-xs font-semibold opacity-60">Line ID: {{ "mrwt" }}</div>
+                </div>
+            </li>
         </ul>
     </div>
 
     <div class="w-10/10">
         <ul class="list bg-base-100 rounded-box shadow-md">
-            <li class="p-4 pb-2 text-base opacity-80 tracking-wide  bg-yellow-200">月費繳交方式</li>
+            <li class="p-4 pb-2 text-base opacity-80 tracking-wide  bg-yellow-200">月費儲值方式</li>
   
             <li class="list-row">
                 <div class="text-4xl font-thin opacity-30 tabular-nums">01</div>
@@ -149,9 +181,9 @@
                     <div class="text-base">加入"Line Bank - 友感帳戶"群組</div>
                     <div class="list-col-wrap text-xs">
                         <span class="text-blue-900 font-black">* 最推薦的方式: 方便 / 透明 / 節省轉帳手續費</span><br />
-                        若是本身有在使用 Line Bank 或是有興趣使用, 則可以請帳戶管理人邀請加入"友感帳戶<sup>*</sup>"群組。<br />
-                        加入"友感帳戶群組"後, 可以<span class="text-blue-900 font-black">即時共管</span>基金, 
-                        也方便日後移轉帳戶負責人。也可省去轉帳費用。
+                        若是本身有在使用 Line Bank 或是有興趣使用，則可以請輪值管理人邀請加入"友感帳戶<sup>*</sup>"群組。<br />
+                        加入"友感帳戶群組"後，不只節省轉帳費用，也可<span class="text-blue-900 font-black">即時共管</span>基金。<br />
+                        另外，日後輪替管理人時，也方便移轉帳戶結餘。
 
                         <div class="mt-5">
                             * 參考資料: 
@@ -211,6 +243,8 @@
         </ul>
 
     </div>
+
+    <div class="divider"></div>
 </div>
 
 </template>
