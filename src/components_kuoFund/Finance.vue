@@ -89,7 +89,7 @@
                             <div class="avatar avatar-placeholder">
                                 <div class="w-12 rounded-full"
                                     :class="{'bg-green-900': fundObj.type === 'IN', 'bg-red-900': fundObj.type === 'OUT'}">
-                                    <span v-if="fundObj.type === 'IN'" class="text-lg text-white">存款</span>
+                                    <span v-if="fundObj.type === 'IN'" class="text-lg text-white">儲值</span>
                                     <span v-if="fundObj.type === 'OUT'" class="text-lg text-white">提領</span>
                                 </div>
                             </div>
