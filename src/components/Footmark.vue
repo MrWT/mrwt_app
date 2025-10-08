@@ -200,7 +200,7 @@
 
     <div class="w-10/10 h-9/10 p-1">
         <GoogleMap class="w-10/10 h-10/10"
-            mapId="DEMO_MAP_ID"
+            mapId="FOOTMARK_MAP_ID"
             :api-key="props.googleMapApiKey"
             :center="googleMapCenter"
             :zoom="7"
