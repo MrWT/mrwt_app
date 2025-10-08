@@ -47,6 +47,7 @@
         googleMapApiKey: "",
         resources: [],
         quiz: {},
+        funButtons: [],
     });
     let kf_funSetting = reactive({
         bank_info: {},
@@ -224,6 +225,22 @@
                     });
                 }
 
+                // 功能 buttons
+                {
+                    appSetting.funButtons.splice(0, appSetting.funButtons.length);
+
+                    appSetting.funButtons.push({ key: "quiz", display_text: userInfo.languages["quiz"] });
+                    appSetting.funButtons.push({ key: "footmark", display_text: userInfo.languages["footmark"] });
+                    appSetting.funButtons.push({ key: "finance", display_text: userInfo.languages["finance"] });
+                    appSetting.funButtons.push({ key: "chat", display_text: userInfo.languages["chat"] });
+                    appSetting.funButtons.push({ key: "lockLucky", display_text: userInfo.languages["lockLucky"] });
+                    appSetting.funButtons.push({ key: "readme", display_text: userInfo.languages["readme"] });
+                    // 郭家基金-專屬功能
+                    appSetting.funButtons.push({ key: "finance_kf", display_text: userInfo.languages["finance_kf"] });
+                    appSetting.funButtons.push({ key: "rule_kf", display_text: userInfo.languages["rule_kf"] });
+                    //appSetting.funButtons.push({ key: "member_kf", display_text: userInfo.languages["member_kf"] });
+                }
+
                 // close signinModal
                 document.getElementById("signinModal").close();
 
@@ -348,16 +365,11 @@
     </div>
     <!-- 功能 menu -->
     <div class="navbar shadow-lg h-[10px] fixed top-15 left-0 z-50 flex flex-row content-center gap-5 overflow-x-auto overflow-y-hidden">
-        <button v-if="userInfo.funcs.indexOf('quiz') !== -1" class="btn btn-ghost text-black font-black" @click="gotoPage('quiz')">{{ userInfo.languages.quiz }}</button>
-        <button v-if="userInfo.funcs.indexOf('footmark') !== -1" class="btn btn-ghost" @click="gotoPage('footmark')">{{ userInfo.languages.footmark }}</button>
-        <button v-if="userInfo.funcs.indexOf('finance') !== -1" class="btn btn-ghost" @click="gotoPage('finance')">{{ userInfo.languages.finance }}</button>
-        <button v-if="userInfo.funcs.indexOf('chat') !== -1" class="btn btn-ghost" @click="gotoPage('chat')">{{ userInfo.languages.chat }}</button>
-        <button v-if="userInfo.funcs.indexOf('lockLucky') !== -1" class="btn btn-ghost" @click="gotoPage('lockLucky')">{{ userInfo.languages.lockLucky }}</button>
-        <button v-if="userInfo.funcs.indexOf('readme') !== -1" class="btn btn-ghost" @click="gotoPage('readme')">{{ userInfo.languages.readme }}</button>
-
-        <button v-if="userInfo.funcs.indexOf('finance_kf') !== -1" class="btn btn-ghost" @click="gotoPage('finance_kf')">{{ userInfo.languages.finance_kf }}</button>
-        <button v-if="userInfo.funcs.indexOf('rule_kf') !== -1" class="btn btn-ghost" @click="gotoPage('rule_kf')">{{ userInfo.languages.rule_kf }}</button>
-        <button v-if="userInfo.funcs.indexOf('member_kf') !== -1 && false" class="btn btn-ghost" @click="gotoPage('member_kf')">{{ userInfo.languages.member_kf }}</button>
+        <template v-for="(fbObj, fb_i) in appSetting.funButtons">
+            <button v-if="userInfo.funcs.indexOf(fbObj.key) !== -1" class="btn text-black font-black" 
+                    :class="{'btn-outline':appSetting.contentComponent === fbObj.key, 'btn-ghost': appSetting.contentComponent !== fbObj.key}" 
+                    @click="gotoPage(fbObj.key)">{{ fbObj.display_text }}</button>
+        </template>
     </div>
     <!-- 功能 component -->
     <div class="p-4 h-8/10 mt-30">
