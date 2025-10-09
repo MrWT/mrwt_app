@@ -1,6 +1,8 @@
 <script setup>
     import { ref, reactive, onMounted } from 'vue'
     import { gsap } from "gsap"
+     import { DrawSVGPlugin } from "gsap/DrawSVGPlugin"
+    import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
     import { getRandomNumber } from "@/composables/random"
 
     const props = defineProps({
@@ -88,6 +90,9 @@
             genChannels();
         }else{
 
+            gsap.registerPlugin(DrawSVGPlugin);
+            gsap.registerPlugin(MotionPathPlugin);
+
             // 候選顏色
             let candidateColors = ["green", "blue", "purple", "gold", "peru", "blanchedalmond", "blueviolet", "goldenrod"];
             let durations = [];
@@ -96,8 +101,9 @@
             }
 
             setTimeout(() => {
-                let tl_back = gsap.timeline({ yoyo: true, repeat: -1 });
-                let tl_word = gsap.timeline({ yoyo: true, repeat: -1 });
+                let tl_back = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
+                let tl_word = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
+
                 for(let c_i = 0; c_i < candidateColors.length; c_i++){
                     // 郭字背景
                     tl_back.to("#" + "kuoBack", {
@@ -114,6 +120,35 @@
                         color: candidateColors[ candidateColors.length - 1 - c_i],
                         //ease: "bounce.inOut",
                     });
+                }
+
+                // 玩 SVG
+                let tl_path = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
+                let tl_circle = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
+                {
+                    tl_path.from("#myPath", {
+                        drawSVG: false, 
+                        duration: 2, 
+                        repeat: -1,
+                        repeatDelay: 3,
+                        yoyo: true,
+                        ease: "power1.inOut"
+                    });
+                    for(let c_i = 1; c_i <= 5; c_i++){
+                        tl_circle.to("#myCircle" + c_i, {
+                            duration: 2, 
+                            repeat: -1,
+                            repeatDelay: 3,
+                            yoyo: true,
+                            ease: "power1.inOut",
+                            motionPath:{
+                                path: "#myPath",
+                                align: "#myPath",
+                                autoRotate: true,
+                                alignOrigin: [0.5, 0.5]
+                            }
+                        });
+                    }
                 }
             }, 100);
         }
@@ -181,8 +216,17 @@
     </dialog>
 
     <!-- 郭家基金 - 使用者 -->
-    <div v-if="account === 'KUOFAMILY'" id="kuoBack" class="w-10/10 h-10/10 flex justify-center items-center bg-gray-950">
+    <div v-if="account === 'KUOFAMILY'" id="kuoBack" class="w-10/10 h-10/10 flex flex-col justify-center items-center bg-gray-950">
         <div id="kuoWord" class="text-9xl text-yellow-500">{{ cname }}</div>
+
+        <svg width="300" height="100" viewBox="0 0 300 100">
+            <path id="myPath" d="M0 0 Q150 100,300 0" fill="none" stroke="#88ce02" stroke-width="3px" />
+            <circle id="myCircle1" cx="0" cy="0" r="10" fill="#88ce02" />
+            <circle id="myCircle2" cx="0" cy="0" r="10" fill="#88ce02" />
+            <circle id="myCircle3" cx="0" cy="0" r="10" fill="#88ce02" />
+            <circle id="myCircle4" cx="0" cy="0" r="10" fill="#88ce02" />
+            <circle id="myCircle5" cx="0" cy="0" r="10" fill="#88ce02" />
+        </svg>
     </div>
     
 </template>
