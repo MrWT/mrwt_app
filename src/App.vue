@@ -83,6 +83,17 @@
         }
         console.log("window.innerWidth=" + window.innerWidth);
         console.log("screenSize.value=" + screenSize.value);
+
+        // KuoFamily - 自動登入控制
+        {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fun = urlParams.get('fun'); // 取得 'John'
+
+            if(fun && fun.trim().toUpperCase() === "KUOFAMILY"){
+                tempAccount.value = "KUOFAMILY";
+                signin();
+            }
+        }
     }
     // 重設系統設定
     function resetAppSetting(){
@@ -232,7 +243,10 @@
                     // 郭家基金-專屬功能
                     appSetting.funButtons.push({ key: "finance_kf", display_text: userInfo.languages["finance_kf"] });
                     appSetting.funButtons.push({ key: "rule_kf", display_text: userInfo.languages["rule_kf"] });
-                    appSetting.funButtons.push({ key: "activity_kf", display_text: userInfo.languages["activity_kf"] });
+                    // 暫不開放
+                    if(userInfo.role === "admin"){
+                        appSetting.funButtons.push({ key: "activity_kf", display_text: userInfo.languages["activity_kf"] });
+                    }
                 }
 
                 // close signinModal
@@ -312,6 +326,11 @@
             document.getElementById("alertMsg").classList.add("hidden");
         }, 5000);
     }
+    // 直接關閉 - for KuoFamily
+    function closeDirectly(){
+        window.close('', '_parent', '');
+    }
+
 
 </script>
 
@@ -338,11 +357,19 @@
                     </a>
                 </li>
                 <!-- userInfo -->
-                <li @click="openUserInfoModal">
+                <li v-if="userInfo.account !== 'KUOFAMILY'" @click="openUserInfoModal">
                     <a class="tooltip tooltip-bottom" :data-tip="userInfo.languages.user_setting">
                         <svg class="w-5 h-5" :class="{'text-lime-900/100': userInfo.role === 'admin', 'text-yellow-900/100': userInfo.role === 'tn100'}"
                             aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd" d="M17 10v1.126c.367.095.714.24 1.032.428l.796-.797 1.415 1.415-.797.796c.188.318.333.665.428 1.032H21v2h-1.126c-.095.367-.24.714-.428 1.032l.797.796-1.415 1.415-.796-.797a3.979 3.979 0 0 1-1.032.428V20h-2v-1.126a3.977 3.977 0 0 1-1.032-.428l-.796.797-1.415-1.415.797-.796A3.975 3.975 0 0 1 12.126 16H11v-2h1.126c.095-.367.24-.714.428-1.032l-.797-.796 1.415-1.415.796.797A3.977 3.977 0 0 1 15 11.126V10h2Zm.406 3.578.016.016c.354.358.574.85.578 1.392v.028a2 2 0 0 1-3.409 1.406l-.01-.012a2 2 0 0 1 2.826-2.83ZM5 8a4 4 0 1 1 7.938.703 7.029 7.029 0 0 0-3.235 3.235A4 4 0 0 1 5 8Zm4.29 5H7a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h6.101A6.979 6.979 0 0 1 9 15c0-.695.101-1.366.29-2Z" clip-rule="evenodd"/>
+                        </svg>
+                    </a>
+                </li>
+                <!-- 直接關閉 - for KuoFamily -->
+                <li v-if="userInfo.account === 'KUOFAMILY'" @click="closeDirectly">
+                    <a class="tooltip tooltip-bottom" data-tip="關閉">
+                        <svg class="size-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
                         </svg>
                     </a>
                 </li>
@@ -362,12 +389,12 @@
     </div>
     <!-- 功能 component -->
     <div class="p-4 h-8/10 mt-30">
-        <Gallery v-if="appSetting.contentComponent === 'gallery'" :title="appSetting.title" />
+        <Gallery v-if="appSetting.contentComponent === 'gallery'" :title="appSetting.title" :account="userInfo.account" :cname="userInfo.cname" />
         <Quiz v-else-if="appSetting.contentComponent === 'quiz'" :title="appSetting.title" :setting="appSetting.quiz" />
         <Readme v-else-if="appSetting.contentComponent === 'readme'" :title="appSetting.title" :resources="appSetting.resources"  @introduce-author="gotoIntroduceAuthor" />
         <Footmark v-else-if="appSetting.contentComponent === 'footmark'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <Finance v-else-if="appSetting.contentComponent === 'finance'" :title="appSetting.title" :account="userInfo.account" />
-        <Setting v-else-if="appSetting.contentComponent === 'setting'" :title="appSetting.title" :account="userInfo.account" :quiz_setting="appSetting.quiz" :app_state="appState" :kf_funSetting="kf_funSetting" @popup-message="popupMessage" />
+        <Setting v-else-if="appSetting.contentComponent === 'setting'" :title="appSetting.title" :account="userInfo.account" :app_state="appState" @popup-message="popupMessage" />
         <Chat v-else-if="appSetting.contentComponent === 'chat'" :title="appSetting.title" :account="userInfo.account" />
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
         <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
