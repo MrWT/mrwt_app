@@ -1,10 +1,12 @@
 <script setup>
     import { ref, reactive, onMounted } from 'vue'
+    import { gsap } from "gsap"
     import { getRandomNumber } from "@/composables/random"
 
-    defineProps({
+    const props = defineProps({
         title: String,
         account: String,
+        cname: String,
     })
 
     onMounted(() => {
@@ -42,33 +44,79 @@
     ];
     let imageUrls = [];
 
+    let account = ref("");
+    let cname = ref("");
+    let repeatRows = ref(1000);
+    let repeatWords_3 = ref(3);
+    let repeatWords_4 = ref(4);
+    let repeatWords_6 = ref(6);
+    let repeatWords_7 = ref(7);
+
     // 初始化 component
     function init(){
-        console.log("gallery.init");
-        // 依據 imageCount 生成 imageUrls
-        imageCount = getRandomNumber(candidateImageUrls.length, 100);
-        for(let img_i = 0; img_i < imageCount; img_i++){
-            let imgIndex = getRandomNumber(0, candidateImageUrls.length -1);
-            let imgUrl = candidateImageUrls[ imgIndex ];
-            imageUrls.push( imgUrl );
-        }
+        console.log("Gallery.init");
+        console.log("Gallery.props.title=", props.title);
+        console.log("Gallery.props.account=", props.account);
+        console.log("Gallery.props.cname=", props.cname);
+        account.value = props.account;
+        cname.value = "郭"; // props.cname;
 
-        // w-sm 約等於 384px
-        // w-md 約等於 448px
-        //console.log("window.innerWidth=" + window.innerWidth);
-        if(window.innerWidth > 448){
-            channelCount = getRandomNumber(3, 4);
-        }else if(304 < window.innerWidth && window.innerWidth < 448 ){
-            channelCount = getRandomNumber(1, 2);
+        if(account.value !== "KUOFAMILY"){
+            // 依據 imageCount 生成 imageUrls
+            imageCount = getRandomNumber(candidateImageUrls.length, 100);
+            for(let img_i = 0; img_i < imageCount; img_i++){
+                let imgIndex = getRandomNumber(0, candidateImageUrls.length -1);
+                let imgUrl = candidateImageUrls[ imgIndex ];
+                imageUrls.push( imgUrl );
+            }
+
+            // w-sm 約等於 384px
+            // w-md 約等於 448px
+            //console.log("window.innerWidth=" + window.innerWidth);
+            if(window.innerWidth > 448){
+                channelCount = getRandomNumber(3, 4);
+            }else if(304 < window.innerWidth && window.innerWidth < 448 ){
+                channelCount = getRandomNumber(1, 2);
+            }else{
+                channelCount = getRandomNumber(1, 1);
+            }
+            // 依據 channelCount 生成 channel
+            for(let c_i = 0; c_i < channelCount; c_i++){
+                channels.push( [] );
+            }
+            // 建立 channel 內容
+            genChannels();
         }else{
-            channelCount = getRandomNumber(1, 1);
+
+            // 候選顏色
+            let candidateColors = ["green", "blue", "purple", "gold", "peru", "blanchedalmond", "blueviolet", "goldenrod"];
+            let durations = [];
+            for(let d_i = 0; d_i < 10; d_i++){
+                durations.push( getRandomNumber(10, 20)/10 );
+            }
+
+            setTimeout(() => {
+                let tl_back = gsap.timeline({ yoyo: true, repeat: -1 });
+                let tl_word = gsap.timeline({ yoyo: true, repeat: -1 });
+                for(let c_i = 0; c_i < candidateColors.length; c_i++){
+                    // 郭字背景
+                    tl_back.to("#" + "kuoBack", {
+                        id: "tween_" + "kuoBack",
+                        duration: getRandomNumber(30, 40)/10,
+                        background: candidateColors[c_i],
+                        ease: "bounce.inOut",
+                    });
+
+                    // 郭字
+                    tl_word.to("#" + "kuoWord", {
+                        id: "tween_" + "kuoWord",
+                        duration: getRandomNumber(20, 30)/10,
+                        color: candidateColors[ candidateColors.length - 1 - c_i],
+                        //ease: "bounce.inOut",
+                    });
+                }
+            }, 100);
         }
-        // 依據 channelCount 生成 channel
-        for(let c_i = 0; c_i < channelCount; c_i++){
-            channels.push( [] );
-        }
-        // 建立 channel 內容
-        genChannels();
     }
     // 建立 channel
     function genChannels(){
@@ -99,39 +147,44 @@
 </script>
 
 <template>
-
-<div class="grid gap-4"
-:class="{ 'grid-cols-1': channels.length === 1,
-          'grid-cols-2': channels.length === 2,
-          'grid-cols-3': channels.length === 3,
-          'grid-cols-4': channels.length === 4 }">
-    <div v-for="(channel, c_i) in channels" class="grid"
-      :class="{ 'gap-16': channels.length === 1,
-                'gap-20': channels.length === 2,
-                'gap-20': channels.length === 3,
-                'gap-20': channels.length === 4 }">
-        <div v-for="(imgSrc, is_i) in channel">
-            <img class="h-auto max-w-full rounded-lg shadow-2xl" :src="imgSrc" alt="" @click="showModal(imgSrc)">
+    <!-- 一般使用者 -->
+    <div v-if="account !== 'KUOFAMILY'" class="grid gap-4"
+    :class="{ 'grid-cols-1': channels.length === 1,
+            'grid-cols-2': channels.length === 2,
+            'grid-cols-3': channels.length === 3,
+            'grid-cols-4': channels.length === 4 }">
+        <div v-for="(channel, c_i) in channels" class="grid"
+        :class="{ 'gap-16': channels.length === 1,
+                    'gap-20': channels.length === 2,
+                    'gap-20': channels.length === 3,
+                    'gap-20': channels.length === 4 }">
+            <div v-for="(imgSrc, is_i) in channel">
+                <img class="h-auto max-w-full rounded-lg shadow-2xl" :src="imgSrc" alt="" @click="showModal(imgSrc)">
+            </div>
         </div>
     </div>
-</div>
 
-<dialog id="imgModal" class="modal">
-  <div class="modal-box w-10/10 h-8/10">
-    <h3 class="text-lg font-bold">Hello!</h3>
-    <div class="w-10/10 h-8/10 justify-items-center content-center">
-      <img :src="selImgUrl" class="max-h-full object-fill rounded-lg" />
+    <dialog id="imgModal" class="modal">
+        <div class="modal-box w-10/10 h-8/10">
+            <h3 class="text-lg font-bold">Hello!</h3>
+            <div class="w-10/10 h-8/10 justify-items-center content-center">
+            <img :src="selImgUrl" class="max-h-full object-fill rounded-lg" />
+            </div>
+
+            <div class="modal-action">
+            <form method="dialog">
+                <!-- if there is a button in form, it will close the modal -->
+                <button class="btn">Close</button>
+            </form>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- 郭家基金 - 使用者 -->
+    <div v-if="account === 'KUOFAMILY'" id="kuoBack" class="w-10/10 h-10/10 flex justify-center items-center bg-gray-950">
+        <div id="kuoWord" class="text-9xl text-yellow-500">{{ cname }}</div>
     </div>
-
-    <div class="modal-action">
-      <form method="dialog">
-        <!-- if there is a button in form, it will close the modal -->
-        <button class="btn">Close</button>
-      </form>
-    </div>
-  </div>
-</dialog>
-
+    
 </template>
 
 <style scoped>
