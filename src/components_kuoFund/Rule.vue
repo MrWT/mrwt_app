@@ -106,6 +106,7 @@
                             <ul>
                                 <li>1. 期限日期可再討論</li>
                                 <li>2. 儲值方式請見最下方說明</li>
+                                <li>3. 可多人合併儲值( 為了資料完整性，合併時，請主動告知。 )</li>
                             </ul>
                         </div>
                     </div>
@@ -119,18 +120,9 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div>帳戶資料彙整: <span class="text-blue-900 font-black text-base">每月 20 號</span></div>
+                    <div>儲值資料彙整: <span class="text-blue-900 font-black text-base">每月 20 號</span></div>
                     <div class="text-xs uppercase font-semibold opacity-60">
-                        輪值管理人於每月 20 號前進行當月份儲值資料彙整，並公告於共享檔案(PDF)、網站和 Line 群組"跟著家族去旅行"。
-
-                        <div class="mt-5">
-                            * 管理工具角色定義: 
-                            <ul>
-                                <li>1. 共享檔案(PDF): 詳細記載儲值細項、提領細項(包含日期、目的和收據照片)</li>
-                                <li>2. 網站: 方便查詢儲值、提領等款項，以及管理方式</li>
-                                <li>3. Line 群組"跟著家族去旅行": 即時通知資料彙整進度</li>
-                            </ul>
-                        </div>
+                        輪值管理人於每月 20 號前進行當月份儲值資料彙整，並公告於共享檔案(PDF)、公佈欄網站和 Line 群組"跟著家族去旅行"。
                     </div>
                 </div>
             </li>
@@ -142,11 +134,38 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div>帳戶細項 PDF 共享檔案</div>
+                    <div>管理工具 - 共享檔案(PDF)</div>
+                    <div class="text-xs font-semibold opacity-60">詳細記載儲值細項、提領細項(包含日期、目的和收據照片)</div>
+                    <div class="divider"></div>
                     <div class="text-xs font-semibold opacity-60">檔案名稱: {{ excelInfo.file_name }}</div>
                     <div class="text-xs font-semibold opacity-60">共享連結: <a class="link" target="_blank" :href="excelInfo.link">{{ excelInfo.link }}</a></div>
                 </div>
             </li>
+
+            <li class="list-row">
+                <div>
+                    <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 14H4m6.5 3L8 20m5.5-3 2.5 3M4.88889 17H19.1111c.4909 0 .8889-.4157.8889-.9286V4.92857C20 4.41574 19.602 4 19.1111 4H4.88889C4.39797 4 4 4.41574 4 4.92857V16.0714c0 .5129.39797.9286.88889.9286ZM13 14v-3h4v3h-4Z"/>
+                    </svg>
+                </div>
+                <div class="list-col-grow">
+                    <div>管理工具 - 公佈欄網站</div>
+                    <div class="text-xs font-semibold opacity-60">方便查詢儲值、提領等款項、<del>活動公告細節</del>，以及管理方式</div>
+                </div>
+            </li>
+
+            <li class="list-row">
+                <div>
+                    <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 10.5h.01m-4.01 0h.01M8 10.5h.01M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.6a1 1 0 0 0-.69.275l-2.866 2.723A.5.5 0 0 1 8 18.635V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+                    </svg>
+                </div>
+                <div class="list-col-grow">
+                    <div>管理工具 - Line 群組"跟著家族去旅行"</div>
+                    <div class="text-xs font-semibold opacity-60">各項資訊即時通知</div>
+                </div>
+            </li>
+
 
             <li class="list-row">
                 <div>

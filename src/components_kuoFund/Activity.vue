@@ -73,7 +73,7 @@
 
             {{ activity.date }}
         </div>
-        <div class="w-10/10 mt-2 text-gray-900 text-lg flex justify-center" @click="openGoogleMap">
+        <div class="w-10/10 mt-2 text-gray-900 text-lg flex justify-center cursor-pointer" @click="openGoogleMap">
             {{ activity.address }}
 
             <svg class="size-6 text-red-800 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -86,7 +86,7 @@
     <div class="w-10/10 h-7/10 p-1">
         <div class="divider">活動手冊</div>
         <div class="carousel rounded-box w-10/10">
-            <div v-for="(pageObj, page_i) in manualPages" class="carousel-item w-10/10" :id="'page_' + page_i">
+            <div v-for="(pageObj, page_i) in manualPages" class="carousel-item w-10/10 justify-center" :id="'page_' + page_i">
                 <img :src="pageObj.src" :alt="pageObj.alt" class="w-fit" />
             </div>
         </div>
