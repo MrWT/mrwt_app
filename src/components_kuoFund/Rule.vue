@@ -70,7 +70,7 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div>存款銀行 - Line Bank</div>
+                    <div>存款銀行 - Line Bank - 友感帳戶</div>
                     <div class="text-xs uppercase font-semibold opacity-60">銀行代號: {{ bankInfo.bank_no }} / 帳號: {{ bankInfo.account }}</div>
                 </div>
             </li>
