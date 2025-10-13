@@ -143,9 +143,6 @@
 
 <template>
 
-    <div class="divider">
-        Finance 資料
-    </div>
     <div class="w-10/10 flex flex-col">
         <div class="divider divider-warning">
             買房

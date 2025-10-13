@@ -35,10 +35,10 @@
 
     // 初始化 component
     function init(){
-        console.log("Setting_Personal.init");
-        console.log("props.app_state", props.app_state);
-        console.log("props.title", props.title);
-        console.log("props.account", props.account);
+        //console.log("Setting_Personal.init");
+        //console.log("props.app_state", props.app_state);
+        //console.log("props.title", props.title);
+        //console.log("props.account", props.account);
 
         fetchUser();
     }
@@ -108,9 +108,6 @@
 
 <template>
 
-    <div class="divider">
-        個人資料
-    </div>
     <div class="flex w-10/10 flex-col place-items-center gap-5">
         <div class="w-10/10 md:w-5/10">
             <label class="label mr-1">Name: </label><br />

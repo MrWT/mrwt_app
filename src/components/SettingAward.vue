@@ -19,10 +19,10 @@
 
     // 初始化 component
     function init(){
-        console.log("Setting_Award.init");
-        console.log("props.app_state", props.app_state);
-        console.log("props.title", props.title);
-        console.log("props.account", props.account);
+        //console.log("Setting_Award.init");
+        //console.log("props.app_state", props.app_state);
+        //console.log("props.title", props.title);
+        //console.log("props.account", props.account);
 
         fetchAward();
     }
