@@ -49,6 +49,7 @@
             data: {
                 account: props.account,
                 message: message,
+                time: moment().format("YYYY-MM-DD HH:mm:ss"),
             }
         });
         Promise.all([chatPromise]).then((values) => {
