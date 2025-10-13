@@ -25,7 +25,7 @@
         console.log("chat.props.account", props.account);
 
         fetchUserInfo();
-        chat("Hi");
+        chat("INIT");
     }
     // 取得 user 資料
     function fetchUserInfo(){
@@ -47,6 +47,7 @@
         let chatPromise = fetchData({
             api: "chat",
             data: {
+                account: props.account,
                 message: message,
             }
         });
