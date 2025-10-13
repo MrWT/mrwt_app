@@ -43,7 +43,7 @@
 <template>
 
     <div class="divider">系統架構</div>
-    <div class="flex flex-col md:flex-row w-10/10 h-fit md:h-3/10">
+    <div class="flex flex-col md:flex-row w-10/10 xs:h-10/10 md:h-[200px]">
         <div v-if="screenSize !== 'md'" class="divider">User Interfase</div>
         <div class="card bg-base-300 rounded-box grid h-[200px] md:h-10/10 w-10/10 md:w-3/10 place-items-center">
             <div class="w-10/10 h-10/10 p-2">

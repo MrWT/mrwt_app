@@ -26,10 +26,10 @@
 
     // 初始化 component
     function init(){
-        console.log("Setting_Finance.init");
-        console.log("props.app_state", props.app_state);
-        console.log("props.title", props.title);
-        console.log("props.account", props.account);
+        //console.log("Setting_Finance.init");
+        //console.log("props.app_state", props.app_state);
+        //console.log("props.title", props.title);
+        //console.log("props.account", props.account);
 
         fetchFinance();
     }
@@ -122,14 +122,14 @@
 
 <template>
 
-    <div class="w-10/10 flex flex-col">
+    <div class="w-10/10 flex flex-row gap-2 justify-center">
         <label class="label">日期:</label>
-        <input type="date" class="input w-10/10" placeholder="" v-model="financeObj.date" />
+        <input type="date" class="input w-8/10" placeholder="" v-model="financeObj.date" />
     </div>
     
-    <div class="w-10/10 flex flex-row gap-1">
+    <div class="w-10/10 flex flex-col md:flex-row gap-2 mt-2">
         <!-- 單一人員 -->
-        <div class="w-5/10 flex flex-col bg-zinc-200">
+        <div class="w-10/10 md:w-5/10 flex flex-col bg-zinc-200">
             <div class="divider">
                 單一人員
             </div>
@@ -172,9 +172,9 @@
             <div class="divider"></div>
         </div>
         <!-- 全部人員 -->
-        <div class="w-5/10 flex flex-col bg-stone-200">
+        <div class="w-10/10 md:w-5/10 flex flex-col bg-stone-200">
             <div class="divider">
-                全部人員
+                全部人員-存款紀錄                
             </div>
             <div class="w-10/10 flex flex-col gap-3 place-items-center">
                 <div class="w-7/10 flex flex-col">
