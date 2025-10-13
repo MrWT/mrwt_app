@@ -16,6 +16,7 @@
         init();
     });
     
+    let account = ref(props.account);
     // screen size
     let screenSize = ref("md");
     let footmarks = reactive([]);
@@ -41,11 +42,6 @@
         belong_to_user: props.account.toUpperCase(),
         memo: "",
     });
-    // 編輯狀態
-    let opObj = reactive({
-        status: true,
-        message: "",
-    });
     
     // 初始化 component
     function init(){
@@ -64,9 +60,11 @@
             screenSize.value = "xs";
         }
         // 圖標類型預設值
-        if(props.account.toUpperCase() === "BRYANT"){
+        if(account.value.toUpperCase() === "BRYANT"){
+            googleMapMarkerType.push("ByGogoro_Plan");
             googleMapMarkerType.push("ByGogoro");
         }else{
+            googleMapMarkerType.push("WithFamily_Plan");
             googleMapMarkerType.push("WithFamily");
         }
 
@@ -85,13 +83,49 @@
         });
         Promise.all([fetchFootmarkPromise]).then((values) => {
             console.log("fetchFootmarkPromise.values=", values);
-
             footmarks = values[0];
 
-            drawGoogleMapMarker();
+            let notPlanAlready = [];
+            footmarks.forEach((fmObj, fm_i) => {
+                let type = fmObj["type"];
+                let markDate_of_fmObj = parseInt( moment(fmObj["mark_date"]).format("YYYYMMDD") );
+                let today = parseInt( moment().format("YYYYMMDD") );
 
-            //console.log("googleMapMarks=", googleMapMarks);
-            //console.log("googleMapMarkPins=", googleMapMarkPins);
+                if(markDate_of_fmObj <= today && type.indexOf("_Plan") >= 0){
+                    notPlanAlready.push({
+                        location_name: fmObj["location_name"],
+                        type: type.split("_")[0],
+                    });
+                }
+            });
+
+            if(notPlanAlready.length > 0){
+                finishPlan(notPlanAlready);
+            }else{
+                drawGoogleMapMarker();
+            }
+        });
+    }
+    // 轉換"計畫"成"完成"
+    function finishPlan(notPlanAlready){
+        console.log("finishPlan.notPlanAlready=", notPlanAlready);
+
+        let cptfPromises = [];
+        notPlanAlready.forEach((npaObj, npa_i) => {
+            let finishPlanPromise = fetchData({
+                api: "finish_footmark",
+                data: {
+                    location_name: npaObj["location_name"],
+                    type: npaObj["type"],
+                }
+            });
+            cptfPromises.push(finishPlanPromise);
+        });
+
+        Promise.all(cptfPromises).then((values) => {
+            console.log("finish_footmark.values=", values);
+            // 重新取得 footmark
+            fetchFootmark();
         });
     }
     // 畫出圖標
@@ -112,8 +146,16 @@
                     }
                 });
 
+
+                let markPin_background = "red";
+                switch(fmObj["type"]){
+                    case "ByGogoro_Plan": markPin_background = "white"; break;
+                    case "ByGogoro": markPin_background = "red"; break;
+                    case "WithFamily_Plan": markPin_background = "white"; break;
+                    case "WithFamily": markPin_background = "pink"; break;
+                }
                 googleMapMarkPins.push({
-                    background: fmObj["type"] === "ByGogoro" ? "red" : "pink",
+                    background: markPin_background,
                 });
             }
         });
@@ -128,7 +170,7 @@
         infoWindowObj.location_name = markObj.location_name;
         infoWindowObj.mark_date = markObj.mark_date;
         infoWindowObj.type = markObj.type;
-        infoWindowObj.memo = markObj.memo;
+        infoWindowObj.memo = (markObj.type.indexOf("_Plan") >= 0 ? "(計畫中) " : "") + markObj.memo;
     }
     // 切換圖標類型
     function changeMarkerType(e){
@@ -149,7 +191,7 @@
 
         editObj.location_name = "";
         editObj.mark_date = moment().format("YYYY-MM-DD");
-        editObj.type = "ByGogoro";
+        editObj.type = props.account === "BRYANT" ? "ByGogoro" : "WithFamily";
         editObj.memo = "";
     }
     // 關閉編輯 modal
@@ -160,10 +202,7 @@
     function saveMark(){
         // 資料檢核
         if(!editObj.location_name || !editObj.mark_date || !editObj.type){
-            opObj.status = false;
-            opObj.message = "請填好資料再新增!";
-
-            emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
+            emit('popupMessage', false, "請填好資料再新增!"); // Emitting the event with data
             return;
         }
 
@@ -171,7 +210,7 @@
         console.log("saveMark.editObj=", editObj);
         let newFootmarkPromise = fetchData({
             api: "new_footmark",
-            data: editObj
+            data: editObj,
         });
         Promise.all([newFootmarkPromise]).then((values) => {
             console.log("newFootmarkPromise.values=", values);
@@ -184,21 +223,35 @@
 
 <template>
 
-    <div class="w-10/10 h-1/10 flex flex-row gap-4 justify-center p-1">
+    <div class="w-10/10 flex flex-col gap-2 justify-center">
         <label class="label">
             圖標類型:
         </label>
-        <label class="label">
-            <input type="checkbox" class="checkbox checkbox-error" value="ByGogoro" :checked="googleMapMarkerType.includes('ByGogoro')" @change="changeMarkerType" />
-            騎車旅行
-        </label>
-        <label class="label">
-            <input type="checkbox" class="checkbox checkbox-secondary" value="WithFamily" :checked="googleMapMarkerType.includes('WithFamily')" @change="changeMarkerType" />
-            家庭旅遊
-        </label>
+        <div class="w-10/10 flex flex-row gap-2 justify-center">
+            <div v-if="account === 'BRYANT'" class="w-5/10 flex flex-col gap-2 justify-center">
+                <label class="label">
+                    <input type="checkbox" class="checkbox checkbox-neutral" value="ByGogoro_Plan" :checked="googleMapMarkerType.includes('ByGogoro_Plan')" @change="changeMarkerType" />
+                    (計畫)騎車旅行
+                </label>
+                <label class="label">
+                    <input type="checkbox" class="checkbox checkbox-error" value="ByGogoro" :checked="googleMapMarkerType.includes('ByGogoro')" @change="changeMarkerType" />
+                    騎車旅行
+                </label>
+            </div>
+            <div class="w-5/10 flex flex-col gap-2 justify-center">
+                <label class="label">
+                    <input type="checkbox" class="checkbox checkbox-neutral" value="WithFamily_Plan" :checked="googleMapMarkerType.includes('WithFamily_Plan')" @change="changeMarkerType" />
+                    (計畫)家庭旅遊
+                </label>
+                <label class="label">
+                    <input type="checkbox" class="checkbox checkbox-secondary" value="WithFamily" :checked="googleMapMarkerType.includes('WithFamily')" @change="changeMarkerType" />
+                    家庭旅遊
+                </label>
+            </div>
+        </div>
     </div>
 
-    <div class="w-10/10 h-9/10 p-1">
+    <div class="w-10/10 h-8/10 p-1 mt-2">
         <GoogleMap class="w-10/10 h-10/10"
             mapId="FOOTMARK_MAP_ID"
             :api-key="props.googleMapApiKey"
@@ -236,10 +289,20 @@
 
             <input type="text" placeholder="備註" class="input input-info w-10/10" v-model="editObj.memo" />
 
-            <div class="flex flex-row gap-2 w-10/10">
+            <div v-if="account === 'BRYANT'" class="flex flex-row gap-2 w-10/10">
+                <label class="text-white text-lg w-5/10">
+                    <input type="radio" v-model="editObj.type" value="ByGogoro_Plan" />
+                    (計畫)電車踩點
+                </label>
                 <label class="text-white text-lg w-5/10">
                     <input type="radio" v-model="editObj.type" value="ByGogoro" checked />
                     電車踩點
+                </label>
+            </div>
+            <div class="flex flex-row gap-2 w-10/10">
+                <label class="text-white text-lg w-5/10">
+                    <input type="radio" v-model="editObj.type" value="WithFamily_Plan" />
+                    (計畫)家庭旅遊
                 </label>
                 <label class="text-white text-lg w-5/10">
                     <input type="radio" v-model="editObj.type" value="WithFamily" />
