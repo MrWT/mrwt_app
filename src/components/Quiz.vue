@@ -96,10 +96,18 @@
                     q_left = q_tmp;
                 }
             }
+
+            let realAnswer = 0;
+            switch(q_op){
+                case "+": realAnswer = q_left + q_right; break;
+                case "-": realAnswer = q_left - q_right; break;
+                case "*": realAnswer = q_left * q_right; break;
+                case "/": realAnswer = q_left / q_right; break;
+            }
             
             let quizObj = {
                 quiz: q_left + " " + q_op_for_ui + " " + q_right + " = ",
-                real_answer: eval(q_left + " " + q_op + " " + q_right),
+                real_answer: realAnswer,
                 user_answer: 0,
                 result: false,
                 answered: false,
