@@ -37,22 +37,6 @@
         excelInfo.file_name = props.funSetting.excel_info.value1;
         excelInfo.link = props.funSetting.excel_info.value2;
     }    
-
-
-    /*
-    key: "bank_info"
-    seq: -1
-    type: "kf_sys_setting"
-    value1: "824",
-    value2: "123123123",
-
-    key: "excel_info"
-    seq: -1
-    type: "kf_sys_setting"
-    value1: "XXX.xlsx",
-    value2: "456456456",
-
-    */
     
 </script>
 
@@ -150,7 +134,7 @@
                 </div>
                 <div class="list-col-grow">
                     <div>管理工具 - 公佈欄網站</div>
-                    <div class="text-xs font-semibold opacity-60">方便查詢儲值、提領等款項、<del>活動公告細節</del>，以及管理方式</div>
+                    <div class="text-xs font-semibold opacity-60">方便查詢儲值、提領等款項、管理方式，以及<del>活動公告</del>等細節</div>
                 </div>
             </li>
 
@@ -199,10 +183,10 @@
                 <div class="list-col-grow">
                     <div class="text-base">加入"Line Bank - 友感帳戶"群組</div>
                     <div class="list-col-wrap text-xs">
-                        <span class="text-blue-900 font-black">* 最推薦的方式: 方便 / 透明 / 節省轉帳手續費</span><br />
-                        若是本身有在使用 Line Bank 或是有興趣使用，則可以請輪值管理人邀請加入"友感帳戶<sup>*</sup>"群組。<br />
-                        加入"友感帳戶群組"後，不只節省轉帳費用，也可<span class="text-blue-900 font-black">即時共管</span>基金。<br />
-                        另外，日後輪替管理人時，也方便移轉帳戶結餘。
+                        <span class="text-blue-900 font-black">* 最推薦的方式: 方便 / 透明 / 節省轉帳手續費</span><br /><br />
+                        若是本身有在使用 Line Bank 或是有興趣申請使用 Line Bank，<br />則可以請輪值管理人邀請加入"友感帳戶<sup>*</sup>"群組。<br />
+                        加入"友感帳戶群組"後，不只節省轉帳費用，也可<ins class="text-blue-900 font-black">即時共管</ins>基金。<br />
+                        另外，日後輪替管理人時，也方便直接移轉帳戶餘額。
 
                         <div class="mt-5">
                             * 參考資料: 
@@ -236,7 +220,7 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div class="text-base">以常用銀行帳號轉帳</div>
+                    <div class="text-base">以常用銀行帳戶轉帳</div>
                     <div class="list-col-wrap text-xs">
                         可能需自行負擔轉帳手續費。
                     </div>
