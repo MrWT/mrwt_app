@@ -118,7 +118,7 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div>管理工具 - 共享檔案(PDF)</div>
+                    <div>管理工具 1. 共享檔案(PDF)</div>
                     <div class="text-xs font-semibold opacity-60">詳細記載儲值細項、提領細項(包含日期、目的和收據照片)</div>
                     <div class="divider"></div>
                     <div class="text-xs font-semibold opacity-60">檔案名稱: {{ excelInfo.file_name }}</div>
@@ -133,7 +133,7 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div>管理工具 - 公佈欄網站</div>
+                    <div>管理工具 2. 公佈欄網站</div>
                     <div class="text-xs font-semibold opacity-60">方便查詢儲值、提領等款項、管理方式，以及<del>活動公告</del>等細節</div>
                 </div>
             </li>
@@ -145,7 +145,7 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div>管理工具 - Line 群組"跟著家族去旅行"</div>
+                    <div>管理工具 3. Line 群組"跟著家族去旅行"</div>
                     <div class="text-xs font-semibold opacity-60">各項資訊即時通知</div>
                 </div>
             </li>
