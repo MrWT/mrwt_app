@@ -106,7 +106,7 @@
                 <div class="list-col-grow">
                     <div>儲值資料彙整: <span class="text-blue-900 font-black text-base">每月 20 號</span></div>
                     <div class="text-xs uppercase font-semibold opacity-60">
-                        輪值管理人於每月 20 號前進行當月份儲值資料彙整，並公告於共享檔案(PDF)、公佈欄網站和 Line 群組"跟著家族去旅行"。
+                        輪值代管人於每月 20 號前進行當月份儲值資料彙整，並公告於共享檔案(PDF)、公佈欄網站和 Line 群組"跟著家族去旅行"。
                     </div>
                 </div>
             </li>
@@ -158,7 +158,7 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div>輪值管理人資訊</div>
+                    <div>輪值代管人資訊</div>
                     <div class="text-xs font-semibold opacity-60">期間: {{ "2025-11-01~2026-10-31" }}</div>
                     <div class="text-xs font-semibold opacity-60">姓名: {{ "郭威廷" }}</div>
                     <div class="text-xs font-semibold opacity-60">電話: {{ "0929-701-600" }}</div>
@@ -184,9 +184,9 @@
                     <div class="text-base">加入"Line Bank - 友感帳戶"群組</div>
                     <div class="list-col-wrap text-xs">
                         <span class="text-blue-900 font-black">* 最推薦的方式: 方便 / 透明 / 節省轉帳手續費</span><br /><br />
-                        若是本身有在使用 Line Bank 或是有興趣申請使用 Line Bank，<br />則可以請輪值管理人邀請加入"友感帳戶<sup>*</sup>"群組。<br />
+                        若是本身有在使用 Line Bank 或是有興趣申請使用 Line Bank，<br />則可以請輪值代管人邀請加入"友感帳戶<sup>*</sup>"群組。<br />
                         加入"友感帳戶群組"後，不只節省轉帳費用，也可<ins class="text-blue-900 font-black">即時共管</ins>基金。<br />
-                        另外，日後輪替管理人時，也方便直接移轉帳戶餘額。
+                        另外，日後輪替代管人時，也方便直接移轉帳戶餘額。
 
                         <div class="mt-5">
                             * 參考資料: 
