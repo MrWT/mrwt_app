@@ -79,6 +79,7 @@
             api: "get_footmark",
             data: {
                 account: props.account,
+                marker_type: googleMapMarkerType.join(","),
             }
         });
         Promise.all([fetchFootmarkPromise]).then((values) => {
@@ -183,7 +184,7 @@
         }
         console.log("googleMapMarkerType=", googleMapMarkerType);
 
-        drawGoogleMapMarker();
+        fetchFootmark();
     }
     // 開啟編輯 modal
     function openEditModal(){
