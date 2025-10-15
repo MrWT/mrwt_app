@@ -111,7 +111,11 @@
             {{ msgObj.speaker }}
             <time class="text-xs opacity-50">{{ msgObj.time }}</time>
         </div>
-        <div class="chat-bubble">{{ msgObj.message }}</div>
+        <div class="chat-bubble">
+            <p style="white-space:pre-wrap;">
+                {{ msgObj.message }}
+            </p>
+        </div>
     </div>
 </div>
 
