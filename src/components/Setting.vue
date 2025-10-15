@@ -58,14 +58,14 @@
 
 <div class="tabs tabs-border w-10/10">
     <!-- Finance -->
-    <input type="radio" name="setting_tabs" class="tab" aria-label="設定個人財務" />
-    <div class="tab-content border-base-300 bg-base-100 pt-1 px-5">
+    <input v-if="userRole === 'admin'" type="radio" name="setting_tabs" class="tab" aria-label="設定個人財務" />
+    <div v-if="userRole === 'admin'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
         <SettingFinance :account="account" @popup-message="popupMessage"></SettingFinance>
     </div>
 
     <!-- 個人資料 -->
-    <input type="radio" name="setting_tabs" class="tab" aria-label="設定個人資料" />
-    <div class="tab-content border-base-300 bg-base-100 pt-1 px-5">
+    <input v-if="userRole === 'admin'" type="radio" name="setting_tabs" class="tab" aria-label="設定個人資料" />
+    <div v-if="userRole === 'admin'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
         <SettingPersonal :account="account" @popup-message="popupMessage"></SettingPersonal>
     </div>
 
@@ -82,14 +82,14 @@
     </div>
 
     <!-- Finance - 郭家基金 -->
-    <input v-if="userRole === 'admin'" type="radio" name="setting_tabs" class="tab" aria-label="設定存款/提領款項-KF" />
-    <div v-if="userRole === 'admin'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
+    <input v-if="userRole === 'admin_kf'" type="radio" name="setting_tabs" class="tab" aria-label="設定存款/提領款項-KF" />
+    <div v-if="userRole === 'admin_kf'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
         <SettingFinanceKF @popup-message="popupMessage"></SettingFinanceKF>
     </div>
 
     <!-- 活動手冊建立 - 郭家基金 -->
-    <input v-if="userRole === 'admin'" type="radio" name="setting_tabs" class="tab" aria-label="上傳活動手冊-KF" />
-    <div v-if="userRole === 'admin'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
+    <input v-if="userRole === 'admin_kf'" type="radio" name="setting_tabs" class="tab" aria-label="上傳活動手冊-KF" />
+    <div v-if="userRole === 'admin_kf'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
         <SettingActivityKF @popup-message="popupMessage"></SettingActivityKF>
     </div>
 

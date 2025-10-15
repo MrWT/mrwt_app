@@ -236,7 +236,7 @@
                     appSetting.funButtons.push({ key: "finance_kf", display_text: userInfo.languages["finance_kf"] });
                     appSetting.funButtons.push({ key: "rule_kf", display_text: userInfo.languages["rule_kf"] });
                     // 暫不開放
-                    if(userInfo.role === "admin"){
+                    if(userInfo.role === "admin_kf"){
                         appSetting.funButtons.push({ key: "activity_kf", display_text: userInfo.languages["activity_kf"] });
                     }
                 }
@@ -245,7 +245,7 @@
                 document.getElementById("signinModal").close();
 
                 // 郭家基金成員 - 預設開啟基金明細 component
-                if(userInfoObj["account"].toUpperCase() === "KUOFAMILY")
+                if(userInfoObj["account"].toUpperCase() === "KUOFAMILY" || userInfoObj["role"] === "admin_kf")
                 {
                     gotoPage("finance_kf");
                 }
@@ -367,7 +367,7 @@
     </div>
     <!-- 功能 component -->
     <div class="p-4 h-8/10 mt-30">
-        <Gallery v-if="appSetting.contentComponent === 'gallery'" :title="appSetting.title" :account="userInfo.account" :cname="userInfo.cname" />
+        <Gallery v-if="appSetting.contentComponent === 'gallery'" :title="appSetting.title" :account="userInfo.account" :cname="userInfo.cname" :user_role="userInfo.role" />
         <Quiz v-else-if="appSetting.contentComponent === 'quiz'" :title="appSetting.title" :setting="appSetting.quiz" />
         <Readme v-else-if="appSetting.contentComponent === 'readme'" :title="appSetting.title" :resources="appSetting.resources"  @introduce-author="gotoIntroduceAuthor" />
         <Footmark v-else-if="appSetting.contentComponent === 'footmark'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
