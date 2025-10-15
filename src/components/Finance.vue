@@ -35,8 +35,10 @@
         },
     });
     let deposit_TWD = ref(0);
-    let deposit_USD = ref(0);
-    let deposit_LikeTWD = ref(0);
+    let deposit_USD_insurance = ref(0);
+    let deposit_LikeTWD_insurance = ref(0);
+    let deposit_USD_fixed = ref(0);
+    let deposit_LikeTWD_fixed = ref(0);
     let stock_USD = ref(0);
     let stock_LikeTWD = ref(0);
 
@@ -77,7 +79,8 @@
             let houseObj = null;
             let creditObj = null;
             let depositObj_TWD = null;
-            let depositObj_USD = null;
+            let depositObj_USD_insurance = null;
+            let depositObj_USD_fixed = null;
             let depositObj_Speed = null;
             values[0].forEach((finObj, fin_i) => {
                 if(finObj["name"] === "house"){
@@ -95,9 +98,12 @@
                 } else if(finObj["name"] === "deposit" && finObj["currency"] === "TWD"){
                     // 台幣存款資訊
                     depositObj_TWD = finObj;
-                } else if(finObj["name"] === "deposit" && finObj["currency"] === "USD"){
-                    // 美金存款資訊
-                    depositObj_USD = finObj;
+                } else if(finObj["name"] === "deposit_insurance" && finObj["currency"] === "USD"){
+                    // 美金存款資訊 - 保險
+                    depositObj_USD_insurance = finObj;
+                } else if(finObj["name"] === "deposit_fixed" && finObj["currency"] === "USD"){
+                    // 美金存款資訊 - 定存
+                    depositObj_USD_fixed = finObj;
                 } else if(finObj["name"] === "speed"){
                     // 存款速度資訊
                     depositObj_Speed = finObj;
@@ -106,16 +112,19 @@
             buildStockTW(stockDatas_TWD);
             buildStockGlobal(stockData_USD);
             buildDepositTWD(depositObj_TWD);
-            buildDepositUSD(depositObj_USD);
+            buildDepositUSD_insurance(depositObj_USD_insurance);
+            buildDepositUSD_fixed(depositObj_USD_fixed);
             buildCreditBlock(creditObj, depositObj_TWD);
-            buildHouseBlock(houseObj, depositObj_USD,  stockData_USD);
+            buildHouseBlock(houseObj, depositObj_USD_insurance, depositObj_USD_fixed,  stockData_USD);
             buildSpeedBlock(depositObj_Speed);
         });
     }
     // 建立"購屋進度"區塊
-    function buildHouseBlock(houseObj, depositObj_USD, stockData_USD){
+    function buildHouseBlock(houseObj, depositObj_USD_insurance, depositObj_USD_fixed, stockData_USD){
         let targetValue = houseObj["value1"];
-        let currentValue = depositObj_USD["value1"] * depositObj_USD["value2"] + stockData_USD["value1"] * stockData_USD["value2"];
+        let currentValue = depositObj_USD_insurance["value1"] * depositObj_USD_insurance["value2"] 
+                        + depositObj_USD_fixed["value1"] * depositObj_USD_fixed["value2"] 
+                        + stockData_USD["value1"] * stockData_USD["value2"];
 
         progressSetting.house.max = 100;
         progressSetting.house.value = Math.floor( currentValue * 100 / (targetValue * 0.3) );
@@ -217,11 +226,17 @@
 
         deposit_TWD.value = new Intl.NumberFormat('en-US').format(depositData["value1"]);
     }
-    // 建立"美金存款"區塊
-    function buildDepositUSD(depositData){
-        console.log("buildDepositUSD.depositData=", depositData);
-        deposit_USD.value = new Intl.NumberFormat('en-US').format(depositData["value1"]);
-        deposit_LikeTWD.value = new Intl.NumberFormat('en-US').format(depositData["value1"] * depositData["value2"]);
+    // 建立"美金存款"區塊-保險
+    function buildDepositUSD_insurance(depositData){
+        console.log("buildDepositUSD_insurance.depositData=", depositData);
+        deposit_USD_insurance.value = new Intl.NumberFormat('en-US').format(depositData["value1"]);
+        deposit_LikeTWD_insurance.value = new Intl.NumberFormat('en-US').format(depositData["value1"] * depositData["value2"]);
+    }
+    // 建立"美金存款"區塊-定存
+    function buildDepositUSD_fixed(depositData){
+        console.log("buildDepositUSD_fixed.depositData=", depositData);
+        deposit_USD_fixed.value = new Intl.NumberFormat('en-US').format(depositData["value1"]);
+        deposit_LikeTWD_fixed.value = new Intl.NumberFormat('en-US').format(depositData["value1"] * depositData["value2"]);
     }
 
 
@@ -281,7 +296,7 @@
     <div class="divider"></div>
 
     <div class="card bg-base-300 rounded-box grid h-3/10 w-10/10 p-5 place-items-center">
-        <div class="w-10/10 text-2xl">存款 TWD: {{ deposit_TWD }}</div>
+        <div class="w-10/10 text-2xl">台幣存款: {{ deposit_TWD }}</div>
     </div>
 
     <div class="divider"></div>
@@ -326,15 +341,18 @@
         </progress>
     </div>
 
-    <div class="divider"></div>
+    <div class="divider">美元計價區域</div>
     
     <div class="flex flex-col md:flex-row w-10/10 h-10/10 gap-2">
         <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
-            <div class="w-10/10 text-2xl">存款 USD: {{ deposit_USD }}</div>
-            <div class="w-10/10 text-lg">約當 TWD( 1:30 ): {{ deposit_LikeTWD }}</div>
+            <div class="w-10/10 text-2xl">保險 USD: {{ deposit_USD_insurance }}</div>
+            <div class="w-10/10 text-lg">約當 TWD( 1:30 ): {{ deposit_LikeTWD_insurance }}</div>
         </div>
 
-        <div class="divider"></div>
+        <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
+            <div class="w-10/10 text-2xl">定存 USD: {{ deposit_USD_fixed }}</div>
+            <div class="w-10/10 text-lg">約當 TWD( 1:30 ): {{ deposit_LikeTWD_fixed }}</div>
+        </div>
 
         <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
             <div class="w-10/10 text-2xl">奈米投 USD: {{ stock_USD }}</div>

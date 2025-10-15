@@ -30,7 +30,11 @@
         deposit_TWD:{
             value: 0,
         },
-        deposit_USD:{
+        deposit_USD_insurance:{
+            value: 0,
+            currency: 0,
+        },
+        deposit_USD_fixed:{
             value: 0,
             currency: 0,
         },
@@ -103,10 +107,14 @@
                 } else if(finObj["name"] === "deposit" && finObj["currency"] === "TWD"){
                     // 台幣存款資訊
                     finance.deposit_TWD.value = finObj["value1"];
-                } else if(finObj["name"] === "deposit" && finObj["currency"] === "USD"){
-                    // 美金存款資訊
-                    finance.deposit_USD.value = finObj["value1"];
-                    finance.deposit_USD.currency = finObj["value2"];
+                } else if(finObj["name"] === "deposit_insurance" && finObj["currency"] === "USD"){
+                    // 美金存款資訊 - 保險
+                    finance.deposit_USD_insurance.value = finObj["value1"];
+                    finance.deposit_USD_insurance.currency = finObj["value2"];
+                } else if(finObj["name"] === "deposit_fixed" && finObj["currency"] === "USD"){
+                    // 美金存款資訊 - 定存
+                    finance.deposit_USD_fixed.value = finObj["value1"];
+                    finance.deposit_USD_fixed.currency = finObj["value2"];
                 }
             });
         });
@@ -193,12 +201,22 @@
         </div>
         <div class="w-10/10 md:w-8/10 flex flex-row">
             <div class="w-5/10">
-                <label class="label">價值</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_USD.value" />
+                <label class="label">保險價值</label>
+                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_USD_insurance.value" />
             </div>
             <div class="w-5/10">
                 <label class="label">匯率</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_USD.currency" />
+                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_USD_insurance.currency" />
+            </div>
+        </div>
+        <div class="w-10/10 md:w-8/10 flex flex-row">
+            <div class="w-5/10">
+                <label class="label">定存價值</label>
+                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_USD_fixed.value" />
+            </div>
+            <div class="w-5/10">
+                <label class="label">匯率</label>
+                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_USD_fixed.currency" />
             </div>
         </div>
 
