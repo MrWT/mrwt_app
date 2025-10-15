@@ -3,9 +3,11 @@
     import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
 
+    const emit = defineEmits(['popupMessage']);
     const props = defineProps({
         title: String,
-        account: String
+        account: String,
+        user_role: String,
     })
 
     onMounted(() => {
@@ -13,22 +15,29 @@
         init();
     });
 
+    let userRole = ref("");
     let appState = ref("");
     let total_fund = ref(0);
     let funds = reactive({});
     let fundKeys = reactive([]);
+    let delRecordObj = reactive({});
 
     // 初始化 component
     function init(){
         console.log("Finance_KF.init");
         console.log("Finance_KF.props.title", props.title);
         console.log("Finance_KF.props.account", props.account);
-
+        console.log("Finance_KF.props.user_role", props.user_role);
+        userRole.value = props.user_role;
+        
+        // 取得儲值/提領紀錄
         fetchFunds();
     }    
-
+    // 取得儲值/提領紀錄
     function fetchFunds(){
-        console.log("fetchFunds");
+        //console.log("fetchFunds");
+        // 清空結餘
+        total_fund.value = 0;
 
         let fetchFundsPromise = fetchData({
             api: "get_kuo_funds",
@@ -70,11 +79,9 @@
             Object.keys(funds).forEach((fundKey, fk_i) => {
                 // 各個月份之中的帳務紀錄, 各自排序
                 funds[fundKey].sort((x, y) => {
-                    if(moment(x["date"]).format("YYYYMMDD") > moment(y["date"]).format("YYYYMMDD")){
-                        return 1;
-                    }else{
-                        return -1;
-                    }
+                    if(x["code_name"] > y["code_name"]) return 1;
+                    if(x["code_name"] < y["code_name"]) return -1;
+                    if(x["code_name"] === y["code_name"]) return 0;
                 });
             });
 
@@ -89,7 +96,50 @@
         });
 
     }
-    
+    // 跳出失效再確認 modal
+    function popupDelConfirmModal(delObj){
+        delRecordObj["code_name"] = delObj["code_name"];
+        delRecordObj["name"] = delObj["name"];
+        delRecordObj["type"] = delObj["type"];
+        delRecordObj["date"] = delObj["date"];
+        console.log("popupDelConfirmModal.delRecordObj=", delRecordObj);
+
+        document.getElementById("delConfirmModal").showModal();
+    }
+    // 取消失效再確認 modal
+    function cancelPopupDelConfirmModal(){
+        document.getElementById("delConfirmModal").close();
+    }
+    // 失效儲值/提領紀錄
+    function deleteRecord(){
+        console.log("deleteRecord.delRecordObj=", delRecordObj);
+
+        let delFinanceKFPromise = fetchData({
+            api: "del_kuo_funds",
+            data: {
+                finance: delRecordObj,
+            }
+        });
+        Promise.all([delFinanceKFPromise]).then((values) => {
+            console.log("delFinanceKFPromise.values=", values);
+
+            let opObj = {
+                message: "",
+                status: true,
+            };
+            opObj.status = values[0]["result"];
+            if(values[0]["result"] === true){
+                opObj.message = "失效成功";
+                fetchFunds();
+            }else{
+                opObj.message = values[0]["message"];
+            }
+
+            document.getElementById("delConfirmModal").close();
+            // 將 message 傳給 Setting.vue 
+            emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
+        });
+    }
 </script>
 
 <template>
@@ -116,7 +166,8 @@
                             <time class="text-base opacity-50">{{ fundObj.date }}</time>
                         </div>
                         <div class="chat-bubble">
-                            {{ new Intl.NumberFormat().format( fundObj.money ) }}
+                            <span v-if="userRole === 'admin' || userRole === 'admin_kf'" class="mr-2 font-black text-red-900 cursor-pointer" @click="popupDelConfirmModal(fundObj)">X</span>
+                            $ {{ new Intl.NumberFormat().format( fundObj.money ) }}
                             <span v-if="fundObj.memo !== ''">( {{ fundObj.memo }} )</span>
                         </div>
                     </div>
@@ -131,8 +182,31 @@
 </div>
 
 <div class="w-10/10 h-1/10 flex flex-col text-3xl justify-center items-center" :class="{'bg-gray-200': total_fund === 0, 'bg-green-200': total_fund > 0, 'bg-red-200': total_fund < 0}">
-    結餘：{{ new Intl.NumberFormat().format( total_fund ) }}
+    結餘：$ {{ new Intl.NumberFormat().format( total_fund ) }}
 </div>
+
+<!-- 失效再確認 -->
+<dialog id="delConfirmModal" class="modal">
+    <div class="modal-box bg-gray-800/80 rounded-box p-2 w-80 md:w-120">
+        <li class="text-white text-xl">{{ "確定要失效以下資料嗎?" }}</li>
+        <div class="divider divider-primary"></div>
+        <li class="text-white text-lg">姓名: {{ delRecordObj.name }}</li>
+        <li class="text-white text-lg">儲值或提領: {{ delRecordObj.type === "IN" ? "儲值" : "提領" }}</li>
+        <li class="text-white text-lg">日期: {{ delRecordObj.date }}</li>
+        <div class="divider divider-primary"></div>
+        <li class="flex flex-row gap-2 w-10/10">
+            <button class="btn w-5/10" @click="cancelPopupDelConfirmModal">
+                取消
+            </button>
+            <button class="btn w-5/10" @click="deleteRecord">
+                確認
+            </button>
+        </li>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
 
 </template>
 
