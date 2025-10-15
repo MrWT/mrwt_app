@@ -1,7 +1,7 @@
 <script setup>
     import { ref, reactive, onMounted } from 'vue'
     import { gsap } from "gsap"
-     import { DrawSVGPlugin } from "gsap/DrawSVGPlugin"
+    import { DrawSVGPlugin } from "gsap/DrawSVGPlugin"
     import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
     import { getRandomNumber } from "@/composables/random"
 
@@ -9,6 +9,7 @@
         title: String,
         account: String,
         cname: String,
+        user_role: String,
     })
 
     onMounted(() => {
@@ -48,6 +49,7 @@
 
     let account = ref("");
     let cname = ref("");
+    let user_role = ref("");
     let repeatRows = ref(1000);
     let repeatWords_3 = ref(3);
     let repeatWords_4 = ref(4);
@@ -60,10 +62,12 @@
         console.log("Gallery.props.title=", props.title);
         console.log("Gallery.props.account=", props.account);
         console.log("Gallery.props.cname=", props.cname);
+        console.log("Gallery.props.user_role=", props.user_role);
         account.value = props.account;
         cname.value = "郭"; // props.cname;
+        user_role.value = props.user_role;
 
-        if(account.value !== "KUOFAMILY"){
+        if(account.value !== "KUOFAMILY" && user_role.value !== "admin_kf"){
             // 依據 imageCount 生成 imageUrls
             imageCount = getRandomNumber(candidateImageUrls.length, 100);
             for(let img_i = 0; img_i < imageCount; img_i++){
@@ -183,7 +187,7 @@
 
 <template>
     <!-- 一般使用者 -->
-    <div v-if="account !== 'KUOFAMILY'" class="grid gap-4"
+    <div v-if="account !== 'KUOFAMILY' && user_role !== 'admin_kf'" class="grid gap-4"
     :class="{ 'grid-cols-1': channels.length === 1,
             'grid-cols-2': channels.length === 2,
             'grid-cols-3': channels.length === 3,
@@ -216,7 +220,7 @@
     </dialog>
 
     <!-- 郭家基金 - 使用者 -->
-    <div v-if="account === 'KUOFAMILY'" id="kuoBack" class="w-10/10 h-10/10 flex flex-col justify-center items-center bg-gray-950">
+    <div v-if="account === 'KUOFAMILY' || user_role === 'admin_kf'" id="kuoBack" class="w-10/10 h-10/10 flex flex-col justify-center items-center bg-gray-950">
         <div id="kuoWord" class="text-9xl text-yellow-500">{{ cname }}</div>
 
         <svg width="300" height="100" viewBox="0 0 300 100">
