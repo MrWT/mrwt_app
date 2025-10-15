@@ -16,7 +16,7 @@
     });
 
     let financeObj = reactive({
-        name: "",
+        code_name: "",
         type: "IN",
         money: 0,
         date: moment().format("YYYY-MM-DD"),
@@ -31,27 +31,34 @@
         //console.log("props.title", props.title);
         //console.log("props.account", props.account);
 
-        fetchFinance();
+        fetchMembers();
     }
 
     // 取得 finance 資料
-    function fetchFinance(){
-        let fetchAppSetting = fetchData({
-            api: "get_app_setting",
+    function fetchMembers(){
+        let fetchMembersPromise = fetchData({
+            api: "get_members_kf",
         });
-        Promise.all([fetchAppSetting]).then((values) => {
-            let appSettingObj = values[0];
+        Promise.all([fetchMembersPromise]).then((values) => {
+            console.log("fetchMembersPromise.values=", values[0]);
 
             // 郭家基金 - 成員
             members.splice(0, members.length);
-            appSettingObj["kf_member"].value1.split(",").forEach((member, m_i) => {
-                members.push(member);
+
+            let memObjs = values[0];
+            memObjs.sort((x, y) => {
+                if(x["code_name"] > y["code_name"]) return 1;
+                if(x["code_name"] < y["code_name"]) return -1;
+                if(x["code_name"] === y["code_name"]) return 0;
+            });
+            memObjs.forEach((memObj, m_i) => {
+                members.push(memObj);
             });
         });
     }    
     // 新增 financeObj 單筆資料
     function newRecord(){
-        console.log("newRecord");
+        console.log("newRecord.financeObj=", financeObj);
 
         let newFinanceKFPromise = fetchData({
             api: "new_kuo_funds",
@@ -83,7 +90,7 @@
         
         members.forEach((memObj, mem_i) => {
             let newFundObj = {
-                name: memObj,
+                code_name: memObj.code_name,
                 type: "IN",
                 money: financeObj.money,
                 date: financeObj.date,
@@ -147,10 +154,9 @@
 
                 <div class="w-7/10 flex flex-col">
                     <label class="label">人員姓名:</label>
-                    <input type="text" class="input w-10/10" placeholder="" v-model="financeObj.name" list="members" />
-                    <datalist id="members">
-                        <option v-for="(member, m_i) in members" :value="member"></option>
-                    </datalist>
+                    <select class="select w-10/10" v-model="financeObj.code_name">
+                        <option v-for="(memObj, m_i) in members" :value="memObj.code_name">{{ memObj.name }}</option>
+                    </select>
                 </div>
 
                 <div class="w-7/10 flex flex-col">

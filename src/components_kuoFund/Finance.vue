@@ -30,11 +30,15 @@
     function fetchFunds(){
         console.log("fetchFunds");
 
-         let fetchFundsPromise = fetchData({
+        let fetchFundsPromise = fetchData({
             api: "get_kuo_funds",
         });
-        Promise.all([fetchFundsPromise]).then((values) => {
+        let fetchMembersPromise = fetchData({
+            api: "get_members_kf",
+        });
+        Promise.all([fetchFundsPromise, fetchMembersPromise]).then((values) => {
             console.log("fetchFundsPromise.values=", values);
+            let members = values[1];
 
             // 清空 funds
             Object.keys(funds).forEach(key => delete funds[key]);
@@ -44,7 +48,18 @@
                     funds[fund_date] = [];
                 }
 
+                // 找到紀錄姓名
+                for(let mem_i = 0; mem_i < members.length; mem_i++){
+                    let memObj = members[mem_i];
+                    if(memObj["code_name"] === fundObj["code_name"]){
+                        fundObj["name"] = memObj["name"];
+                        break;
+                    }
+                }
+
+                // 依月份建立帳務紀錄
                 funds[fund_date].push( fundObj );
+                // 順道計算結餘
                 if(fundObj["type"] === "IN"){
                     total_fund.value += fundObj["money"];
                 }else{
@@ -53,6 +68,7 @@
             });
 
             Object.keys(funds).forEach((fundKey, fk_i) => {
+                // 各個月份之中的帳務紀錄, 各自排序
                 funds[fundKey].sort((x, y) => {
                     if(moment(x["date"]).format("YYYYMMDD") > moment(y["date"]).format("YYYYMMDD")){
                         return 1;
@@ -62,6 +78,7 @@
                 });
             });
 
+            // 排(倒)序月份
             fundKeys = Object.keys(funds);
             fundKeys.sort((x, y) => {
                 return parseInt(y) - parseInt(x);
