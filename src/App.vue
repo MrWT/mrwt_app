@@ -16,6 +16,7 @@
     import PopupMessage from './components/PopupMessage.vue'
 
     // 郭家基金相關 component - 先寄生於此專案, 待成熟後, 再分家出去
+    import Chat_KF from './components_kuoFund/Chat.vue'
     import Finance_KF from './components_kuoFund/Finance.vue'
     import Rule_KF from './components_kuoFund/Rule.vue'
     import Activity_KF from './components_kuoFund/Activity.vue'
@@ -226,19 +227,26 @@
                 {
                     appSetting.funButtons.splice(0, appSetting.funButtons.length);
 
-                    appSetting.funButtons.push({ key: "quiz", display_text: userInfo.languages["quiz"] });
-                    appSetting.funButtons.push({ key: "footmark", display_text: userInfo.languages["footmark"] });
-                    appSetting.funButtons.push({ key: "finance", display_text: userInfo.languages["finance"] });
-                    appSetting.funButtons.push({ key: "chat", display_text: userInfo.languages["chat"] });
-                    appSetting.funButtons.push({ key: "lockLucky", display_text: userInfo.languages["lockLucky"] });
-                    appSetting.funButtons.push({ key: "readme", display_text: userInfo.languages["readme"] });
-                    // 郭家基金-專屬功能
-                    appSetting.funButtons.push({ key: "finance_kf", display_text: userInfo.languages["finance_kf"] });
-                    appSetting.funButtons.push({ key: "rule_kf", display_text: userInfo.languages["rule_kf"] });
-                    // 暫不開放
-                    if(userInfo.role === "admin_kf"){
-                        appSetting.funButtons.push({ key: "activity_kf", display_text: userInfo.languages["activity_kf"] });
-                    }
+                    let allFunctionKeys = ["quiz", "footmark", "finance", "chat", "lockLucky", "readme", "chat_kf", "finance_kf", "rule_kf", "activity_kf"];
+                    let buildingFunctionKeys = [];
+                    let buildingFunctionKeys_kf = ["chat_kf", "activity_kf"];
+                    allFunctionKeys.forEach((funKey, fk_i) => {
+                        if(userInfo.funcs.indexOf(funKey) >= 0){
+
+                            if(buildingFunctionKeys.indexOf(funKey) >= 0 && userInfo.role === "admin"){
+                                appSetting.funButtons.push({ key: funKey, display_text: userInfo.languages[funKey] });
+                            }                            
+                            if(buildingFunctionKeys_kf.indexOf(funKey) >= 0 && userInfo.role === "admin_kf"){
+                               appSetting.funButtons.push({ key: funKey, display_text: userInfo.languages[funKey] });
+                            }
+                            if(buildingFunctionKeys.indexOf(funKey) < 0 && buildingFunctionKeys_kf.indexOf(funKey) < 0){
+                               appSetting.funButtons.push({ key: funKey, display_text: userInfo.languages[funKey] });
+                            }
+                        }
+                    });
+
+                    console.log("userInfo.role=" + userInfo.role);
+                    console.log("appSetting.funButtons=", appSetting.funButtons);
                 }
 
                 // close signinModal
@@ -360,7 +368,7 @@
     <!-- 功能 menu -->
     <div class="navbar shadow-lg h-[10px] fixed top-15 left-0 z-50 flex flex-row content-center gap-5 overflow-x-auto overflow-y-hidden">
         <template v-for="(fbObj, fb_i) in appSetting.funButtons">
-            <button v-if="userInfo.funcs.indexOf(fbObj.key) !== -1" class="btn text-black font-black" 
+            <button class="btn text-black font-black" 
                     :class="{'btn-outline':appSetting.contentComponent === fbObj.key, 'btn-ghost': appSetting.contentComponent !== fbObj.key}" 
                     @click="gotoPage(fbObj.key)">{{ fbObj.display_text }}</button>
         </template>
@@ -377,6 +385,7 @@
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
         <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
 
+        <Chat_KF v-else-if="appSetting.contentComponent === 'chat_kf'" :title="appSetting.title" :account="userInfo.account" />
         <Finance_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Rule_KF v-else-if="appSetting.contentComponent === 'rule_kf'" :title="appSetting.title" :account="userInfo.account" :funSetting="kf_funSetting" />
         <Activity_KF v-else-if="appSetting.contentComponent === 'activity_kf'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" />
