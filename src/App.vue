@@ -44,7 +44,7 @@
         contentComponent: "gallery",
         title: "",
         googleMapApiKey: "",
-        resources: [],
+        reference: [],
         quiz: {},
         funButtons: [],
     });
@@ -173,18 +173,18 @@
                 kf_funSetting.excel_info = appSettingObj["kf_excel_info"];
                 kf_funSetting.member = appSettingObj["kf_member"];
 
-                // appSetting.resources
+                // appSetting.reference
                 {
-                    appSetting.resources = [];
-                    appSettingObj["resource"].sort((x, y) => {
+                    appSetting.reference = [];
+                    appSettingObj["reference"].sort((x, y) => {
                         return x["seq"] - y["seq"];
                     });
-                    appSettingObj["resource"].forEach((appSetObj, as_i) => {
-                        appSetting.resources.push({
+                    appSettingObj["reference"].forEach((appSetObj, as_i) => {
+                        appSetting.reference.push({
                             index: ((as_i + 1) < 10 ? "0" : "") + (as_i + 1),
                             name: appSetObj["key"],
-                            text: appSetObj["value1"],
-                            link: appSetObj["value2"],
+                            text: appSetObj["display_text"],
+                            link: appSetObj["link_url"],
                         });
                     });
                 }
@@ -369,7 +369,7 @@
     <div class="p-4 h-8/10 mt-30">
         <Gallery v-if="appSetting.contentComponent === 'gallery'" :title="appSetting.title" :account="userInfo.account" :cname="userInfo.cname" :user_role="userInfo.role" />
         <Quiz v-else-if="appSetting.contentComponent === 'quiz'" :title="appSetting.title" :setting="appSetting.quiz" />
-        <Readme v-else-if="appSetting.contentComponent === 'readme'" :title="appSetting.title" :resources="appSetting.resources"  @introduce-author="gotoIntroduceAuthor" />
+        <Readme v-else-if="appSetting.contentComponent === 'readme'" :title="appSetting.title" :reference="appSetting.reference"  @introduce-author="gotoIntroduceAuthor" />
         <Footmark v-else-if="appSetting.contentComponent === 'footmark'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <Finance v-else-if="appSetting.contentComponent === 'finance'" :title="appSetting.title" :account="userInfo.account" />
         <Setting v-else-if="appSetting.contentComponent === 'setting'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />

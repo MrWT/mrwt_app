@@ -4,7 +4,7 @@
     const emit = defineEmits(['introduceAuthor']);
     const props = defineProps({
         title: String,
-        resources: Array,
+        reference: Array,
     })
 
     onMounted(() => {
@@ -18,7 +18,7 @@
     // 初始化 component
     function init(){
         console.log("props.title=", props.title);
-        console.log("props.resources=", props.resources);
+        console.log("props.reference=", props.reference);
 
         // w-sm 約等於 384px
         // w-md 約等於 448px
@@ -47,7 +47,7 @@
         <div v-if="screenSize !== 'md'" class="divider">User Interfase</div>
         <div class="card bg-base-300 rounded-box grid h-[200px] md:h-10/10 w-10/10 md:w-3/10 place-items-center">
             <div class="w-10/10 h-10/10 p-2">
-                <div class="text-2xl underline text-center mb-2">Firebase Hosting</div>
+                <div class="text-2xl underline text-center mb-2">github.io</div>
 
                 <div class="flex flex-wrap justify-center">
                     <div class="p-2 justify-center content-center rounded-4xl w-fit text-base bg-green-200">DaisyUI</div>
@@ -87,7 +87,7 @@
 
     <div class="divider">實作技術參考</div>
     <ul class="list bg-base-100 rounded-box h-fit w-10/10 overflow-y-auto shadow-2xl">
-        <li v-for="resObj in props.resources" class="list-row hover:bg-yellow-300/10">
+        <li v-for="resObj in props.reference" class="list-row hover:bg-yellow-300/10">
             <div class="text-4xl font-thin opacity-30 tabular-nums">{{ resObj.index }}</div>
             <div class="list-col-grow">
                 <div>{{ resObj.text }}</div>
