@@ -30,9 +30,11 @@
     }
     // 取得初始資料
     function fetchInitData(){
+        // 取得 AI 角色
         let fetchAIRolesPromise = fetchData({
             api: "get_ai_role",
         });
+        // 取得使用者資訊
         let fetchUserInfoPromise = fetchData({
             api: "get_user",
             data: {
@@ -49,77 +51,41 @@
     function chat(message){
         console.log("chat.message=" + message);
 
-        let opMode = "chat";
-        let change_ai_role = "";
-        switch(message){
-            case "換成韓國女生":
-            opMode = "changeAI";
-            change_ai_role = "kr_girl";
-            break;
-            case "換成韓國男生":
-            change_ai_role = "kr_boy";
-            opMode = "changeAI";
-            break;
-            case "換成日本女生":
-            change_ai_role = "jp_girl";
-            opMode = "changeAI";
-            break;
-            case "換成日本男生":
-            change_ai_role = "jp_boy";
-            opMode = "changeAI";
-            break;
-        }
+        let chatPromise = fetchData({
+            api: "chat",
+            data: {
+                account: props.account,
+                message: message,
+                time: moment().format("YYYY-MM-DD HH:mm:ss"),
+            }
+        });
+        Promise.all([chatPromise]).then((values) => {
+            console.log("chatPromise.values=", values);
 
-        if(opMode === "changeAI"){
-            //change_ai_role
-            let changeAIRolePromise = fetchData({
-                api: "change_ai_role",
-                data: {
-                    account: props.account,
-                    ai_role: change_ai_role,
+            let ai_msg = values[0]["message"];
+            let speaker = "";
+            let short_name = "";
+            aiRoles.forEach((roleObj, role_i) => {
+                if(roleObj["role"] === values[0]["ai_role"]){
+                    speaker = roleObj["name"];
+                    short_name = roleObj["name"].substr(0, 1);
                 }
             });
-            Promise.all([changeAIRolePromise]).then((values) => {
-                console.log("changeAIRolePromise.values=", values);
 
-                chat("轉換AI成功");
+            messages.push({
+                role: "AI",
+                speaker: speaker,
+                short_name: short_name,
+                message: ai_msg,
+                time: moment().format("HH:mm:ss"),
             });
-        }else{
-            let chatPromise = fetchData({
-                api: "chat",
-                data: {
-                    account: props.account,
-                    message: message,
-                    time: moment().format("YYYY-MM-DD HH:mm:ss"),
-                }
-            });
-            Promise.all([chatPromise]).then((values) => {
-                console.log("chatPromise.values=", values);
 
-                let ai_msg = values[0]["message"];
-                let speaker = "";
-                let short_name = "";
-                aiRoles.forEach((roleObj, role_i) => {
-                    if(roleObj["role"] === values[0]["ai_role"]){
-                        speaker = roleObj["name"];
-                        short_name = roleObj["name"].substr(0, 1);
-                    }
-                });
+            setTimeout(() => {
+                let chatBoxElement = document.getElementById("chatBox");
+                chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
+            }, 100);
+        });
 
-                messages.push({
-                    role: "AI",
-                    speaker: speaker,
-                    short_name: short_name,
-                    message: ai_msg,
-                    time: moment().format("HH:mm:ss"),
-                });
-
-                setTimeout(() => {
-                    let chatBoxElement = document.getElementById("chatBox");
-                    chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
-                }, 100);
-            });
-        }
     }
     // 送出 message
     function send(){
