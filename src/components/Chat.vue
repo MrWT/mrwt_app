@@ -17,6 +17,7 @@
     let userMessage = ref("");
     let messages = reactive([]);
     let userInfo = reactive({});
+    let aiRoles = reactive([]);
 
     // 初始化 component
     function init(){
@@ -24,49 +25,101 @@
         console.log("chat.props.title", props.title);
         console.log("chat.props.account", props.account);
 
-        fetchUserInfo();
+        fetchInitData();
         chat("INIT");
     }
-    // 取得 user 資料
-    function fetchUserInfo(){
+    // 取得初始資料
+    function fetchInitData(){
+        let fetchAIRolesPromise = fetchData({
+            api: "get_ai_role",
+        });
         let fetchUserInfoPromise = fetchData({
             api: "get_user",
             data: {
                 account: props.account,
             }
         });
-        Promise.all([fetchUserInfoPromise]).then((values) => {
-            console.log("fetchUserInfoPromise.values=", values);
-            userInfo = values[0];
+        Promise.all([fetchAIRolesPromise, fetchUserInfoPromise]).then((values) => {
+            console.log("fetchInitData.values=", values);
+            aiRoles = values[0];
+            userInfo = values[1];
         });
     }
     // chat with ai
     function chat(message){
         console.log("chat.message=" + message);
 
-        let chatPromise = fetchData({
-            api: "chat",
-            data: {
-                account: props.account,
-                message: message,
-                time: moment().format("YYYY-MM-DD HH:mm:ss"),
-            }
-        });
-        Promise.all([chatPromise]).then((values) => {
-            console.log("chatPromise.values=", values);
+        let opMode = "chat";
+        let change_ai_role = "";
+        switch(message){
+            case "換成韓國女生":
+            opMode = "changeAI";
+            change_ai_role = "kr_girl";
+            break;
+            case "換成韓國男生":
+            change_ai_role = "kr_boy";
+            opMode = "changeAI";
+            break;
+            case "換成日本女生":
+            change_ai_role = "jp_girl";
+            opMode = "changeAI";
+            break;
+            case "換成日本男生":
+            change_ai_role = "jp_boy";
+            opMode = "changeAI";
+            break;
+        }
 
-            messages.push({
-                role: "AI",
-                speaker: "AI",
-                message: values[0]["message"],
-                time: moment().format("HH:mm:ss"),
+        if(opMode === "changeAI"){
+            //change_ai_role
+            let changeAIRolePromise = fetchData({
+                api: "change_ai_role",
+                data: {
+                    account: props.account,
+                    ai_role: change_ai_role,
+                }
             });
+            Promise.all([changeAIRolePromise]).then((values) => {
+                console.log("changeAIRolePromise.values=", values);
 
-            setTimeout(() => {
-                let chatBoxElement = document.getElementById("chatBox");
-                chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
-            }, 100);
-        });
+                chat("轉換AI成功");
+            });
+        }else{
+            let chatPromise = fetchData({
+                api: "chat",
+                data: {
+                    account: props.account,
+                    message: message,
+                    time: moment().format("YYYY-MM-DD HH:mm:ss"),
+                }
+            });
+            Promise.all([chatPromise]).then((values) => {
+                console.log("chatPromise.values=", values);
+
+                let ai_msg = values[0]["message"];
+                let speaker = "";
+                let short_name = "";
+                aiRoles.forEach((roleObj, role_i) => {
+                    if(roleObj["role"] === values[0]["ai_role"]){
+                        speaker = roleObj["name"];
+                        short_name = roleObj["name"].substr(0, 1);
+                    }
+                });
+
+                messages.push({
+                    role: "AI",
+                    speaker: speaker,
+                    short_name: short_name,
+                    message: ai_msg,
+                    time: moment().format("HH:mm:ss"),
+                });
+
+                setTimeout(() => {
+                    let chatBoxElement = document.getElementById("chatBox");
+                    chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
+                }, 100);
+            });
+        }
     }
     // 送出 message
     function send(){
@@ -102,8 +155,7 @@
                 <div class="w-8 rounded-full"
                     :class="{'bg-neutral': msgObj.role === 'AI', 'text-gray-100': msgObj.role === 'AI',
                              'bg-green-500': msgObj.role === 'user', 'text-gray-900': msgObj.role === 'user'}">
-                    <span v-if="msgObj.role === 'AI'" class="text-xs">AI</span>
-                    <span v-if="msgObj.role === 'user'" class="text-xs">{{ msgObj.short_name }}</span>
+                    <span class="text-xs">{{ msgObj.short_name }}</span>
                 </div>
             </div>
         </div>
