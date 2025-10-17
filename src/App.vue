@@ -16,7 +16,7 @@
     import PopupMessage from './components/PopupMessage.vue'
 
     // 郭家基金相關 component - 先寄生於此專案, 待成熟後, 再分家出去
-    import Chat_KF from './components_kuoFund/Chat.vue'
+    import Recall from './components_kuoFund/Recall.vue'
     import Finance_KF from './components_kuoFund/Finance.vue'
     import Rule_KF from './components_kuoFund/Rule.vue'
     import Activity_KF from './components_kuoFund/Activity.vue'
@@ -227,9 +227,9 @@
                 {
                     appSetting.funButtons.splice(0, appSetting.funButtons.length);
 
-                    let allFunctionKeys = ["quiz", "footmark", "finance", "chat", "lockLucky", "readme", "chat_kf", "finance_kf", "rule_kf", "activity_kf"];
+                    let allFunctionKeys = ["quiz", "footmark", "finance", "chat", "lockLucky", "readme", "recall", "finance_kf", "rule_kf", "activity_kf"];
                     let buildingFunctionKeys = [];
-                    let buildingFunctionKeys_kf = ["chat_kf", "activity_kf"];
+                    let buildingFunctionKeys_kf = ["recall", "activity_kf"];
                     allFunctionKeys.forEach((funKey, fk_i) => {
                         if(userInfo.funcs.indexOf(funKey) >= 0){
 
@@ -385,7 +385,7 @@
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
         <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
 
-        <Chat_KF v-else-if="appSetting.contentComponent === 'chat_kf'" :title="appSetting.title" :account="userInfo.account" />
+        <Recall v-else-if="appSetting.contentComponent === 'recall'" :title="appSetting.title" :account="userInfo.account" />
         <Finance_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Rule_KF v-else-if="appSetting.contentComponent === 'rule_kf'" :title="appSetting.title" :account="userInfo.account" :funSetting="kf_funSetting" />
         <Activity_KF v-else-if="appSetting.contentComponent === 'activity_kf'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" />

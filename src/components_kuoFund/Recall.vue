@@ -57,8 +57,8 @@
 
             messages.push({
                 role: "AI",
-                speaker: "小郭郭",
-                short_name: "郭",
+                speaker: "郭萊特",
+                short_name: "萊",
                 message: values[0]["message"],
                 time: moment().format("HH:mm:ss"),
             });
