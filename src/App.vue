@@ -287,33 +287,37 @@
         console.log("signinModal.clientHeight=", signinModal.clientHeight);
         console.log("signinModal.clientWidth=", signinModal.clientWidth);
         
-        let tlList = [];
-        for(let c_i = 0; c_i < 10; c_i++){
-            let tl = gsap.timeline({ yoyo: true, repeat: -1 });
-            tl.to("#circle" + c_i, {
-                x: getRandomNumber(10, screenSize.value === "md" ? 300 : signinModal.clientWidth),
-                y: getRandomNumber(10, screenSize.value === "md" ? 300 : signinModal.clientHeight),
-                duration: 0.1,        
-            })
-            .to("#circle" + c_i, {
-                opacity: 100,
-                x: getRandomNumber(10, signinModal.clientWidth - 100),
-                y: getRandomNumber(10, signinModal.clientHeight - 100),
-                duration: getRandomNumber(10, 20),        
-                ease: "power2.inOut",    
-            })
-            .to("#circle" + c_i, {
-                scale: 0.5,
-                x: getRandomNumber(10, signinModal.clientWidth - 100),
-                y: getRandomNumber(10, signinModal.clientHeight - 100),
-                duration: getRandomNumber(10, 20),            
-            })
-            .to("#circle" + c_i, {
-                x: getRandomNumber(10, signinModal.clientWidth - 100),
-                y: getRandomNumber(10, signinModal.clientHeight - 100),
-                duration: getRandomNumber(10, 20),            
-            });
+        // 碎花片 - 候選顏色
+        let boxColors = ["green", "blue", "purple", "gold", "peru", "blanchedalmond", "blueviolet", "goldenrod"];
+        // 碎花片 - 數量上限
+        let boxCount = 500;
+
+        let boxContainer = document.getElementById("boxContainer");
+        for(let box_i = 1; box_i <= boxCount; box_i++){
+            let box_div = document.createElement("div");
+            box_div.setAttribute("id", "box_" + box_i);
+            let boxColorIndex = getRandomNumber(0, boxColors.length - 1);
+            box_div.style.backgroundColor = boxColors[ boxColorIndex ];
+            box_div.style.width = "30px";
+            box_div.style.height = "30px";
+
+            boxContainer.append(box_div);
         }
+
+        // 控制 gsap animation
+        let tlList = [];
+        for(let box_i = 1; box_i <= boxCount; box_i++){
+            let uniqueId = "" + box_i;
+
+            let tl = gsap.timeline({ yoyo: true, repeat: -1 });
+            tl.to("#" + "box_" + uniqueId, {
+                id: "tween_" + uniqueId,
+                duration: getRandomNumber(10, 20)/10,
+                opacity: 0,
+            });
+            tlList.push(tl);
+        }
+        
     }
     // popup message
     function popupMessage(status, message){
@@ -393,12 +397,12 @@
 
     <!-- signin modal -->
     <dialog id="signinModal" class="modal">
-        <div class="modal-box h-10/10 w-10/10 md:h-8/10 md:w-8/10 flex flex-col place-content-center bg-neutral-500 overflow-hidden">
+        <div class="modal-box h-5/10 w-10/10 md:h-8/10 md:w-8/10 flex flex-col place-content-center bg-neutral-500 overflow-hidden">
 
-            <div class="h-auto w-10/10 flex flex-col place-content-center rounded-2xl bg-white p-3">
+            <div class="h-auto w-10/10 flex flex-col place-content-center rounded-2xl bg-white p-3 z-51">
                 <h3 class="text-lg font-bold text-center">Hello!</h3>
                 <h4 v-if="signinError" class="text-red-900 text-center mb-5">Error! 登入失敗~ 請檢查登入帳號!</h4>
-                <div class="flex justify-center items-center join z-51">
+                <div class="flex justify-center items-center join">
                     <input id="signinName" type="text" placeholder="What's your name?" class="input input-ghost join-item" :value="tempAccount" @change="keyinAccount" @keyup.enter="signin" autofocus />
                     <button class="btn btn-primary join-item ml-1" @click="signin" >
                         <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -407,17 +411,9 @@
                     </button>
                 </div>
             </div>
-
-            <div id="circle0" class="circle fixed top-0 left-0 rounded-full size-[35px] border-3 border-fuchsia-900 opacity-0"></div>
-            <div id="circle1" class="circle fixed top-0 left-0 rounded-full size-[55px] border-3 border-green-900 opacity-0"></div>
-            <div id="circle2" class="circle fixed top-0 left-0 rounded-full size-[75px] border-3 border-blue-900 opacity-0"></div>
-            <div id="circle3" class="circle fixed top-0 left-0 rounded-full size-[100px] border-3 border-red-900 opacity-0"></div>
-            <div id="circle4" class="circle fixed top-0 left-0 rounded-full size-[125px] border-3 border-neutral-900 opacity-0"></div>
-            <div id="circle5" class="circle fixed top-0 left-0 rounded-full size-[155px] border-3 border-emerald-900 opacity-0"></div>
-            <div id="circle6" class="circle fixed top-0 left-0 rounded-full size-[185px] border-3 border-teal-900 opacity-0"></div>
-            <div id="circle7" class="circle fixed top-0 left-0 rounded-full size-[215px] border-3 border-sky-900 opacity-0"></div>
-            <div id="circle8" class="circle fixed top-0 left-0 rounded-full size-[245px] border-3 border-lime-900 opacity-0"></div>
-            <div id="circle9" class="circle fixed top-0 left-0 rounded-full size-[275px] border-3 border-rose-900 opacity-0"></div>
+            
+            <div id="boxContainer" class="fixed top-0 left-0 w-10/10 h-10/10 flex flex-wrap justify-center items-center">
+            </div>
         </div>
     </dialog>
     <!-- userInfo modal -->
