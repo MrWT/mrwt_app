@@ -18,6 +18,7 @@
     let messages = reactive([]);
     let userInfo = reactive({});
     let aiRoles = reactive([]);
+    let currentAiRole = reactive({});
 
     // 初始化 component
     function init(){
@@ -69,6 +70,9 @@
                 if(roleObj["role"] === values[0]["ai_role"]){
                     speaker = roleObj["name"];
                     short_name = roleObj["name"].substr(0, 1);
+
+                    currentAiRole["nation"] = roleObj["role"].split("_")[0];
+                    currentAiRole["gender"] = roleObj["role"].split("_")[1];
                 }
             });
 
@@ -107,13 +111,41 @@
             chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
         }, 100);
     }        
+    // 改變 AI 角色
+    function changeAiRole(){
+        console.log("changeAiRole.currentAiRole=", currentAiRole);
+        let msg = "換成";
+        switch(currentAiRole.nation){
+            case "kr":
+                msg += "韓國";
+                break;
+            case "jp":
+                msg += "日本";
+                break;
+            case "tw":
+                msg += "台灣";
+                break;
+            case "us":
+                msg += "美國";
+                break;
+        }
+        switch(currentAiRole.gender){
+            case "boy":
+                msg += "男生";
+                break;
+            case "girl":
+                msg += "女生";
+                break;
+        }
+        chat(msg);
+    }
         
 
 </script>
 
 <template>
 
-<div id="chatBox" class="flex flex-col w-10/10 h-9/10 overflow-y-auto">
+<div id="chatBox" class="flex flex-col w-10/10 h-8/10 overflow-y-auto">
     <div v-for="(msgObj, msg_i) in messages" class="chat"
         :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
         <div class="chat-image avatar">
@@ -137,13 +169,43 @@
     </div>
 </div>
 
-<div class="join join-horizontal absolute bottom-5 left-0 z-55 w-10/10 justify-center bg-gray-200">
-    <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-8/10" v-model="userMessage" @keyup.enter="send" />
+<div class="join join-horizontal absolute bottom-15 left-0 z-55 w-10/10 justify-center bg-gray-200">
+    <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-7/10" v-model="userMessage" @keyup.enter="send" />
     <button class="btn join-item bg-gray-700 btn-circle" @click="send">
-        <svg class="w-6 h-6 text-white rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+        <svg class="size-6 text-white rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
         </svg>
     </button>
+</div>
+<div class="absolute bottom-5 left-0 z-55 w-10/10 flex flex-row justify-center gap-10">
+    <div class="flex flex-row justify-end gap-2">
+        <label class="label">
+            <input type="radio" class="radio radio-primary" value="kr" v-model="currentAiRole.nation" @change="changeAiRole" />
+            韓國 
+        </label>
+        <label class="label">
+            <input type="radio" class="radio radio-primary" value="jp" v-model="currentAiRole.nation" @change="changeAiRole" />
+            日本
+        </label>
+        <label class="label">
+            <input type="radio" class="radio radio-primary" value="tw" v-model="currentAiRole.nation" @change="changeAiRole" />
+            台灣
+        </label>
+        <label class="label">
+            <input type="radio" class="radio radio-primary" value="us" v-model="currentAiRole.nation" @change="changeAiRole" />
+            美國
+        </label>
+    </div>
+    <div class="flex flex-row justify-start gap-2">
+        <label class="label">
+            <input type="radio" class="radio radio-secondary" value="boy" v-model="currentAiRole.gender" @change="changeAiRole" />
+            男生
+        </label>
+        <label class="label">
+            <input type="radio" class="radio radio-secondary" value="girl" v-model="currentAiRole.gender" @change="changeAiRole" />
+            女生
+        </label>
+    </div>
 </div>
 
 </template>
