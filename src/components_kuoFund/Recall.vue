@@ -17,6 +17,7 @@
     let userMessage = ref("");
     let messages = reactive([]);
     let userInfo = reactive({});
+    let aiRoles = reactive([]);
 
     // 初始化 component
     function init(){
@@ -24,20 +25,25 @@
         console.log("chat.props.title", props.title);
         console.log("chat.props.account", props.account);
 
-        fetchUserInfo();
+        fetchInitData();
         chat("INIT");
     }
     // 取得 user 資料
-    function fetchUserInfo(){
+    function fetchInitData(){
+        // 取得 AI 角色
+        let fetchAIRolesPromise = fetchData({
+            api: "get_ai_role",
+        });
         let fetchUserInfoPromise = fetchData({
             api: "get_user",
             data: {
                 account: props.account,
             }
         });
-        Promise.all([fetchUserInfoPromise]).then((values) => {
-            console.log("fetchUserInfoPromise.values=", values);
-            userInfo = values[0];
+        Promise.all([fetchAIRolesPromise, fetchUserInfoPromise]).then((values) => {
+            console.log("fetchInitData.values=", values);
+            aiRoles = values[0];
+            userInfo = values[1];
         });
     }
     // chat with ai
@@ -55,11 +61,21 @@
         Promise.all([chatPromise]).then((values) => {
             console.log("chatPromise.values=", values);
 
+            let ai_msg = values[0]["message"];
+            let speaker = "";
+            let short_name = "";
+            aiRoles.forEach((roleObj, role_i) => {
+                if(roleObj["code"] === values[0]["ai_role"]){
+                    speaker = roleObj["name"];
+                    short_name = roleObj["short_name"];
+                }
+            });
+
             messages.push({
                 role: "AI",
-                speaker: "郭萊特",
-                short_name: "萊",
-                message: values[0]["message"],
+                speaker: speaker,
+                short_name: short_name,
+                message: ai_msg,
                 time: moment().format("HH:mm:ss"),
             });
 
