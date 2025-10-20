@@ -17,6 +17,7 @@
 
     // 郭家基金相關 component - 先寄生於此專案, 待成熟後, 再分家出去
     import Recall from './components_kuoFund/Recall.vue'
+    import Survey from './components_kuoFund/Survey.vue'
     import Finance_KF from './components_kuoFund/Finance.vue'
     import Rule_KF from './components_kuoFund/Rule.vue'
     import Activity_KF from './components_kuoFund/Activity.vue'
@@ -92,6 +93,16 @@
 
             if(fun && fun.trim().toUpperCase() === "KUOFAMILY"){
                 tempAccount.value = "KUOFAMILY";
+                signin();
+            }
+        }
+        // Survey - 自動登入控制
+        {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fun = urlParams.get('fun'); // 取得 'John'
+
+            if(fun && fun.trim().toUpperCase().startsWith("SURVEY")){
+                tempAccount.value = fun.trim().toUpperCase();
                 signin();
             }
         }
@@ -227,7 +238,7 @@
                 {
                     appSetting.funButtons.splice(0, appSetting.funButtons.length);
 
-                    let allFunctionKeys = ["quiz", "footmark", "finance", "chat", "lockLucky", "readme", "recall", "finance_kf", "rule_kf", "activity_kf"];
+                    let allFunctionKeys = ["quiz", "footmark", "finance", "chat", "lockLucky", "readme", "recall", "survey", "finance_kf", "rule_kf", "activity_kf"];
                     let buildingFunctionKeys = [];
                     let buildingFunctionKeys_kf = ["recall", "activity_kf"];
                     allFunctionKeys.forEach((funKey, fk_i) => {
@@ -245,8 +256,8 @@
                         }
                     });
 
-                    console.log("userInfo.role=" + userInfo.role);
-                    console.log("appSetting.funButtons=", appSetting.funButtons);
+                    //console.log("userInfo.role=" + userInfo.role);
+                    //console.log("appSetting.funButtons=", appSetting.funButtons);
                 }
 
                 // close signinModal
@@ -256,6 +267,11 @@
                 if(userInfoObj["account"].toUpperCase() === "KUOFAMILY" || userInfoObj["role"] === "admin_kf")
                 {
                     gotoPage("finance_kf");
+                }
+                // 郭家基金-問卷帳號 - 預設開啟問卷 component
+                if(userInfoObj["account"].toUpperCase().startsWith("SURVEY"))
+                {
+                    gotoPage("survey");
                 }
             });
         }
@@ -390,6 +406,7 @@
         <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
 
         <Recall v-else-if="appSetting.contentComponent === 'recall'" :title="appSetting.title" :account="userInfo.account" />
+        <Survey v-else-if="appSetting.contentComponent === 'survey'" :title="appSetting.title" :account="userInfo.account" />
         <Finance_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Rule_KF v-else-if="appSetting.contentComponent === 'rule_kf'" :title="appSetting.title" :account="userInfo.account" :funSetting="kf_funSetting" />
         <Activity_KF v-else-if="appSetting.contentComponent === 'activity_kf'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" />
