@@ -15,6 +15,8 @@
 
     let appState = ref("");
     let userMessage = ref("");
+    // 聊天室 UUID
+    let chat_room_uuid = ref("INIT");
     let messages = reactive([]);
     let userInfo = reactive({});
     let aiRoles = reactive([]);
@@ -27,7 +29,7 @@
         console.log("chat.props.account", props.account);
 
         fetchInitData();
-        chat("INIT");
+        chat("HI");
     }
     // 取得初始資料
     function fetchInitData(){
@@ -56,6 +58,7 @@
             api: "chat",
             data: {
                 account: props.account,
+                chat_room_uuid: chat_room_uuid.value,
                 message: message,
                 time: moment().format("YYYY-MM-DD HH:mm:ss"),
             }
@@ -63,6 +66,7 @@
         Promise.all([chatPromise]).then((values) => {
             console.log("chatPromise.values=", values);
 
+            chat_room_uuid.value = values[0]["chat_room_uuid"];
             let ai_msg = values[0]["message"];
             let speaker = "";
             let short_name = "";
