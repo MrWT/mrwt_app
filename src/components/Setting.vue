@@ -7,6 +7,7 @@
     import SettingQuiz from '@/components/SettingQuiz.vue'
     import SettingActivityKF from '@/components_kuoFund/SettingActivity.vue'
     import SettingFinanceKF from '@/components_kuoFund/SettingFinance.vue'
+    import SettingAnalyze from '@/components_kuoFund/SettingAnalyze.vue'
 
     const emit = defineEmits(['popupMessage']);
     const props = defineProps({
@@ -91,6 +92,12 @@
     <input v-if="userRole === 'admin_kf'" type="radio" name="setting_tabs" class="tab" aria-label="上傳活動手冊-KF" />
     <div v-if="userRole === 'admin_kf'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
         <SettingActivityKF @popup-message="popupMessage"></SettingActivityKF>
+    </div>
+
+    <!-- 分析問卷結果 - 郭家基金 -->
+    <input v-if="userRole === 'admin_kf'" type="radio" name="setting_tabs" class="tab" aria-label="分析問卷結果" />
+    <div v-if="userRole === 'admin_kf'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
+        <SettingAnalyze></SettingAnalyze>
     </div>
 
 </div>
