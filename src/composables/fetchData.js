@@ -1,7 +1,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 // by convention, composable function names start with "use"
-export function fetchData(postData) {
+export function fetchData(postData, api_position = "MAIN") {
     // a composable can also hook into its owner component's
     // lifecycle to setup and teardown side effects.
     /*
@@ -15,7 +15,12 @@ export function fetchData(postData) {
     */
 
     let fetchDataPromise = new Promise((resolve, reject) => {
-        const cloudRunUrl = import.meta.env.VITE_API_URL;
+        let cloudRunUrl = "";
+        switch(api_position){
+            case "MAIN": cloudRunUrl = import.meta.env.VITE_API_URL; break;
+            case "AI": cloudRunUrl = import.meta.env.VITE_AI_API_URL; break;
+            case "KUO-FUNDS": cloudRunUrl = import.meta.env.VITE_KUO_FUNDS_API_URL; break;
+        }
 
         $("#loading").show();
 

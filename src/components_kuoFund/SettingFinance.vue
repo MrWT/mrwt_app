@@ -38,7 +38,7 @@
     function fetchMembers(){
         let fetchMembersPromise = fetchData({
             api: "get_members_kf",
-        });
+        }, "KUO-FUNDS");
         Promise.all([fetchMembersPromise]).then((values) => {
             console.log("fetchMembersPromise.values=", values[0]);
 
@@ -65,7 +65,7 @@
             data: {
                 finance: financeObj,
             }
-        });
+        }, "KUO-FUNDS");
         Promise.all([newFinanceKFPromise]).then((values) => {
             console.log("newFinanceKFPromise.values=", values);
 
@@ -103,7 +103,7 @@
                 data: {
                     finance: newFundObj,
                 }
-            });
+            }, "KUO-FUNDS");
             Promise.all([newFinanceKFPromise]).then((values) => {
                 console.log("newFinanceKFPromise.values=", values);
 

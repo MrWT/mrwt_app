@@ -35,7 +35,7 @@
         // 取得 AI 角色
         let fetchAIRolesPromise = fetchData({
             api: "get_ai_role",
-        });
+        }, "AI");
         let fetchUserInfoPromise = fetchData({
             api: "get_user",
             data: {
@@ -60,7 +60,7 @@
                 message: message,
                 time: moment().format("YYYY-MM-DD HH:mm:ss"),
             }
-        });
+        }, "AI");
         Promise.all([chatPromise]).then((values) => {
             console.log("chatPromise.values=", values);
 

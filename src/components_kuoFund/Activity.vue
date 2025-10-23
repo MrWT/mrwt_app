@@ -32,9 +32,9 @@
     }   
     // 取得活動清單
     function get_activity_kuoFunds(){
-         let getActivityKFPromise = fetchData({
+        let getActivityKFPromise = fetchData({
             api: "get_activiy_kf",
-        });
+        }, "KUO-FUNDS");
         Promise.all([getActivityKFPromise]).then((values) => {
             //console.log("getActivityKFPromise.values=", values);
             activity = values[0][0];

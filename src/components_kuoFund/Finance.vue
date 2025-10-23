@@ -41,10 +41,10 @@
 
         let fetchFundsPromise = fetchData({
             api: "get_kuo_funds",
-        });
+        }, "KUO-FUNDS");
         let fetchMembersPromise = fetchData({
             api: "get_members_kf",
-        });
+        }, "KUO-FUNDS");
         Promise.all([fetchFundsPromise, fetchMembersPromise]).then((values) => {
             console.log("fetchFundsPromise.values=", values);
             let members = values[1];

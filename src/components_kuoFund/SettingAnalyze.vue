@@ -30,7 +30,7 @@
 
         let analyzePromise = fetchData({
             api: "analyze_survey",
-        });
+        }, "AI");
         Promise.all([analyzePromise]).then((values) => {
             console.log("analyzePromise.values=", values);
 
