@@ -139,6 +139,7 @@
 
         // 整理聊天內容成"json"
 
+        trip_sumup_text.value = "整理中... 稍等...";
         let chatPromise = fetchData({
             api: "sumup_trip",
             data: {
@@ -216,9 +217,11 @@
 
 <!-- sumup modal -->
 <dialog id="sumupModal" class="modal">
-    <div class="modal-box h-10/10 w-10/10 flex flex-col bg-neutral-700">
-        <div class="h-5/10 w-10/10 flex flex-col overflow-y-auto text-white">
-            {{ trip_sumup_text }}
+    <div class="modal-box h-8/10 md:h-10/10 w-10/10 flex flex-col bg-neutral-700">
+        <div class="h-5/10 w-10/10 flex flex-col overflow-y-auto">
+            <p class="text-white h-full w-full" style="white-space:pre-wrap;">
+                {{ trip_sumup_text }}
+            </p>
         </div>
         <div class="divider"></div>
         <div class="h-5/10 w-10/10 flex flex-col">
@@ -240,12 +243,6 @@
                 <AdvancedMarker v-for="(markObj, m_i) in googleMapMarks" :options="markObj.marker" :pin-options="{ background: 'red' }" @click="openInfoWindow(markObj)">
                 </AdvancedMarker>        
             </GoogleMap>
-        </div>
-        <div class="divider divider-primary"></div>
-        <div class="modal-action">
-            <button class="btn btn-ghost w-2/10 text-white hover:text-gray-900" @click="closeSumupModal">
-                關閉
-            </button>
         </div>
     </div>
     <form method="dialog" class="modal-backdrop">
