@@ -119,7 +119,7 @@
             data: {
                 finance: delRecordObj,
             }
-        });
+        }, "KUO-FUNDS");
         Promise.all([delFinanceKFPromise]).then((values) => {
             console.log("delFinanceKFPromise.values=", values);
 
