@@ -11,6 +11,7 @@
     import Readme from './components/Readme.vue'
     import Setting from './components/Setting.vue'
     import Chat from './components/Chat.vue'
+    import PlanTrip from './components/PlanTrip.vue'
     import Author from './components/Author.vue'
     import LockLucky from './components/LockLucky.vue'
     import PopupMessage from './components/PopupMessage.vue'
@@ -238,7 +239,7 @@
                 {
                     appSetting.funButtons.splice(0, appSetting.funButtons.length);
 
-                    let allFunctionKeys = ["quiz", "footmark", "finance", "chat", "lockLucky", "readme", "recall", "survey", "finance_kf", "rule_kf", "activity_kf"];
+                    let allFunctionKeys = ["quiz", "footmark", "finance", "chat", "plan_trip", "lockLucky", "readme", "recall", "survey", "finance_kf", "rule_kf", "activity_kf"];
                     let buildingFunctionKeys = [];
                     let buildingFunctionKeys_kf = ["recall", "activity_kf"];
                     allFunctionKeys.forEach((funKey, fk_i) => {
@@ -402,6 +403,7 @@
         <Finance v-else-if="appSetting.contentComponent === 'finance'" :title="appSetting.title" :account="userInfo.account" />
         <Setting v-else-if="appSetting.contentComponent === 'setting'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Chat v-else-if="appSetting.contentComponent === 'chat'" :title="appSetting.title" :account="userInfo.account" />
+        <PlanTrip v-else-if="appSetting.contentComponent === 'plan_trip'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" />
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
         <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
 
