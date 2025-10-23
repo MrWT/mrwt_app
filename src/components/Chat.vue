@@ -187,16 +187,16 @@
     </div>
 </div>
 
-<div class="join join-horizontal absolute bottom-5 left-0 z-55 w-10/10 justify-center bg-gray-200">
-    <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-7/10" v-model="userMessage" @keyup.enter="send" />
+<div class="join join-horizontal absolute bottom-5 left-0 z-55 w-10/10 justify-start md:justify-center bg-gray-200">
+    <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-6/10" v-model="userMessage" @keyup.enter="send" />
     <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" @click="send">
         <svg class="size-5 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
         </svg>
     </button>
     <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" @click="openSettingModal">
-        <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-            <path fill-rule="evenodd" d="M9.586 2.586A2 2 0 0 1 11 2h2a2 2 0 0 1 2 2v.089l.473.196.063-.063a2.002 2.002 0 0 1 2.828 0l1.414 1.414a2 2 0 0 1 0 2.827l-.063.064.196.473H20a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-.089l-.196.473.063.063a2.002 2.002 0 0 1 0 2.828l-1.414 1.414a2 2 0 0 1-2.828 0l-.063-.063-.473.196V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.089l-.473-.196-.063.063a2.002 2.002 0 0 1-2.828 0l-1.414-1.414a2 2 0 0 1 0-2.827l.063-.064L4.089 15H4a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h.09l.195-.473-.063-.063a2 2 0 0 1 0-2.828l1.414-1.414a2 2 0 0 1 2.827 0l.064.063L9 4.089V4a2 2 0 0 1 .586-1.414ZM8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" clip-rule="evenodd"/>
+        <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 19h4a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-2m-2.236-4a3 3 0 1 0 0-4M3 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
         </svg>
     </button>
 </div>
@@ -205,14 +205,14 @@
 <dialog id="settingModal" class="modal">
     <div class="modal-box h-8/10 w-8/10 flex flex-col bg-neutral-700">
         <div class="flex flex-col justify-center">
-            <span class="text-xl text-white">AI 功能設定</span>
+            <span class="text-xl text-white text-center">AI 角色設定</span>
             <div class="divider divider-primary"></div>
         </div>
         <div class="h-8/10 w-10/10 flex flex-col overflow-y-auto">
-            <div class="text-white">
+            <div class="text-white text-center">
                 國家:
             </div>
-            <div class="flex flex-row justify-start gap-2">            
+            <div class="flex flex-row justify-center gap-2">            
                 <label class="label text-white ">
                     <input type="radio" class="radio radio-primary" value="Korea" v-model="currentAiRole.nation" />
                     韓國 
@@ -226,10 +226,11 @@
                     台灣
                 </label>
             </div>
-            <div class="text-white mt-2">
+            <div class="divider"></div>
+            <div class="text-white text-center">
                 性別:
             </div>
-            <div class="flex flex-row justify-start gap-2">
+            <div class="flex flex-row justify-center gap-2">
                 <label class="label text-white">
                     <input type="radio" class="radio radio-secondary" value="male" v-model="currentAiRole.gender" />
                     Boy
