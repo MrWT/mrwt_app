@@ -24,7 +24,9 @@
     let aiRoles = reactive([]);
     let currentAiRole = reactive({});
 
-    let trip_sumup_text = ref("");
+    let trip_sumup_destination = ref("");
+    let trip_sumup_obj = reactive([]);
+    let sel_day_sequence = ref("");
     // InfoWindow options
     let infoWindowObj = reactive({});
     // 圖標類型
@@ -135,11 +137,7 @@
     }        
     // 開啟 sumup modal
     function openSumupModal(){
-        document.getElementById("sumupModal").showModal();
-
         // 整理聊天內容成"json"
-
-        trip_sumup_text.value = "整理中... 稍等...";
         let chatPromise = fetchData({
             api: "sumup_trip",
             data: {
@@ -152,9 +150,78 @@
         Promise.all([chatPromise]).then((values) => {
             console.log("chatPromise.values=", values);
 
-           trip_sumup_text.value = values[0]["message"];
+            let tmpTextAry = values[0]["message"].split("\n");
+            if(tmpTextAry.length > 0) tmpTextAry.splice(0, 1);
+            if(tmpTextAry.length > 0) tmpTextAry.splice(tmpTextAry.length - 1, 1);
+            let tmpObj = JSON.parse(tmpTextAry.join("\n"));
+            console.log("tmpObj=", tmpObj);
+
+            trip_sumup_destination.value = tmpObj.destination;
+            trip_sumup_obj.splice(0, trip_sumup_obj.length);
+            tmpObj.trip_detail.forEach((tdObj, td_i) => {
+                trip_sumup_obj.push(tdObj);
+            });
+            sel_day_sequence.value = trip_sumup_obj[0].day_sequence;
+
+            document.getElementById("sumupModal").showModal();
+
+            drawGoogleMapMarker();
+        });
+    }
+    function drawGoogleMapMarker(){
+        googleMapMarks.splice(0, googleMapMarks.length);
+
+        let sel_day_sequence_obj = {};
+        trip_sumup_obj.forEach((tdObj, td_i) => {
+            let day_sequence = tdObj.day_sequence;
+            if(day_sequence === sel_day_sequence.value){
+                sel_day_sequence_obj = tdObj;
+            }
         });
 
+
+        let geoPromiseAry = [];
+        sel_day_sequence_obj.trip_detail_of_day.forEach((tddObj, tdd_i) => {
+            geoPromiseAry.push(fetchData({
+                api: "get_geocoded_from_google_map",
+                data: {
+                    location_name: trip_sumup_destination.value + ( tddObj["subway_station"] ? tddObj["subway_station"] : tddObj["location"] ),
+                }
+            }));
+        });
+
+        Promise.all(geoPromiseAry).then((values) => {
+            console.log("geocodedPromise.values=", values);
+
+            values.forEach((geoObj, geo_i) => {
+                let latitude_of_tddObj = geoObj[0];
+                let longitude_of_tddObj = geoObj[1];
+
+                googleMapMarks.push({
+                    location_name: sel_day_sequence_obj.trip_detail_of_day[geo_i]["location"],
+                    mark_date: sel_day_sequence_obj.day_sequence + " - " + ((geo_i + 1) < 10 ? "0" : "") + (geo_i + 1),
+                    type: "plan_a_trip",
+                    memo: sel_day_sequence_obj.trip_detail_of_day[geo_i]["memo"],
+                    marker: {
+                        position: { 
+                            lat: latitude_of_tddObj, 
+                            lng: longitude_of_tddObj 
+                        },
+                        title: sel_day_sequence_obj.trip_detail_of_day[geo_i]["location"],
+                    }
+                });
+            });
+
+            googleMapCenter.lat = googleMapMarks[0].marker.position.lat;
+            googleMapCenter.lng = googleMapMarks[0].marker.position.lng;
+        });
+    }
+    // 選擇 TripSumupObj
+    function clickSelTripSumup(tdObj){
+        // console.log("clickSelTripSumup.tdObj=", tdObj);
+
+        sel_day_sequence.value = tdObj.day_sequence;
+        drawGoogleMapMarker();
     }
     // 開啟 InfoWindow
     function openInfoWindow(markObj){
@@ -201,7 +268,7 @@
     </div>
 </div>
 
-<div class="join join-horizontal absolute bottom-5 left-0 z-55 w-10/10 justify-start md:justify-center bg-gray-200">
+<div class="join join-horizontal absolute bottom-5 left-0 z-55 w-10/10 justify-start md:justify-center bg-gray-200 px-2">
     <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-6/10" v-model="userMessage" @keyup.enter="send" />
     <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" @click="send">
         <svg class="size-5 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -217,15 +284,31 @@
 
 <!-- sumup modal -->
 <dialog id="sumupModal" class="modal">
-    <div class="modal-box h-8/10 md:h-10/10 w-10/10 flex flex-col bg-neutral-700">
-        <div class="h-5/10 w-10/10 flex flex-col overflow-y-auto">
-            <p class="text-white h-full w-full" style="white-space:pre-wrap;">
-                {{ trip_sumup_text }}
-            </p>
+    <div class="modal-box h-8/10 md:h-10/10 w-10/10 max-w-3xl flex flex-col bg-neutral-100">
+        <div class="h-1/10 w-10/10 flex flex-row overflow-x-auto">
+            <button v-for="(tdObj, td_i) in trip_sumup_obj" class="btn btn-ghost" :class="{ 'border-black': sel_day_sequence === tdObj.day_sequence}" @click="clickSelTripSumup(tdObj)">
+                {{ tdObj.day_sequence }}
+            </button>
         </div>
-        <div class="divider"></div>
-        <div class="h-5/10 w-10/10 flex flex-col">
-            <GoogleMap class="w-10/10 h-10/10"
+        <div class="h-4/10 w-10/10 flex flex-col overflow-y-auto">
+            <div v-for="(tdObj, td_i) in trip_sumup_obj">
+                <ul class="list bg-yellow-100 rounded-box shadow-md">
+                    <li v-if="sel_day_sequence === tdObj.day_sequence" v-for="(tddObj, tdd_i) in tdObj.trip_detail_of_day" class="list-row">
+                        <div class="text-4xl font-thin opacity-30 tabular-nums">{{ ((tdd_i + 1) < 10 ? "0" : "") + (tdd_i + 1) }}</div>
+                        <div class="list-col-grow">
+                            <div class="text-lg">
+                                {{ tddObj.location }}
+                                <span v-if="tddObj.subway_station">{{ " - 地鐵: " + tddObj.subway_station }}</span>
+                            </div>
+                            <div class="text-md uppercase font-semibold">{{ tddObj.memo }}</div>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+        <div class="h-5/10 w-10/10 flex flex-col mt-1">
+            <GoogleMap class="w-10/10 h-10/10 border"
                 mapId="PLAN_TRIP_MAP_ID"
                 :api-key="props.googleMapApiKey"
                 :center="googleMapCenter"
