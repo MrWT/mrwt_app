@@ -187,7 +187,7 @@
     </div>
 </div>
 
-<div class="join join-horizontal absolute bottom-5 left-0 z-55 w-10/10 justify-start md:justify-center bg-gray-200">
+<div class="join join-horizontal absolute bottom-5 left-0 z-55 w-10/10 justify-start md:justify-center bg-gray-200 px-2">
     <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-6/10" v-model="userMessage" @keyup.enter="send" />
     <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" @click="send">
         <svg class="size-5 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
