@@ -32,9 +32,8 @@
     // 圖標類型
     let googleMapMarkerType = reactive([]);
     // google map 初始中心點 - 台灣地理中心碑
-    let googleMapCenter = reactive({
-        lat: 23.974174340321614, lng: 120.97984968163026
-    });
+    let mapCenter_lat = ref(23.974174340321614);
+    let mapCenter_lng = ref(120.97984968163026);
     // google map mark
     let googleMapMarks = reactive([]);
 
@@ -135,6 +134,10 @@
             chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
         }, 100);
     }        
+    // 一鍵列出之前聊天內容
+    function remindPlan(){
+        chat("幫我列出上次聊的行程");
+    }        
     // 開啟 sumup modal
     function openSumupModal(){
         // 整理聊天內容成"json"
@@ -212,8 +215,8 @@
                 });
             });
 
-            googleMapCenter.lat = googleMapMarks[0].marker.position.lat;
-            googleMapCenter.lng = googleMapMarks[0].marker.position.lng;
+            mapCenter_lat.value = googleMapMarks[0].marker.position.lat;
+            mapCenter_lng.value = googleMapMarks[0].marker.position.lng;
         });
     }
     // 選擇 TripSumupObj
@@ -234,6 +237,30 @@
         infoWindowObj.mark_date = markObj.mark_date;
         infoWindowObj.type = markObj.type;
         infoWindowObj.memo = markObj.memo;
+    }
+    // 儲存 TripSumupObj
+    function saveTripSumup(){
+        console.log("saveTripSumup");
+    }
+     // 重新規畫 trip
+    function replanTrip(){
+        console.log("replanTrip");
+
+        let removeTripPromise = fetchData({
+            api: "remove_trip",
+            data: {
+                account: props.account,
+            },
+        }, "AI");
+        Promise.all([removeTripPromise]).then((values) => {
+            console.log("removeTripPromise.values=", values);
+            // 清空聊天室內容
+            messages.splice(0, messages.length);
+            // 重新 chat
+            chat("HI");
+            // 關閉 sumup modal
+            closeSumupModal();
+        });
     }
     // 關閉 sumup modal
     function closeSumupModal(){
@@ -268,14 +295,24 @@
     </div>
 </div>
 
-<div class="join join-horizontal absolute bottom-5 left-0 z-55 w-10/10 justify-start md:justify-center bg-gray-200 px-2">
+<div class="join join-horizontal absolute bottom-5 left-0 z-55 w-10/10 justify-start md:justify-center bg-gray-200 px-2 gap-2">
+    <button class="btn join-item bg-red-300 text-gray-900 hover:underline hover:bg-gray-900 hover:text-gray-100 btn-circle" title="新對話" @click="replanTrip">
+        <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        </svg>
+    </button>
     <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-6/10" v-model="userMessage" @keyup.enter="send" />
-    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" @click="send">
+    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="傳送" @click="send">
         <svg class="size-5 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
         </svg>
     </button>
-    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" @click="openSumupModal">
+    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="列出上次聊的行程" @click="remindPlan">
+        <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 15v2a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-2M12 4v12m0-12 4 4m-4-4L8 8"/>
+        </svg>
+    </button>
+    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="總結行程" @click="openSumupModal">
         <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4.37 7.657c2.063.528 2.396 2.806 3.202 3.87 1.07 1.413 2.075 1.228 3.192 2.644 1.805 2.289 1.312 5.705 1.312 6.705M20 15h-1a4 4 0 0 0-4 4v1M8.587 3.992c0 .822.112 1.886 1.515 2.58 1.402.693 2.918.351 2.918 2.334 0 .276 0 2.008 1.972 2.008 2.026.031 2.026-1.678 2.026-2.008 0-.65.527-.9 1.177-.9H20M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
@@ -284,7 +321,7 @@
 
 <!-- sumup modal -->
 <dialog id="sumupModal" class="modal">
-    <div class="modal-box h-8/10 md:h-10/10 w-10/10 max-w-3xl flex flex-col bg-neutral-100">
+    <div class="modal-box h-10/10 w-10/10 max-w-3xl flex flex-col bg-neutral-100">
         <div class="h-1/10 w-10/10 flex flex-row overflow-x-auto">
             <button v-for="(tdObj, td_i) in trip_sumup_obj" class="btn btn-ghost" :class="{ 'border-black': sel_day_sequence === tdObj.day_sequence}" @click="clickSelTripSumup(tdObj)">
                 {{ tdObj.day_sequence }}
@@ -311,8 +348,8 @@
             <GoogleMap class="w-10/10 h-10/10 border"
                 mapId="PLAN_TRIP_MAP_ID"
                 :api-key="props.googleMapApiKey"
-                :center="googleMapCenter"
-                :zoom="7"
+                :center="{ lat: mapCenter_lat, lng: mapCenter_lng }"
+                :zoom="10"
                 :mapTypeControl = "false" 
                 :streetViewControl = "false"
                 >
@@ -326,6 +363,15 @@
                 <AdvancedMarker v-for="(markObj, m_i) in googleMapMarks" :options="markObj.marker" :pin-options="{ background: 'red' }" @click="openInfoWindow(markObj)">
                 </AdvancedMarker>        
             </GoogleMap>
+        </div>
+        <div class="modal-action">
+            <button class="btn btn-ghost w-1/2 text-gray-900 hover:underline" @click="closeSumupModal">
+                再聊聊
+            </button>
+
+            <button class="btn btn-ghost w-1/2 text-gray-900 hover:underline" @click="saveTripSumup">
+                儲存規畫
+            </button>
         </div>
     </div>
     <form method="dialog" class="modal-backdrop">
