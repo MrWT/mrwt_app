@@ -171,7 +171,12 @@
         infoWindowObj.location_name = markObj.location_name;
         infoWindowObj.mark_date = markObj.mark_date;
         infoWindowObj.type = markObj.type;
-        infoWindowObj.memo = (markObj.type.indexOf("_Plan") >= 0 ? "(計畫中) " : "") + markObj.memo;
+        infoWindowObj.memo = markObj.memo;
+    }
+    // 關閉 InfoWindow
+    function closeInfoWindow(){
+        //console.log("infoWindow.closeclick");
+        infoWindowObj.isOpen = false;
     }
     // 切換圖標類型
     function changeMarkerType(e){
@@ -262,10 +267,9 @@
             :streetViewControl = "false"
             >
             
-            <InfoWindow class="flex flex-col gap-2 pr-5" :options="infoWindowObj.options" v-model:opened="infoWindowObj.isOpen">
-                <h3 class="text-lg text-black">{{ infoWindowObj.mark_date }}</h3>    
-                <h1 class="text-2xl text-black">{{ infoWindowObj.location_name }}</h1>    
-                <h3 class="text-base text-black">{{ infoWindowObj.memo }}</h3>    
+            <InfoWindow class="flex flex-col gap-2 pr-5 w-1/1" :options="infoWindowObj.options" v-model="infoWindowObj.isOpen" @closeclick="closeInfoWindow">
+                <div class="text-lg text-black">{{ infoWindowObj.mark_date }} - {{ infoWindowObj.location_name }}</div>    
+                <div class="text-base text-black">{{ infoWindowObj.memo }}</div>    
             </InfoWindow>
 
             <AdvancedMarker v-for="(markObj, m_i) in googleMapMarks" :options="markObj.marker" :pin-options="googleMapMarkPins[m_i]" @click="openInfoWindow(markObj)">
