@@ -4,6 +4,7 @@
     import { fetchData } from "@/composables/fetchData"
     import { GoogleMap, AdvancedMarker, CustomControl, InfoWindow } from 'vue3-google-map'
 
+    const emit = defineEmits(['popupMessage']);
     const props = defineProps({
         title: String,
         account: String,
@@ -24,8 +25,8 @@
     let aiRoles = reactive([]);
     let currentAiRole = reactive({});
 
-    let trip_sumup_destination = ref("");
-    let trip_sumup_obj = reactive([]);
+    let trip_schedule_obj = {};
+    let tripSumupList = reactive([]);
     let sel_day_sequence = ref("");
     // InfoWindow options
     let infoWindowObj = reactive({});
@@ -156,26 +157,27 @@
             let tmpTextAry = values[0]["message"].split("\n");
             if(tmpTextAry.length > 0) tmpTextAry.splice(0, 1);
             if(tmpTextAry.length > 0) tmpTextAry.splice(tmpTextAry.length - 1, 1);
-            let tmpObj = JSON.parse(tmpTextAry.join("\n"));
-            console.log("tmpObj=", tmpObj);
+            //console.log("tmpTextAry=", tmpTextAry.join("").trim());
+            trip_schedule_obj = JSON.parse(tmpTextAry.join("").trim());
+            //console.log("trip_schedule_obj=", trip_schedule_obj);
 
-            trip_sumup_destination.value = tmpObj.destination;
-            trip_sumup_obj.splice(0, trip_sumup_obj.length);
-            tmpObj.trip_detail.forEach((tdObj, td_i) => {
-                trip_sumup_obj.push(tdObj);
+            tripSumupList.splice(0, tripSumupList.length);
+            trip_schedule_obj.trip_detail.forEach((tdObj, td_i) => {
+                tripSumupList.push(tdObj);
             });
-            sel_day_sequence.value = trip_sumup_obj[0].day_sequence;
+            sel_day_sequence.value = tripSumupList[0].day_sequence;
 
             document.getElementById("sumupModal").showModal();
 
             drawGoogleMapMarker();
         });
     }
+    // 繪畫圖標
     function drawGoogleMapMarker(){
         googleMapMarks.splice(0, googleMapMarks.length);
 
         let sel_day_sequence_obj = {};
-        trip_sumup_obj.forEach((tdObj, td_i) => {
+        tripSumupList.forEach((tdObj, td_i) => {
             let day_sequence = tdObj.day_sequence;
             if(day_sequence === sel_day_sequence.value){
                 sel_day_sequence_obj = tdObj;
@@ -188,7 +190,7 @@
             geoPromiseAry.push(fetchData({
                 api: "get_geocoded_from_google_map",
                 data: {
-                    location_name: trip_sumup_destination.value + ( tddObj["subway_station"] ? tddObj["subway_station"] : tddObj["location"] ),
+                    location_name: trip_schedule_obj.destination + ( tddObj["subway_station"] ? tddObj["subway_station"] : tddObj["location"] ),
                 }
             }));
         });
@@ -238,11 +240,48 @@
         infoWindowObj.type = markObj.type;
         infoWindowObj.memo = markObj.memo;
     }
-    // 儲存 TripSumupObj
-    function saveTripSumup(){
-        console.log("saveTripSumup");
+    // 儲存行程規劃
+    function saveTripSchedule(){
+        console.log("saveTripSchedule.trip_schedule_obj=", trip_schedule_obj);
+
+        let saveTripSchedulePromise = fetchData({
+            api: "new_trip_schedule",
+            data: {
+                account: props.account,
+                destination: trip_schedule_obj.destination,
+                trip_start_date: trip_schedule_obj.trip_start_date,
+                schedule: JSON.stringify( trip_schedule_obj ),
+            }
+        });
+        Promise.all([saveTripSchedulePromise]).then((values) => {
+            console.log("saveTripSchedulePromise.values=", values);
+
+            closeSumupModal();
+
+            let opObj = {
+                message: "",
+                status: true,
+            };
+            opObj.status = values[0]["result"];
+            if(values[0]["result"] === true){
+                opObj.message = "儲存成功";
+            }else{
+                opObj.message = "Error: " + values[0]["message"];
+            }
+
+            // 將 message 傳給 App.vue 
+            emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
+        });
     }
-     // 重新規畫 trip
+    // 開啟 Replan 再確認 modal
+    function openReplanConfirmModal(){
+        document.getElementById("replanConfirmModal").showModal();
+    }
+    // 關閉 Replan 再確認 modal
+    function closeReplanConfirmModal(){
+        document.getElementById("replanConfirmModal").close();
+    }
+    // 重新規畫 trip
     function replanTrip(){
         console.log("replanTrip");
 
@@ -257,7 +296,10 @@
             // 清空聊天室內容
             messages.splice(0, messages.length);
             // 重新 chat
+            chat_room_uuid.value = "INIT";
             chat("HI");
+            // 關閉 replan 再確認 modal
+            closeReplanConfirmModal();
             // 關閉 sumup modal
             closeSumupModal();
         });
@@ -295,8 +337,8 @@
     </div>
 </div>
 
-<div class="join join-horizontal absolute bottom-5 left-0 z-55 w-10/10 justify-start md:justify-center bg-gray-200 px-2 gap-2">
-    <button class="btn join-item bg-red-300 text-gray-900 hover:underline hover:bg-gray-900 hover:text-gray-100 btn-circle" title="新對話" @click="replanTrip">
+<div class="join join-horizontal absolute bottom-5 left-0 w-10/10 justify-start md:justify-center bg-gray-200 px-2 gap-2">
+    <button class="btn join-item bg-red-300 text-gray-900 hover:underline hover:bg-gray-900 hover:text-gray-100 btn-circle" title="新話題" @click="openReplanConfirmModal">
         <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
@@ -323,12 +365,12 @@
 <dialog id="sumupModal" class="modal">
     <div class="modal-box h-10/10 w-10/10 max-w-3xl flex flex-col bg-neutral-100">
         <div class="h-1/10 w-10/10 flex flex-row overflow-x-auto">
-            <button v-for="(tdObj, td_i) in trip_sumup_obj" class="btn btn-ghost" :class="{ 'border-black': sel_day_sequence === tdObj.day_sequence}" @click="clickSelTripSumup(tdObj)">
+            <button v-for="(tdObj, td_i) in tripSumupList" class="btn btn-ghost" :class="{ 'border-black': sel_day_sequence === tdObj.day_sequence}" @click="clickSelTripSumup(tdObj)">
                 {{ tdObj.day_sequence }}
             </button>
         </div>
         <div class="h-4/10 w-10/10 flex flex-col overflow-y-auto">
-            <div v-for="(tdObj, td_i) in trip_sumup_obj">
+            <div v-for="(tdObj, td_i) in tripSumupList">
                 <ul class="list bg-yellow-100 rounded-box shadow-md">
                     <li v-if="sel_day_sequence === tdObj.day_sequence" v-for="(tddObj, tdd_i) in tdObj.trip_detail_of_day" class="list-row">
                         <div class="text-4xl font-thin opacity-30 tabular-nums">{{ ((tdd_i + 1) < 10 ? "0" : "") + (tdd_i + 1) }}</div>
@@ -369,8 +411,30 @@
                 再聊聊
             </button>
 
-            <button class="btn btn-ghost w-1/2 text-gray-900 hover:underline" @click="saveTripSumup">
+            <button class="btn btn-ghost w-1/2 text-gray-900 hover:underline" @click="saveTripSchedule">
                 儲存規畫
+            </button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+<!-- replanConfirm modal -->
+<dialog id="replanConfirmModal" class="modal">
+    <div class="modal-box h-3/10 w-10/10 flex flex-col bg-neutral-500">
+        <div class="h-10/10 w-10/10 text-center text-black font-black">
+            <span class="text-2xl">再跟您確認一次~</span>
+            <div class="divider divider-primary"></div>
+        </div>
+        <div class="modal-action">
+            <button class="btn btn-ghost w-1/2 text-gray-100 hover:bg-gray-100 hover:text-gray-900 hover:underline" @click="closeReplanConfirmModal">
+                話題繼續
+            </button>
+
+            <button class="btn btn-ghost w-1/2 text-gray-100 hover:bg-gray-100 hover:text-gray-900 hover:underline" @click="replanTrip">
+                新話題
             </button>
         </div>
     </div>
