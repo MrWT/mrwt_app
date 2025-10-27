@@ -273,7 +273,7 @@
     }
     // 開啟 InfoWindow
     function openInfoWindow(markObj){
-        console.log("openInfoWindow.markObj=", markObj);
+        //console.log("openInfoWindow.markObj=", markObj);
         infoWindowObj.isOpen = true;
         infoWindowObj.options = {
             position: markObj.marker.position,
@@ -282,6 +282,11 @@
         infoWindowObj.mark_date = markObj.mark_date;
         infoWindowObj.type = markObj.type;
         infoWindowObj.memo = markObj.memo;
+    }
+    // 關閉 InfoWindow
+    function closeInfoWindow(){
+        //console.log("infoWindow.closeclick");
+        infoWindowObj.isOpen = false;
     }
     // 儲存行程規劃
     function saveTripSchedule(){
@@ -341,7 +346,7 @@
             // 重新 chat
             chat_room_uuid.value = "INIT";
 
-            if(json_onScheduleTrip){
+            if(typeof json_onScheduleTrip === "string"){
                 let chat_msg = "";
                 chat_msg += "幫我閱讀下列以 json 格式編寫的資料, 並以口語方式將內容回應給使用者,";
                 chat_msg += "回應內容前請加上 'Hello, 關於這段旅程的規劃如下:'";
@@ -398,25 +403,30 @@
     </div>
 </div>
 
-<div class="join join-horizontal absolute bottom-5 left-0 w-10/10 justify-start md:justify-center bg-gray-200 px-2 gap-2">
+<div class="join join-horizontal absolute bottom-5 left-0 w-10/10 justify-center md:justify-center bg-gray-200 px-2 gap-2">
     <button class="btn join-item bg-red-300 text-gray-900 hover:underline hover:bg-gray-900 hover:text-gray-100 btn-circle" title="新話題" @click="openReplanConfirmModal">
-        <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
     </button>
     <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-6/10" v-model="userMessage" @keyup.enter="send" />
+    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="傳送訊息" @click="send">
+        <svg class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
+        </svg>
+    </button>
     <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="列出之前聊天內容" @click="remindPlan">
-        <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 15v2a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-2M12 4v12m0-12 4 4m-4-4L8 8"/>
+        <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
         </svg>
     </button>
     <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="總結對話" @click="openSumupModal">
-        <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4.37 7.657c2.063.528 2.396 2.806 3.202 3.87 1.07 1.413 2.075 1.228 3.192 2.644 1.805 2.289 1.312 5.705 1.312 6.705M20 15h-1a4 4 0 0 0-4 4v1M8.587 3.992c0 .822.112 1.886 1.515 2.58 1.402.693 2.918.351 2.918 2.334 0 .276 0 2.008 1.972 2.008 2.026.031 2.026-1.678 2.026-2.008 0-.65.527-.9 1.177-.9H20M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4a1 1 0 0 0-1-1H8.914a1 1 0 0 0-.707.293L4.293 7.207A1 1 0 0 0 4 7.914V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5M9 3v4a1 1 0 0 1-1 1H4m11.383.772 2.745 2.746m1.215-3.906a2.089 2.089 0 0 1 0 2.953l-6.65 6.646L9 17.95l.739-3.692 6.646-6.646a2.087 2.087 0 0 1 2.958 0Z"/>
         </svg>
     </button>
 
-    <div class="dropdown dropdown-top dropdown-end">
+    <div v-if="scheduleList.length > 0" class="dropdown dropdown-top dropdown-end">
         <div tabindex="0" role="button">
             <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="調整已排定的旅行">
                 <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -425,6 +435,10 @@
             </button>
         </div>
         <ul tabindex="-1" class="dropdown-content menu bg-base-100 border border-gray-900 rounded-box z-1 w-52 p-2 gap-2 shadow-sm">
+            <li class="bg-gray-900 text-gray-100 p-1 flex flex-col rounded-xl">
+                <div>注意!</div>
+                <div>調整'已排定的旅行'會清空現有聊天內容!</div>
+            </li>
             <li v-for="(schObj, sch_i) in scheduleList" class="bg-gray-200">
                 <a @click="editOnScheduleTrip(schObj)" class="flex flex-col">
                     <div>{{ schObj.destination }}</div>
@@ -470,10 +484,9 @@
                 :streetViewControl = "false"
                 >
                 
-                <InfoWindow class="flex flex-col gap-2 pr-5" :options="infoWindowObj.options" v-model:opened="infoWindowObj.isOpen">
-                    <h3 class="text-lg text-black">{{ infoWindowObj.mark_date }}</h3>    
-                    <h1 class="text-xl text-black">{{ infoWindowObj.location_name }}</h1>    
-                    <h3 class="text-base text-black">{{ infoWindowObj.memo }}</h3>    
+                <InfoWindow class="flex flex-col gap-2 pr-5 w-1/1" :options="infoWindowObj.options" v-model="infoWindowObj.isOpen" @closeclick="closeInfoWindow">
+                    <div class="text-lg text-black">{{ infoWindowObj.mark_date }} - {{ infoWindowObj.location_name }}</div>    
+                    <div class="text-base text-black">{{ infoWindowObj.memo }}</div>    
                 </InfoWindow>
 
                 <AdvancedMarker v-for="(markObj, m_i) in googleMapMarks" :options="markObj.marker" :pin-options="{ background: 'red' }" @click="openInfoWindow(markObj)">
