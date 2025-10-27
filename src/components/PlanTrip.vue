@@ -28,6 +28,7 @@
     let trip_schedule_obj = {};
     let tripSumupList = reactive([]);
     let sel_day_sequence = ref("");
+    let scheduleList = reactive([]);
     // InfoWindow options
     let infoWindowObj = reactive({});
     // 圖標類型
@@ -61,10 +62,43 @@
                 account: props.account,
             }
         });
-        Promise.all([fetchAIRolesPromise, fetchUserInfoPromise]).then((values) => {
+        // 取得已排定行程清單
+        scheduleList.splice(0, scheduleList.length);
+        let fetchTripSchedulePromise = fetchData({
+            api: "get_trip_schedule",
+            data: {
+                account: props.account,
+            }
+        });
+        Promise.all([fetchAIRolesPromise, fetchUserInfoPromise, fetchTripSchedulePromise]).then((values) => {
             console.log("fetchInitData.values=", values);
             aiRoles = values[0];
             userInfo = values[1];
+
+            // 建立已排定的行程清單
+            {
+                values[2].sort((x, y) => {
+                    if(x["trip_start_date"] > y["trip_start_date"]){
+                        return 1;
+                    }
+                    if(x["trip_start_date"] < y["trip_start_date"]){
+                        return -1;
+                    }
+
+                    if(x["destination"] < y["destination"]){
+                        return 1;
+                    }
+                    if(x["destination"] > y["destination"]){
+                        return -1;
+                    }
+
+                    return 0;
+                });
+                values[2].forEach((schObj, sch_i) => {
+                    let schedule = JSON.parse(schObj["schedule"]);
+                    scheduleList.push( schedule );
+                });
+            }
         });
     }
     // chat with ai
@@ -83,32 +117,41 @@
         Promise.all([chatPromise]).then((values) => {
             console.log("chatPromise.values=", values);
 
-            chat_room_uuid.value = values[0]["chat_room_uuid"];
-            let ai_msg = values[0]["message"];
-            let speaker = "";
-            let short_name = "";
-            aiRoles.forEach((roleObj, role_i) => {
-                if(roleObj["code"] === values[0]["ai_role"]){
-                    speaker = roleObj["name"];
-                    short_name = roleObj["short_name"];
+            try{
+                chat_room_uuid.value = values[0]["chat_room_uuid"];
+                let ai_msg = values[0]["message"];
+                let speaker = "";
+                let short_name = "";
+                aiRoles.forEach((roleObj, role_i) => {
+                    if(roleObj["code"] === values[0]["ai_role"]){
+                        speaker = roleObj["name"];
+                        short_name = roleObj["short_name"];
 
-                    currentAiRole["nation"] = roleObj["nation"];
-                    currentAiRole["gender"] = roleObj["gender"];
-                }
-            });
+                        currentAiRole["nation"] = roleObj["nation"];
+                        currentAiRole["gender"] = roleObj["gender"];
+                    }
+                });
 
-            messages.push({
-                role: "AI",
-                speaker: speaker,
-                short_name: short_name,
-                message: ai_msg,
-                time: moment().format("HH:mm:ss"),
-            });
+                messages.push({
+                    role: "AI",
+                    speaker: speaker,
+                    short_name: short_name,
+                    message: ai_msg,
+                    time: moment().format("HH:mm:ss"),
+                });
 
-            setTimeout(() => {
-                let chatBoxElement = document.getElementById("chatBox");
-                chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
-            }, 100);
+                setTimeout(() => {
+                    let chatBoxElement = document.getElementById("chatBox");
+                    chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
+                }, 100);
+            }catch(ex){
+                let opObj = {
+                    message: "剛剛 AI 可能暫離開位置, 麻煩再操作一次.",
+                    status: false,
+                };
+                // 將 message 傳給 App.vue 
+                emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
+            }
         });
 
     }
@@ -137,7 +180,7 @@
     }        
     // 一鍵列出之前聊天內容
     function remindPlan(){
-        chat("幫我列出上次聊的行程");
+        chat("幫我列出上次聊天的行程詳細內容");
     }        
     // 開啟 sumup modal
     function openSumupModal(){
@@ -249,7 +292,7 @@
             data: {
                 account: props.account,
                 destination: trip_schedule_obj.destination,
-                trip_start_date: trip_schedule_obj.trip_start_date,
+                trip_start_date: trip_schedule_obj.trip_start_date ? trip_schedule_obj.trip_start_date : "",
                 schedule: JSON.stringify( trip_schedule_obj ),
             }
         });
@@ -282,7 +325,7 @@
         document.getElementById("replanConfirmModal").close();
     }
     // 重新規畫 trip
-    function replanTrip(){
+    function replanTrip(json_onScheduleTrip = null){
         console.log("replanTrip");
 
         let removeTripPromise = fetchData({
@@ -297,7 +340,17 @@
             messages.splice(0, messages.length);
             // 重新 chat
             chat_room_uuid.value = "INIT";
-            chat("HI");
+
+            if(json_onScheduleTrip){
+                let chat_msg = "";
+                chat_msg += "幫我閱讀下列以 json 格式編寫的資料, 並以口語方式將內容回應給使用者,";
+                chat_msg += "回應內容前請加上 'Hello, 關於這段旅程的規劃如下:'";
+                chat_msg += "回應內容後請加上 '以上, 有需協助的地方, 儘管提出...'";
+                chat_msg += json_onScheduleTrip;
+                chat(chat_msg);
+            }else{
+                chat("HI");
+            }
             // 關閉 replan 再確認 modal
             closeReplanConfirmModal();
             // 關閉 sumup modal
@@ -307,6 +360,14 @@
     // 關閉 sumup modal
     function closeSumupModal(){
         document.getElementById("sumupModal").close();
+    }
+    // 修改已排定行程
+    function editOnScheduleTrip(schObj){
+        console.log("editOnScheduleTrip.schObj=", schObj);
+        let json_onScheduleTrip = JSON.stringify(schObj);
+        // 清空先前聊天內容, 並列出已排定的旅行
+        replanTrip(json_onScheduleTrip);
+     
     }
 
 </script>
@@ -344,21 +405,34 @@
         </svg>
     </button>
     <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-6/10" v-model="userMessage" @keyup.enter="send" />
-    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="傳送" @click="send">
-        <svg class="size-5 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-            <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
-        </svg>
-    </button>
-    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="列出上次聊的行程" @click="remindPlan">
+    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="列出之前聊天內容" @click="remindPlan">
         <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 15v2a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-2M12 4v12m0-12 4 4m-4-4L8 8"/>
         </svg>
     </button>
-    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="總結行程" @click="openSumupModal">
+    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="總結對話" @click="openSumupModal">
         <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4.37 7.657c2.063.528 2.396 2.806 3.202 3.87 1.07 1.413 2.075 1.228 3.192 2.644 1.805 2.289 1.312 5.705 1.312 6.705M20 15h-1a4 4 0 0 0-4 4v1M8.587 3.992c0 .822.112 1.886 1.515 2.58 1.402.693 2.918.351 2.918 2.334 0 .276 0 2.008 1.972 2.008 2.026.031 2.026-1.678 2.026-2.008 0-.65.527-.9 1.177-.9H20M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
     </button>
+
+    <div class="dropdown dropdown-top dropdown-end">
+        <div tabindex="0" role="button">
+            <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="調整已排定的旅行">
+                <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+                </svg>
+            </button>
+        </div>
+        <ul tabindex="-1" class="dropdown-content menu bg-base-100 border border-gray-900 rounded-box z-1 w-52 p-2 gap-2 shadow-sm">
+            <li v-for="(schObj, sch_i) in scheduleList" class="bg-gray-200">
+                <a @click="editOnScheduleTrip(schObj)" class="flex flex-col">
+                    <div>{{ schObj.destination }}</div>
+                    <div class="text-xs">( {{ schObj.trip_start_date }} - {{ schObj.trip_end_date }} )</div>
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <!-- sumup modal -->
@@ -398,7 +472,7 @@
                 
                 <InfoWindow class="flex flex-col gap-2 pr-5" :options="infoWindowObj.options" v-model:opened="infoWindowObj.isOpen">
                     <h3 class="text-lg text-black">{{ infoWindowObj.mark_date }}</h3>    
-                    <h1 class="text-2xl text-black">{{ infoWindowObj.location_name }}</h1>    
+                    <h1 class="text-xl text-black">{{ infoWindowObj.location_name }}</h1>    
                     <h3 class="text-base text-black">{{ infoWindowObj.memo }}</h3>    
                 </InfoWindow>
 
