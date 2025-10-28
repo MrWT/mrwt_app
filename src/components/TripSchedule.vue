@@ -18,8 +18,8 @@
     let appState = ref("");
     // 已排定的行程清單
     let scheduleList = reactive([]);
-    // 行程細節 - 目的地
-    let tripDestination = "";
+    // 行程細節 - 目的地國家
+    let tripNation = "";
     // 行程細節 - 每站清單/天
     let tripDetailList = reactive([]);
     // 行程細節 - 選定要查看的日期
@@ -100,7 +100,7 @@
 
         document.getElementById("tripDetailModal").showModal();
 
-        tripDestination = scheduleObj.destination;
+        tripNation = scheduleObj.nation;
         drawGoogleMapMarker();
     }
     // 繪畫圖標
@@ -120,7 +120,7 @@
             geoPromiseAry.push(fetchData({
                 api: "get_geocoded_from_google_map",
                 data: {
-                    location_name: tripDestination + ( tddObj["subway_station"] ? tddObj["subway_station"] : tddObj["location"] ),
+                    location_name: tripNation + ( tddObj["subway_station"] ? tddObj["subway_station"] : tddObj["location"] ),
                 }
             }));
         });

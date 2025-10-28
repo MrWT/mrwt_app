@@ -215,12 +215,11 @@
         Promise.all([chatPromise]).then((values) => {
             console.log("chatPromise.values=", values);
 
-            let tmpTextAry = values[0]["message"].split("\n");
-            if(tmpTextAry.length > 0) tmpTextAry.splice(0, 1);
-            if(tmpTextAry.length > 0) tmpTextAry.splice(tmpTextAry.length - 1, 1);
-            //console.log("tmpTextAry=", tmpTextAry.join("").trim());
-            trip_schedule_obj = JSON.parse(tmpTextAry.join("").trim());
-            //console.log("trip_schedule_obj=", trip_schedule_obj);
+            let ai_msg = values[0]["message"];
+            ai_msg = ai_msg.replace(/```/g, "").replace(/json/g, "").replace(/\n/g, "").trim();
+            console.log("ai_msg=", ai_msg);
+            trip_schedule_obj = JSON.parse(ai_msg);
+            console.log("trip_schedule_obj=", trip_schedule_obj);
 
             tripSumupList.splice(0, tripSumupList.length);
             trip_schedule_obj.trip_detail.forEach((tdObj, td_i) => {
@@ -251,7 +250,7 @@
             geoPromiseAry.push(fetchData({
                 api: "get_geocoded_from_google_map",
                 data: {
-                    location_name: trip_schedule_obj.destination + ( tddObj["subway_station"] ? tddObj["subway_station"] : tddObj["location"] ),
+                    location_name: trip_schedule_obj.nation + ( tddObj["subway_station"] ? tddObj["subway_station"] : tddObj["location"] ),
                 }
             }));
         });
