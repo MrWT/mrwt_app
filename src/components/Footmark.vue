@@ -25,9 +25,8 @@
     // 圖標類型
     let googleMapMarkerType = reactive([]);
     // google map 初始中心點 - 台灣地理中心碑
-    let googleMapCenter = reactive({
-        lat: 23.974174340321614, lng: 120.97984968163026
-    });
+    let mapCenter_lat = ref(23.974174340321614);
+    let mapCenter_lng = ref(120.97984968163026);
     // google map mark
     let googleMapMarks = reactive([]);
     // style of mark
@@ -261,7 +260,7 @@
         <GoogleMap class="w-10/10 h-10/10"
             mapId="FOOTMARK_MAP_ID"
             :api-key="props.googleMapApiKey"
-            :center="googleMapCenter"
+            :center="{ lat: mapCenter_lat, lng: mapCenter_lng }"
             :zoom="7"
             :mapTypeControl = "false" 
             :streetViewControl = "false"
