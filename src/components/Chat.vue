@@ -77,6 +77,8 @@
                     speaker = roleObj["name"];
                     short_name = roleObj["short_name"];
 
+                    currentAiRole["speaker"] = roleObj["speaker"];
+                    currentAiRole["short_name"] = roleObj["short_name"];
                     currentAiRole["nation"] = roleObj["nation"];
                     currentAiRole["gender"] = roleObj["gender"];
                 }
@@ -203,7 +205,8 @@
             {{ currentAiRole.speaker ?? "AI" }}
         </div>
         <div class="chat-bubble">
-            <span class="loading loading-dots loading-md"></span>
+            好的~ 稍等一下喔
+            <span class="loading loading-dots loading-xs"></span>
         </div>
     </div>
 </div>
