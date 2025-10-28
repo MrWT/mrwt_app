@@ -1,8 +1,7 @@
 <script setup>
     import { ref, reactive, onMounted } from 'vue'
-    import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
-    import { GoogleMap, AdvancedMarker, CustomControl, InfoWindow } from 'vue3-google-map'
+    import { GoogleMap, AdvancedMarker, InfoWindow } from 'vue3-google-map'
 
     const emit = defineEmits(['popupMessage']);
     const props = defineProps({
@@ -17,11 +16,15 @@
     });
 
     let appState = ref("");
+    // 已排定的行程清單
     let scheduleList = reactive([]);
-    
+    // 行程細節 - 目的地
     let tripDestination = "";
-    let tripSumupList = reactive([]);
+    // 行程細節 - 每站清單/天
+    let tripDetailList = reactive([]);
+    // 行程細節 - 選定要查看的日期
     let sel_day_sequence = ref("");
+    // 選擇要刪除的行程
     let selRemoveObj = {
         destination: "",
         trip_start_date: "",
@@ -85,17 +88,17 @@
 
         });
     }
-    // 開啟 sumup modal
-    function openSumupModal(scheduleObj){
-        console.log("openSumupModal.scheduleObj=", scheduleObj);
+    // 開啟 trip detail modal
+    function openTripDetailModal(scheduleObj){
+        console.log("openTripDetailModal.scheduleObj=", scheduleObj);
 
-        tripSumupList.splice(0, tripSumupList.length);
+        tripDetailList.splice(0, tripDetailList.length);
         scheduleObj.trip_detail.forEach((tdObj, td_i) => {
-            tripSumupList.push(tdObj);
+            tripDetailList.push(tdObj);
         });
-        sel_day_sequence.value = tripSumupList[0].day_sequence;
+        sel_day_sequence.value = tripDetailList[0].day_sequence;
 
-        document.getElementById("sumupModal").showModal();
+        document.getElementById("tripDetailModal").showModal();
 
         tripDestination = scheduleObj.destination;
         drawGoogleMapMarker();
@@ -105,13 +108,12 @@
         googleMapMarks.splice(0, googleMapMarks.length);
 
         let sel_day_sequence_obj = {};
-        tripSumupList.forEach((tdObj, td_i) => {
+        tripDetailList.forEach((tdObj, td_i) => {
             let day_sequence = tdObj.day_sequence;
             if(day_sequence === sel_day_sequence.value){
                 sel_day_sequence_obj = tdObj;
             }
         });
-
 
         let geoPromiseAry = [];
         sel_day_sequence_obj.trip_detail_of_day.forEach((tddObj, tdd_i) => {
@@ -187,7 +189,7 @@
     function closeRemoveConfirmModal(){
         document.getElementById("removeConfirmModal").close();
     }
-    // 刪除 trip
+    // 刪除已排定的行程
     function removeTrip(){
         console.log("removeTrip");
 
@@ -219,15 +221,15 @@
 
             // 關閉 remove 再確認 modal
             closeRemoveConfirmModal();
-            // 關閉 sumup modal
-            closeSumupModal();
+            // 關閉 trip detail modal
+            closeTripDetailModal();
 
 
         });
     }
-    // 關閉 sumup modal
-    function closeSumupModal(){
-        document.getElementById("sumupModal").close();
+    // 關閉 trip detail modal
+    function closeTripDetailModal(){
+        document.getElementById("tripDetailModal").close();
     }
 
 </script>
@@ -236,7 +238,7 @@
 
 <div class="w-1/1 h-1/1">
     <ul v-if="scheduleList.length > 0" class="list rounded-box shadow-md">
-        <li v-for="(sObj, s_i) in scheduleList" class="list-row">
+        <li v-for="(sObj, s_i) in scheduleList" class="list-row hover:bg-yellow-100">
             <div class="text-4xl font-thin opacity-30 tabular-nums">{{ ((s_i + 1) < 10 ? "0" : "") + (s_i + 1) }}</div>
             <div class="list-col-grow">
                 <div class="text-lg">
@@ -249,7 +251,7 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                 </svg>
             </button>
-            <button class="btn btn-square btn-ghost" @click="openSumupModal(sObj)">
+            <button class="btn btn-square btn-ghost" @click="openTripDetailModal(sObj)">
                 <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
                 </svg>
@@ -261,16 +263,16 @@
     </div>
 </div>
 
-<!-- sumup modal -->
-<dialog id="sumupModal" class="modal">
+<!-- tripDetail modal -->
+<dialog id="tripDetailModal" class="modal">
     <div class="modal-box h-10/10 w-10/10 max-w-3xl flex flex-col bg-neutral-100">
         <div class="h-1/10 w-10/10 flex flex-row overflow-x-auto">
-            <button v-for="(tdObj, td_i) in tripSumupList" class="btn btn-ghost" :class="{ 'border-black': sel_day_sequence === tdObj.day_sequence}" @click="clickSelTripSumup(tdObj)">
+            <button v-for="(tdObj, td_i) in tripDetailList" class="btn btn-ghost" :class="{ 'border-black': sel_day_sequence === tdObj.day_sequence}" @click="clickSelTripSumup(tdObj)">
                 {{ tdObj.day_sequence }}
             </button>
         </div>
         <div class="h-4/10 w-10/10 flex flex-col overflow-y-auto">
-            <div v-for="(tdObj, td_i) in tripSumupList">
+            <div v-for="(tdObj, td_i) in tripDetailList">
                 <ul class="list bg-yellow-100 rounded-box shadow-md">
                     <li v-if="sel_day_sequence === tdObj.day_sequence" v-for="(tddObj, tdd_i) in tdObj.trip_detail_of_day" class="list-row">
                         <div class="text-4xl font-thin opacity-30 tabular-nums">{{ ((tdd_i + 1) < 10 ? "0" : "") + (tdd_i + 1) }}</div>
@@ -306,7 +308,7 @@
             </GoogleMap>
         </div>
         <div class="modal-action">
-            <button class="btn btn-ghost w-1/1 text-gray-900 hover:underline" @click="closeSumupModal">
+            <button class="btn btn-ghost w-1/1 text-gray-900 hover:underline" @click="closeTripDetailModal">
                 關閉
             </button>
         </div>
