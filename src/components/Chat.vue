@@ -15,6 +15,7 @@
 
     let appState = ref("");
     let userMessage = ref("");
+    let chatState = ref("TALKING");
     // 聊天室 UUID
     let chat_room_uuid = ref("INIT");
     let messages = reactive([]);
@@ -53,7 +54,8 @@
     // chat with ai
     function chat(message){
         console.log("chat.message=" + message);
-
+        
+        chatState.value = "TALKING";
         let chatPromise = fetchData({
             api: "chat",
             data: {
@@ -91,6 +93,8 @@
             setTimeout(() => {
                 let chatBoxElement = document.getElementById("chatBox");
                 chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
+
+                chatState.value = "DONE";
             }, 100);
         });
 
@@ -183,6 +187,23 @@
             <p style="white-space:pre-wrap;">
                 {{ msgObj.message }}
             </p>
+        </div>
+    </div>
+    <div v-if="chatState === 'TALKING'" class="chat chat-start">
+        <div class="chat-image avatar">
+            <div class="avatar avatar-placeholder">
+                <div class="size-8 rounded-full bg-neutral text-gray-100">
+                    <span class="text-xs">
+                        {{ currentAiRole.short_name ?? "AI" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="chat-header">
+            {{ currentAiRole.speaker ?? "AI" }}
+        </div>
+        <div class="chat-bubble">
+            <span class="loading loading-dots loading-md"></span>
         </div>
     </div>
 </div>
