@@ -17,7 +17,8 @@
     });
 
     let appState = ref("");
-    let userMessage = ref("");
+    let chatState = ref("TALKING");
+    let userMessage = ref("");    
     // 聊天室 UUID
     let chat_room_uuid = ref("INIT");
     let messages = reactive([]);
@@ -47,7 +48,8 @@
         console.log("PlanTrip.props.googleMapApiKey", props.googleMapApiKey);
 
         fetchInitData();
-        chat("HI");
+        //chat("HI");
+        remindPlan();
     }
     // 取得初始資料
     function fetchInitData(){
@@ -104,7 +106,8 @@
     // chat with ai
     function chat(message){
         console.log("chat.message=" + message);
-
+        
+        chatState.value = "TALKING";
         let chatPromise = fetchData({
             api: "plan_trip",
             data: {
@@ -127,6 +130,8 @@
                         speaker = roleObj["name"];
                         short_name = roleObj["short_name"];
 
+                        currentAiRole["speaker"] = speaker;
+                        currentAiRole["short_name"] = short_name;
                         currentAiRole["nation"] = roleObj["nation"];
                         currentAiRole["gender"] = roleObj["gender"];
                     }
@@ -143,6 +148,8 @@
                 setTimeout(() => {
                     let chatBoxElement = document.getElementById("chatBox");
                     chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
+
+                    chatState.value = "DONE";
                 }, 100);
             }catch(ex){
                 let opObj = {
@@ -151,6 +158,8 @@
                 };
                 // 將 message 傳給 App.vue 
                 emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
+
+                chatState.value = "DONE";
             }
         });
 
@@ -180,7 +189,16 @@
     }        
     // 一鍵列出之前聊天內容
     function remindPlan(){
-        chat("幫我列出上次聊天的行程詳細內容");
+        let chat_msg = "";
+
+        chat_msg += "如果之前的聊天內容中有任何行程相關的話題, ";
+        chat_msg += "列出上次聊天的行程詳細內容";
+        chat_msg += "回應上次聊天的行程詳細內容前, 請加上'Hello, 我們上次聊到的行程如下'";
+        chat_msg += "回應上次聊天的行程詳細內容後, 請加上'有任何我幫得上忙的地方, 隨時跟我說~~";
+
+        chat_msg += "如果之前的聊天內容中沒有任何行程相關的話題, 就直接和 user 打招呼";
+
+        chat( chat_msg );
     }        
     // 開啟 sumup modal
     function openSumupModal(){
@@ -401,31 +419,53 @@
             </p>
         </div>
     </div>
+    <div v-if="chatState === 'TALKING'" class="chat chat-start">
+        <div class="chat-image avatar">
+            <div class="avatar avatar-placeholder">
+                <div class="size-8 rounded-full bg-neutral text-gray-100">
+                    <span class="text-xs">
+                        {{ currentAiRole.short_name ?? "AI" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="chat-header">
+            {{ currentAiRole.speaker ?? "AI" }}
+        </div>
+        <div class="chat-bubble">
+            <span class="loading loading-dots loading-md"></span>
+        </div>
+    </div>
 </div>
 
 <div class="join join-horizontal absolute bottom-5 left-0 w-10/10 justify-center md:justify-center bg-gray-200 px-2 gap-2">
+    <!-- 開啟新話題 -->
     <button class="btn join-item bg-red-300 text-gray-900 hover:underline hover:bg-gray-900 hover:text-gray-100 btn-circle" title="新話題" @click="openReplanConfirmModal">
         <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
     </button>
+    <!-- 說點什麼 -->
     <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-6/10" v-model="userMessage" @keyup.enter="send" />
+    <!-- 傳送訊息 -->
     <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="傳送訊息" @click="send">
         <svg class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
         </svg>
     </button>
+    <!-- 列出之前聊天內容 -->
     <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="列出之前聊天內容" @click="remindPlan">
         <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
         </svg>
     </button>
+    <!-- 總結對話 -->
     <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="總結對話" @click="openSumupModal">
         <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4a1 1 0 0 0-1-1H8.914a1 1 0 0 0-.707.293L4.293 7.207A1 1 0 0 0 4 7.914V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5M9 3v4a1 1 0 0 1-1 1H4m11.383.772 2.745 2.746m1.215-3.906a2.089 2.089 0 0 1 0 2.953l-6.65 6.646L9 17.95l.739-3.692 6.646-6.646a2.087 2.087 0 0 1 2.958 0Z"/>
         </svg>
     </button>
-
+    <!-- 調整已排定的旅行 -->
     <div v-if="scheduleList.length > 0" class="dropdown dropdown-top dropdown-end">
         <div tabindex="0" role="button">
             <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="調整已排定的旅行">
@@ -435,9 +475,9 @@
             </button>
         </div>
         <ul tabindex="-1" class="dropdown-content menu bg-base-100 border border-gray-900 rounded-box z-1 w-52 p-2 gap-2 shadow-sm">
-            <li class="bg-gray-900 text-gray-100 p-1 flex flex-col rounded-xl">
-                <div>注意!</div>
-                <div>調整'已排定的旅行'會清空現有聊天內容!</div>
+            <li class="bg-yellow-100 text-gray-900 p-1 flex flex-col rounded-xl">
+                <div class="text-base md:text-lg">注意!</div>
+                <div class="text-base md:text-lg">調整'已排定的旅行'會清空現有聊天內容!</div>
             </li>
             <li v-for="(schObj, sch_i) in scheduleList" class="bg-gray-200">
                 <a @click="editOnScheduleTrip(schObj)" class="flex flex-col">
@@ -516,11 +556,11 @@
             <div class="divider divider-primary"></div>
         </div>
         <div class="modal-action">
-            <button class="btn btn-ghost w-1/2 text-gray-100 hover:bg-gray-100 hover:text-gray-900 hover:underline" @click="closeReplanConfirmModal">
+            <button class="btn btn-ghost w-1/2 text-gray-900 bg-gray-100 hover:bg-gray-500 hover:text-gray-100 hover:underline" @click="closeReplanConfirmModal">
                 話題繼續
             </button>
 
-            <button class="btn btn-ghost w-1/2 text-gray-100 hover:bg-gray-100 hover:text-gray-900 hover:underline" @click="replanTrip">
+            <button class="btn btn-ghost w-1/2 text-gray-900 bg-gray-100 hover:bg-gray-500 hover:text-gray-100 hover:underline" @click="replanTrip">
                 新話題
             </button>
         </div>
