@@ -39,19 +39,22 @@
         // 清空結餘
         total_fund.value = 0;
 
+        let fetchFundsMonthPromise = fetchData({
+            api: "get_finance_month",
+        }, "KUO-FUNDS");
         let fetchFundsPromise = fetchData({
-            api: "get_kuo_funds",
+            api: "get_finance",
         }, "KUO-FUNDS");
         let fetchMembersPromise = fetchData({
             api: "get_members_kf",
         }, "KUO-FUNDS");
-        Promise.all([fetchFundsPromise, fetchMembersPromise]).then((values) => {
+        Promise.all([fetchFundsMonthPromise, fetchFundsPromise, fetchMembersPromise]).then((values) => {
             console.log("fetchFundsPromise.values=", values);
-            let members = values[1];
+            let members = values[2];
 
             // 清空 funds
             Object.keys(funds).forEach(key => delete funds[key]);
-            values[0].forEach((fundObj, fund_i) => {
+            values[1].forEach((fundObj, fund_i) => {
                 let fund_date = moment(fundObj["date"]).format("YYYYMM");
                 if(Object.keys(funds).indexOf(fund_date) < 0){
                     funds[fund_date] = [];
@@ -115,7 +118,7 @@
         console.log("deleteRecord.delRecordObj=", delRecordObj);
 
         let delFinanceKFPromise = fetchData({
-            api: "del_kuo_funds",
+            api: "del_finance",
             data: {
                 finance: delRecordObj,
             }

@@ -61,7 +61,7 @@
         console.log("newRecord.financeObj=", financeObj);
 
         let newFinanceKFPromise = fetchData({
-            api: "new_kuo_funds",
+            api: "new_finance",
             data: {
                 finance: financeObj,
             }
@@ -99,7 +99,7 @@
 
             //console.log("newFundObj=", newFundObj);
             let newFinanceKFPromise = fetchData({
-                api: "new_kuo_funds",
+                api: "new_finance",
                 data: {
                     finance: newFundObj,
                 }
