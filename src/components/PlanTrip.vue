@@ -244,42 +244,59 @@
             }
         });
 
-
-        let geoPromiseAry = [];
-        sel_day_sequence_obj.trip_detail_of_day.forEach((tddObj, tdd_i) => {
-            geoPromiseAry.push(fetchData({
-                api: "get_geocoded_from_google_map",
-                data: {
-                    location_name: trip_schedule_obj.nation + ( tddObj["subway_station"] ? tddObj["subway_station"] : tddObj["location"] ),
-                }
-            }));
-        });
-
-        Promise.all(geoPromiseAry).then((values) => {
-            console.log("geocodedPromise.values=", values);
-
-            values.forEach((geoObj, geo_i) => {
-                let latitude_of_tddObj = geoObj[0];
-                let longitude_of_tddObj = geoObj[1];
-
-                googleMapMarks.push({
-                    location_name: sel_day_sequence_obj.trip_detail_of_day[geo_i]["location"],
-                    mark_date: sel_day_sequence_obj.day_sequence + " - " + ((geo_i + 1) < 10 ? "0" : "") + (geo_i + 1),
-                    type: "plan_a_trip",
-                    memo: sel_day_sequence_obj.trip_detail_of_day[geo_i]["memo"],
-                    marker: {
-                        position: { 
-                            lat: latitude_of_tddObj, 
-                            lng: longitude_of_tddObj 
-                        },
-                        title: sel_day_sequence_obj.trip_detail_of_day[geo_i]["location"],
+        // 標註每個停靠點
+        {
+            let geoPromiseAry = [];
+            sel_day_sequence_obj.trip_detail_of_day.forEach((tddObj, tdd_i) => {
+                geoPromiseAry.push(fetchData({
+                    api: "get_geocoded_from_google_map",
+                    data: {
+                        location_name: trip_schedule_obj.nation + ( tddObj["subway_station"] ? tddObj["subway_station"] : tddObj["location"] ),
                     }
+                }));
+            });
+            Promise.all(geoPromiseAry).then((values) => {
+                console.log("geocodedPromise.values=", values);
+
+                values.forEach((geoObj, geo_i) => {
+                    let latitude_of_tddObj = geoObj[0];
+                    let longitude_of_tddObj = geoObj[1];
+
+                    googleMapMarks.push({
+                        location_name: sel_day_sequence_obj.trip_detail_of_day[geo_i]["location"],
+                        mark_date: sel_day_sequence_obj.day_sequence + " - " + ((geo_i + 1) < 10 ? "0" : "") + (geo_i + 1),
+                        type: "plan_a_trip",
+                        memo: sel_day_sequence_obj.trip_detail_of_day[geo_i]["memo"],
+                        marker: {
+                            position: { 
+                                lat: latitude_of_tddObj, 
+                                lng: longitude_of_tddObj 
+                            },
+                            title: sel_day_sequence_obj.trip_detail_of_day[geo_i]["location"],
+                        }
+                    });
                 });
             });
+        }
 
-            mapCenter_lat.value = googleMapMarks[0].marker.position.lat;
-            mapCenter_lng.value = googleMapMarks[0].marker.position.lng;
-        });
+        // 將 google map 中心點設定在目的地
+        {
+            let fetchCenterPromise = fetchData({
+                api: "get_geocoded_from_google_map",
+                data: {
+                    location_name: trip_schedule_obj.nation + trip_schedule_obj.destination,
+                }
+            });
+            Promise.all([fetchCenterPromise]).then((values) => {
+                let latitude_of_tddObj = values[0][0];
+                let longitude_of_tddObj = values[0][1];
+
+                // 以目的地為中心點
+                mapCenter_lat.value = latitude_of_tddObj;
+                mapCenter_lng.value = longitude_of_tddObj;
+            });
+        }
+        
     }
     // 選擇 TripSumupObj
     function clickSelTripSumup(tdObj){
@@ -534,11 +551,17 @@
             </GoogleMap>
         </div>
         <div class="modal-action">
-            <button class="btn btn-ghost w-1/2 text-gray-900 hover:underline" @click="closeSumupModal">
+            <button class="btn btn-ghost w-1/2 bg-gray-900 text-gray-100 hover:underline hover:bg-gray-100 hover:text-black" @click="closeSumupModal">
+                <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 9h5m3 0h2M7 12h2m3 0h5M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.616a1 1 0 0 0-.67.257l-2.88 2.592A.5.5 0 0 1 8 18.477V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+                </svg>
                 再聊聊
             </button>
 
-            <button class="btn btn-ghost w-1/2 text-gray-900 hover:underline" @click="saveTripSchedule">
+            <button class="btn btn-ghost w-1/2 bg-gray-900 text-gray-100 hover:underline hover:bg-gray-100 hover:text-black" @click="saveTripSchedule">
+                <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m14-4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
+                </svg>
                 儲存規畫
             </button>
         </div>
