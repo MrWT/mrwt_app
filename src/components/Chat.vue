@@ -37,11 +37,11 @@
             { value: "korea", text: "韓國", },
         ],
         scope: [
-            { value: "house", text: "房地產", },
-            { value: "stock", text: "股市", },
             { value: "entertainment-ugly", text: "演藝圈(緋聞)", },
             { value: "entertainment-ceremony", text: "演藝圈(頒獎典禮)", },
             { value: "entertainment-show", text: "演藝圈(節目)", },
+            { value: "house", text: "房地產", },
+            { value: "stock", text: "股市", },
             { value: "nba", text: "NBA", },
             { value: "mlb", text: "MLB", },
         ],
@@ -58,7 +58,7 @@
     // 提詞機 - 選擇
     let promptAction = ref("summary");
     let promptNation = ref("taiwan");
-    let promptScope = ref("stock");
+    let promptScope = ref("entertainment-ugly");
     let promptTime = ref("1week");
     let promptType = ref("news");
     // 提詞機 - 結果
@@ -290,6 +290,9 @@
     watch(promptScope, (newValue, oldValue) => {
         combinePrompt();
     });
+    watch(promptTime, (newValue, oldValue) => {
+        combinePrompt();
+    });
     watch(promptType, (newValue, oldValue) => {
         combinePrompt();
     });
@@ -360,40 +363,40 @@
 </div>
 
 <!-- setting modal -->
-<dialog id="settingModal" class="modal">
-    <div class="modal-box h-5/10 w-8/10 flex flex-col bg-neutral-700">
+<dialog id="settingModal" class="modal modal-end">
+    <div class="modal-box h-7/10 w-8/10 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
-            <span class="text-xl text-white text-center">AI 角色設定</span>
+            <span class="text-xl text-gray-900 text-center">AI 角色設定</span>
             <div class="divider divider-primary"></div>
         </div>
         <div class="h-8/10 w-10/10 flex flex-col overflow-y-auto">
-            <div class="text-white text-center">
+            <div class="text-gray-900 text-center">
                 國家:
             </div>
             <div class="flex flex-row justify-center gap-2">            
-                <label class="label text-white ">
+                <label class="label text-gray-900 ">
                     <input type="radio" class="radio radio-primary" value="Korea" v-model="currentAiRole.nation" />
                     韓國 
                 </label>
-                <label class="label text-white">
+                <label class="label text-gray-900">
                     <input type="radio" class="radio radio-primary" value="Japan" v-model="currentAiRole.nation" />
                     日本
                 </label>
-                <label class="label text-white">
+                <label class="label text-gray-900">
                     <input type="radio" class="radio radio-primary" value="Taiwan" v-model="currentAiRole.nation" />
                     台灣
                 </label>
             </div>
             <div class="divider"></div>
-            <div class="text-white text-center">
+            <div class="text-gray-900 text-center">
                 性別:
             </div>
             <div class="flex flex-row justify-center gap-2">
-                <label class="label text-white">
+                <label class="label text-gray-900">
                     <input type="radio" class="radio radio-secondary" value="male" v-model="currentAiRole.gender" />
                     Boy
                 </label>
-                <label class="label text-white">
+                <label class="label text-gray-900">
                     <input type="radio" class="radio radio-secondary" value="female" v-model="currentAiRole.gender" />
                     Girl
                 </label>
