@@ -353,7 +353,7 @@
 
 <template>
     <!-- 系統 loading mask -->
-    <div id="loading" class="w-full h-full flex justify-center items-center bg-gray-700/70 absolute top-0 left-0 z-999" style="display:none;">
+    <div id="loading" class="w-full h-full flex justify-center items-center bg-gray-700/70 absolute top-0 left-0 z-[9999]" style="display:none;">
         <span class="loading loading-bars loading-xl"></span>
     </div>
     <!-- 功能 component -->
@@ -403,7 +403,7 @@
         <Footmark v-else-if="appSetting.contentComponent === 'footmark'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <Finance v-else-if="appSetting.contentComponent === 'finance'" :title="appSetting.title" :account="userInfo.account" />
         <Setting v-else-if="appSetting.contentComponent === 'setting'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
-        <Chat v-else-if="appSetting.contentComponent === 'chat'" :title="appSetting.title" :account="userInfo.account" />
+        <Chat v-else-if="appSetting.contentComponent === 'chat'" :title="appSetting.title" :account="userInfo.account" @popup-message="popupMessage" />
         <PlanTrip v-else-if="appSetting.contentComponent === 'plan_trip'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <TripSchedule v-else-if="appSetting.contentComponent === 'trip_schedule'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
@@ -466,7 +466,7 @@
         </form>
     </dialog>
 
-    <PopupMessage id="alertMsg" class="hidden" :status="opObj.status" :message="opObj.message" />
+    <PopupMessage id="alertMsg" class="hidden z-[999]" :status="opObj.status" :message="opObj.message" />
 </template>
 
 <style scoped>
