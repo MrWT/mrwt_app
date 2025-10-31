@@ -449,7 +449,7 @@
             {{ currentAiRole.speaker ?? "AI" }}
         </div>
         <div class="chat-bubble">
-            好的~ 稍等一下喔
+            好喔~ 稍等
             <span class="loading loading-dots loading-xs"></span>
         </div>
     </div>
