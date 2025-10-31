@@ -64,6 +64,11 @@
             values[1].forEach((fmn, fmn_i) => {
                 funds_months.push(fmn);
             });
+
+            if(!funds_months.includes(moment().format("YYYY-MM"))){
+                funds_months.push(moment().format("YYYY-MM"));
+            }
+
             funds_months.sort((x, y) => {
                 if( x < y ){
                     return 1;
