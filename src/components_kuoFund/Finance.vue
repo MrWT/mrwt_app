@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, reactive, onMounted } from 'vue'
+    import { ref, reactive, onMounted, watch } from 'vue'
     import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
 
@@ -17,9 +17,13 @@
 
     let userRole = ref("");
     let appState = ref("");
-    let total_fund = ref(0);
-    let funds = reactive({});
-    let fundKeys = reactive([]);
+
+    let funds_total = ref(0);
+    let funds_members = reactive([]);
+    let funds = reactive([]);
+    let funds_months = reactive([]);
+    let sel_dataMN = ref("");
+
     let delRecordObj = reactive({});
 
     // 初始化 component
@@ -30,72 +34,84 @@
         console.log("Finance_KF.props.user_role", props.user_role);
         userRole.value = props.user_role;
         
-        // 取得儲值/提領紀錄
-        fetchFunds();
+        // 取得初始資料
+        fetchInitData();
     }    
-    // 取得儲值/提領紀錄
-    function fetchFunds(){
-        //console.log("fetchFunds");
+    // 取得初始資料
+    function fetchInitData(){
+        //console.log("fetchInitData");
         // 清空結餘
-        total_fund.value = 0;
-
+        funds_total.value = 0;
+        // 取得資料月份
         let fetchFundsMonthPromise = fetchData({
             api: "get_finance_month",
         }, "KUO-FUNDS");
-        let fetchFundsPromise = fetchData({
-            api: "get_finance",
+        // 取得總結餘
+        let fetchFundsTotalPromise = fetchData({
+            api: "get_finance_total",
         }, "KUO-FUNDS");
+        // 取得成員
         let fetchMembersPromise = fetchData({
             api: "get_members_kf",
         }, "KUO-FUNDS");
-        Promise.all([fetchFundsMonthPromise, fetchFundsPromise, fetchMembersPromise]).then((values) => {
+        Promise.all([fetchFundsTotalPromise, fetchFundsMonthPromise, fetchMembersPromise]).then((values) => {
             console.log("fetchFundsPromise.values=", values);
-            let members = values[2];
 
-            // 清空 funds
-            Object.keys(funds).forEach(key => delete funds[key]);
-            values[1].forEach((fundObj, fund_i) => {
-                let fund_date = moment(fundObj["date"]).format("YYYYMM");
-                if(Object.keys(funds).indexOf(fund_date) < 0){
-                    funds[fund_date] = [];
+            funds_total.value = values[0];
+
+            // clear month list
+            funds_months.splice(0, funds_months.length);
+            values[1].forEach((fmn, fmn_i) => {
+                funds_months.push(fmn);
+            });
+            funds_months.sort((x, y) => {
+                if( x < y ){
+                    return 1;
                 }
+                if( x > y ){
+                    return -1;
+                }
+                return 0;
+            });
 
+            // clear member list
+            funds_members.splice(0, funds_members.length);
+            values[2].forEach((fmn, fmn_i) => {
+                funds_members.push(fmn);
+            });
+        }).then(() => {
+            sel_dataMN.value = moment().format("YYYY-MM");
+        });
+    }
+    // 選擇查閱的資料月份
+    function clickDataMN(dataYM){
+        sel_dataMN.value = dataYM;
+    }
+    // 取得特定月份儲值/提領紀錄
+    function fetchFunds(dataYM){
+        console.log("fetchFunds.dataYM=", dataYM);
+
+        let fetchFundsPromise = fetchData({
+            api: "get_finance",
+            data: {
+                dataYM: dataYM,
+            },
+        }, "KUO-FUNDS");
+        Promise.all([fetchFundsPromise]).then((values) => {
+            console.log("fetchFundsPromise.values=", values);
+
+            funds.splice(0, funds.length);
+            values[0].forEach((fundObj, f_i) => {
                 // 找到紀錄姓名
-                for(let mem_i = 0; mem_i < members.length; mem_i++){
-                    let memObj = members[mem_i];
+                for(let mem_i = 0; mem_i < funds_members.length; mem_i++){
+                    let memObj = funds_members[mem_i];
                     if(memObj["code_name"] === fundObj["code_name"]){
                         fundObj["name"] = memObj["name"];
                         break;
                     }
                 }
-
-                // 依月份建立帳務紀錄
-                funds[fund_date].push( fundObj );
-                // 順道計算結餘
-                if(fundObj["type"] === "IN"){
-                    total_fund.value += fundObj["money"];
-                }else{
-                    total_fund.value -= fundObj["money"];
-                }
+                funds.push(fundObj);
             });
-
-            Object.keys(funds).forEach((fundKey, fk_i) => {
-                // 各個月份之中的帳務紀錄, 各自排序
-                funds[fundKey].sort((x, y) => {
-                    if(x["code_name"] > y["code_name"]) return 1;
-                    if(x["code_name"] < y["code_name"]) return -1;
-                    if(x["code_name"] === y["code_name"]) return 0;
-                });
-            });
-
-            // 排(倒)序月份
-            fundKeys = Object.keys(funds);
-            fundKeys.sort((x, y) => {
-                return parseInt(y) - parseInt(x);
-            });
-
-            console.log("funds=", funds);
-            console.log("total_fund=", total_fund.value);
         });
 
     }
@@ -133,7 +149,7 @@
             opObj.status = values[0]["result"];
             if(values[0]["result"] === true){
                 opObj.message = "失效成功";
-                fetchFunds();
+                fetchInitData();
             }else{
                 opObj.message = values[0]["message"];
             }
@@ -143,49 +159,50 @@
             emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
         });
     }
+
+    // 監聽 sel_dataMN
+    watch(sel_dataMN, (newDataMN, oldDataMN) => {
+        console.log("watch.sel_dataMN.newDataMN=", newDataMN);
+
+        fetchFunds(newDataMN);
+    });
 </script>
 
 <template>
 
-<div class="w-10/10 md:w-6/10 h-8/10 md:h-8/10 justify-self-center">
-    <div class="tabs tabs-border w-10/10 h-10/10">
-        <template v-for="(fundKey, fk_i) in fundKeys">
-            <input type="radio" name="funds_tabs" class="tab" :aria-label="fundKey.substr(0, 4) + '-' + fundKey.substr(4)" :checked="fk_i === 0 ? true : false" />
-            <div class="tab-content border-base-300 bg-base-100 pt-1 px-5">
-                <div class="flex flex-col w-10/10 h-10/10 overflow-y-auto">
-                    <div v-for="(fundObj, fund_i) in funds[fundKey]" class="chat"
-                        :class="{ 'chat-start': fundObj.type === 'IN', 'chat-end': fundObj.type === 'OUT' }">
-                        <div class="chat-image avatar">
-                            <div class="avatar avatar-placeholder">
-                                <div class="w-12 rounded-full"
-                                    :class="{'bg-green-900': fundObj.type === 'IN', 'bg-red-900': fundObj.type === 'OUT'}">
-                                    <span v-if="fundObj.type === 'IN'" class="text-lg text-white">儲值</span>
-                                    <span v-if="fundObj.type === 'OUT'" class="text-lg text-white">提領</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chat-header">
-                            <span class="text-base">{{ fundObj.name }}</span>
-                            <time class="text-base opacity-50">{{ fundObj.date }}</time>
-                        </div>
-                        <div class="chat-bubble">
-                            <span v-if="userRole === 'admin_kf'" class="mr-2 font-black text-red-900 cursor-pointer" @click="popupDelConfirmModal(fundObj)">X</span>
-                            $ {{ new Intl.NumberFormat().format( fundObj.money ) }}
-                            <span v-if="fundObj.memo !== ''">( {{ fundObj.memo }} )</span>
-                        </div>
-                    </div>
+<div class="w-1/1 overflow-x-auto shadow-xl">
+    <button v-for="(f_mn, f_mn_i) in funds_months" @click="clickDataMN(f_mn)"
+                class="btn btn-ghost rounded-full hover:border-black mx-1"
+                :class="{'border-black': f_mn == sel_dataMN}">
+        {{ f_mn }}
+    </button>
+</div>
+<div class="w-1/1 h-4/5 mt-2 flex flex-col overflow-y-auto">
+    <div v-for="(fundObj, fund_i) in funds" class="chat"
+        :class="{ 'chat-start': fundObj.type === 'IN', 'chat-end': fundObj.type === 'OUT' }">
+        <div class="chat-image avatar">
+            <div class="avatar avatar-placeholder">
+                <div class="w-12 rounded-full"
+                    :class="{'bg-green-900': fundObj.type === 'IN', 'bg-red-900': fundObj.type === 'OUT'}">
+                    <span v-if="fundObj.type === 'IN'" class="text-lg text-white">儲值</span>
+                    <span v-if="fundObj.type === 'OUT'" class="text-lg text-white">提領</span>
                 </div>
-            </div>    
-        </template>
+            </div>
+        </div>
+        <div class="chat-header">
+            <span class="text-base">{{ fundObj.name }}</span>
+            <time class="text-base opacity-50">{{ fundObj.date }}</time>
+        </div>
+        <div class="chat-bubble">
+            <span v-if="userRole === 'admin_kf'" class="mr-2 font-black text-red-900 cursor-pointer" @click="popupDelConfirmModal(fundObj)">X</span>
+            $ {{ new Intl.NumberFormat().format( fundObj.money ) }}
+            <span v-if="fundObj.memo !== ''">( {{ fundObj.memo }} )</span>
+        </div>
     </div>
 </div>
 
-<div class="w-10/10 h-1/10">
-    &nbsp;
-</div>
-
-<div class="w-10/10 h-1/10 flex flex-col text-3xl justify-center items-center" :class="{'bg-gray-200': total_fund === 0, 'bg-green-200': total_fund > 0, 'bg-red-200': total_fund < 0}">
-    結餘：$ {{ new Intl.NumberFormat().format( total_fund ) }}
+<div class="w-10/10 h-1/10 mt-2 flex flex-col text-3xl justify-center items-center rounded-full shadow-xl" :class="{'bg-gray-200': funds_total === 0, 'bg-green-200': funds_total > 0, 'bg-red-200': funds_total < 0}">
+    結餘：$ {{ new Intl.NumberFormat().format( funds_total ) }}
 </div>
 
 <!-- 失效再確認 -->
