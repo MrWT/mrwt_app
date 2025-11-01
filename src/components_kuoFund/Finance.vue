@@ -175,14 +175,15 @@
 
 <template>
 
-<div class="w-1/1 overflow-x-auto shadow-xl">
+<div class="w-1/1 h-1/6 overflow-x-auto">
     <button v-for="(f_mn, f_mn_i) in funds_months" @click="clickDataMN(f_mn)"
-                class="btn btn-ghost rounded-full hover:border-black mx-1"
-                :class="{'border-black': f_mn == sel_dataMN}">
+                class="btn btn-ghost rounded-none border-0 border-b-2 hover:border-rose-500 mx-1"
+                :class="{'border-amber-600': f_mn == sel_dataMN}">
         {{ f_mn }}
     </button>
+    <div class="divider"></div>
 </div>
-<div class="w-1/1 h-4/5 mt-2 flex flex-col overflow-y-auto">
+<div class="w-1/1 h-4/6 mt-2 flex flex-col overflow-y-auto">
     <div v-for="(fundObj, fund_i) in funds" class="chat"
         :class="{ 'chat-start': fundObj.type === 'IN', 'chat-end': fundObj.type === 'OUT' }">
         <div class="chat-image avatar">
@@ -204,9 +205,10 @@
             <span v-if="fundObj.memo !== ''">( {{ fundObj.memo }} )</span>
         </div>
     </div>
+    <div v-if="funds.length === 0" class="text-3xl text-center w-1/1">查無資料</div>
 </div>
 
-<div class="w-10/10 h-1/10 mt-2 flex flex-col text-3xl justify-center items-center rounded-full shadow-xl" :class="{'bg-gray-200': funds_total === 0, 'bg-green-200': funds_total > 0, 'bg-red-200': funds_total < 0}">
+<div class="w-10/10 h-1/6 mt-1 flex flex-col text-3xl justify-center items-center rounded-full shadow-xl" :class="{'bg-gray-200': funds_total === 0, 'bg-green-200': funds_total > 0, 'bg-red-200': funds_total < 0}">
     結餘：$ {{ new Intl.NumberFormat().format( funds_total ) }}
 </div>
 
