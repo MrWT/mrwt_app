@@ -37,7 +37,7 @@
     // 取得 finance 資料
     function fetchMembers(){
         let fetchMembersPromise = fetchData({
-            api: "get_members_kf",
+            api: "get_members",
         }, "KUO-FUNDS");
         Promise.all([fetchMembersPromise]).then((values) => {
             console.log("fetchMembersPromise.values=", values[0]);
