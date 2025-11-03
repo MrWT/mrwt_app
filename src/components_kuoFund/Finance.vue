@@ -175,7 +175,7 @@
 
 <template>
 
-<div class="w-1/1 h-1/6 overflow-x-auto">
+<div class="w-1/1 h-1/6 overflow-x-auto overflow-y-hidden">
     <button v-for="(f_mn, f_mn_i) in funds_months" @click="clickDataMN(f_mn)"
                 class="btn btn-ghost rounded-none border-0 border-b-2 hover:border-rose-500 mx-1"
                 :class="{'border-amber-600': f_mn == sel_dataMN}">
