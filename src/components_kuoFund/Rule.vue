@@ -54,7 +54,7 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div>存款銀行 - Line Bank - 友感帳戶</div>
+                    <div>管理帳戶 - Line Bank - 友感帳戶</div>
                     <div class="text-xs uppercase font-semibold opacity-60">銀行代號: {{ bankInfo.bank_no }} / 帳號: {{ bankInfo.account }}</div>
                 </div>
             </li>
@@ -195,18 +195,38 @@
                     </div>
                 </div>
             </li>
-  
+            
             <li class="list-row">
                 <div class="text-4xl font-thin opacity-30 tabular-nums">02</div>
+                <div>
+                    <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M3 5.983C3 4.888 3.895 4 5 4h14c1.105 0 2 .888 2 1.983v8.923a1.992 1.992 0 0 1-2 1.983h-6.6l-2.867 2.7c-.955.899-2.533.228-2.533-1.08v-1.62H5c-1.105 0-2-.888-2-1.983V5.983Zm5.706 3.809a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Zm2.585.002a1 1 0 1 1 .003 1.414 1 1 0 0 1-.003-1.414Zm5.415-.002a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="list-col-grow">
+                    <div class="text-base">使用"Line 中的 iPass Money"進行"跨機構轉帳"</div>
+                    <div class="list-col-wrap text-xs">
+                        使用 iPass Money 將月費直接轉進管理帳戶, 可能需自行負擔轉帳手續費。<br>
+
+                        <div class="mt-5">
+                            * 參考資料: 
+                            <a class="link" target="_blank" href="https://www.i-pass.com.tw/News/Detail/103011">相關手續費參考</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="list-row">
+                <div class="text-4xl font-thin opacity-30 tabular-nums">03</div>
                 <div>
                     <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                         <path fill-rule="evenodd" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-6.616l-2.88 2.592C8.537 20.461 7 19.776 7 18.477V17H5a2 2 0 0 1-2-2V6Zm4 2a1 1 0 0 0 0 2h5a1 1 0 1 0 0-2H7Zm8 0a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2Zm-8 3a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H7Zm5 0a1 1 0 1 0 0 2h5a1 1 0 1 0 0-2h-5Z" clip-rule="evenodd"/>
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div class="text-base">以"Line 中的 iPass Money"轉帳</div>
+                    <div class="text-base">使用"Line 中的 iPass Money"進行"轉帳"</div>
                     <div class="list-col-wrap text-xs">
-                        方便直接使用 Line App 轉帳, 也可省去轉帳費用。
+                        使用 iPass Money 將月費轉進輪值代管人的 iPass Money 中, 再由輪值代管人轉進管理帳戶。
                     </div>
                 </div>
             </li>
@@ -220,7 +240,7 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div class="text-base">以常用銀行帳戶轉帳</div>
+                    <div class="text-base">以常用銀行帳戶, 直接轉帳進管理帳戶</div>
                     <div class="list-col-wrap text-xs">
                         可能需自行負擔轉帳手續費。
                     </div>
