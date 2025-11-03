@@ -325,9 +325,8 @@
         :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
         <div class="chat-image avatar">
             <div class="avatar avatar-placeholder">
-                <div class="w-8 rounded-full"
-                    :class="{'bg-neutral': msgObj.role === 'AI', 'text-gray-100': msgObj.role === 'AI',
-                             'bg-green-500': msgObj.role === 'user', 'text-gray-900': msgObj.role === 'user'}">
+                <div class="w-8 rounded-full border-5 bg-white text-gray-900"
+                    :class="{'border-zinc-500': msgObj.role === 'AI', 'border-stone-500': msgObj.role === 'user'}">
                     <span class="text-xs">{{ msgObj.short_name }}</span>
                 </div>
             </div>
@@ -347,13 +346,13 @@
             <div class="avatar avatar-placeholder">
                 <div class="size-8 rounded-full bg-neutral text-gray-100">
                     <span class="text-xs">
-                        {{ currentAiRole.short_name ?? "AI" }}
+                        {{ " " }}
                     </span>
                 </div>
             </div>
         </div>
         <div class="chat-header">
-            {{ currentAiRole.speaker ?? "AI" }}
+            {{ "AI" }}
         </div>
         <div class="chat-bubble">
             好喔~ 稍等
