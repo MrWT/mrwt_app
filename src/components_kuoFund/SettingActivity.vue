@@ -34,11 +34,14 @@
     }
     // 取得活動清單
     function fetchActivity(){
-        let getActivityKFPromise = fetchData({
-            api: "get_activiy_kf",
+        let getActivityPromise = fetchData({
+            api: "get_activiy",
+            data: {
+                activity_month: "ALL",
+            }
         }, "KUO-FUNDS");
-        Promise.all([getActivityKFPromise]).then((values) => {
-            console.log("getActivityKFPromise.values=", values);
+        Promise.all([getActivityPromise]).then((values) => {
+            console.log("getActivityPromise.values=", values);
 
             locations.splice(0, locations.length);
             values[0].forEach((activity, act_i) => {
@@ -92,7 +95,7 @@
         }
 
         let newManualPagePromise = fetchData({
-            api: "new_activity_manual_page_kf",
+            api: "new_activity_manual_page",
             data: {
                 manual: manual,
             }
@@ -116,7 +119,7 @@
 
 <template>
 
-    <div class="divider">新增活動手冊頁面</div>
+    <div class="divider">新增活動說明頁面</div>
     <div class="w-10/10 flex flex-col md:flex-row gap-2 place-items-center">
         <div class="w-10/10 md:w-5/10 flex flex-col">
             <label class="label">
