@@ -10,7 +10,7 @@
     })
 
     onMounted(() => {
-        console.log("Rule_KF mounted.");
+        console.log("Rule mounted.");
         init();
     });
 
@@ -26,10 +26,10 @@
 
     // 初始化 component
     function init(){
-        console.log("Rule_KF.init");
-        console.log("Rule_KF.props.title", props.title);
-        console.log("Rule_KF.props.account", props.account);
-        console.log("Rule_KF.props.funSetting", props.funSetting);
+        console.log("Rule.init");
+        console.log("Rule.props.title", props.title);
+        console.log("Rule.props.account", props.account);
+        console.log("Rule.props.funSetting", props.funSetting);
 
         bankInfo.bank_no = props.funSetting.bank_info.value1;
         bankInfo.account = props.funSetting.bank_info.value2;
@@ -232,7 +232,7 @@
             </li>
   
             <li class="list-row">
-                <div class="text-4xl font-thin opacity-30 tabular-nums">03</div>
+                <div class="text-4xl font-thin opacity-30 tabular-nums">04</div>
                 <div>
                     <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                         <path fill-rule="evenodd" d="M10.915 2.345a2 2 0 0 1 2.17 0l7 4.52A2 2 0 0 1 21 8.544V9.5a1.5 1.5 0 0 1-1.5 1.5H19v6h1a1 1 0 1 1 0 2H4a1 1 0 1 1 0-2h1v-6h-.5A1.5 1.5 0 0 1 3 9.5v-.955a2 2 0 0 1 .915-1.68l7-4.52ZM17 17v-6h-2v6h2Zm-6-6h2v6h-2v-6Zm-2 6v-6H7v6h2Z" clip-rule="evenodd"/>
@@ -248,7 +248,7 @@
             </li>
 
             <li class="list-row">
-                <div class="text-4xl font-thin opacity-30 tabular-nums">04</div>
+                <div class="text-4xl font-thin opacity-30 tabular-nums">05</div>
                 <div>
                     <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                         <path fill-rule="evenodd" d="M7 6a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-2v-4a3 3 0 0 0-3-3H7V6Z" clip-rule="evenodd"/>
