@@ -88,10 +88,10 @@
         <SettingFinanceKF @popup-message="popupMessage"></SettingFinanceKF>
     </div>
 
-    <!-- 活動手冊建立 - 郭家基金 -->
+    <!-- 活動說明建立 - 郭家基金 -->
     <input v-if="userRole === 'admin_kf'" type="radio" name="setting_tabs" class="tab" aria-label="上傳活動手冊-KF" />
     <div v-if="userRole === 'admin_kf'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
-        <SettingActivityKF @popup-message="popupMessage"></SettingActivityKF>
+        <SettingActivityKF :user_role="userRole" @popup-message="popupMessage"></SettingActivityKF>
     </div>
 
     <!-- 分析問卷結果 - 郭家基金 -->

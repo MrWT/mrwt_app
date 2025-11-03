@@ -8,6 +8,7 @@
         app_state: String,
         title: String,
         account: String,
+        user_role: String, 
     })
 
     onMounted(() => {
@@ -29,6 +30,7 @@
         //console.log("props.app_state", props.app_state);
         //console.log("props.title", props.title);
         //console.log("props.account", props.account);
+        //console.log("props.user_role", props.user_role);
 
         fetchActivity();
     }
@@ -38,6 +40,7 @@
             api: "get_activiy",
             data: {
                 activity_month: "ALL",
+                user_role: props.user_role,
             }
         }, "KUO-FUNDS");
         Promise.all([getActivityPromise]).then((values) => {
