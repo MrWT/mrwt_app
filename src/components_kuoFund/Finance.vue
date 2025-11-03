@@ -11,7 +11,7 @@
     })
 
     onMounted(() => {
-        console.log("Finance_KF mounted.");
+        console.log("Finance mounted.");
         init();
     });
 
@@ -28,10 +28,10 @@
 
     // 初始化 component
     function init(){
-        console.log("Finance_KF.init");
-        console.log("Finance_KF.props.title", props.title);
-        console.log("Finance_KF.props.account", props.account);
-        console.log("Finance_KF.props.user_role", props.user_role);
+        console.log("Finance.init");
+        console.log("Finance.props.title", props.title);
+        console.log("Finance.props.account", props.account);
+        console.log("Finance.props.user_role", props.user_role);
         userRole.value = props.user_role;
         
         // 取得初始資料
@@ -52,7 +52,7 @@
         }, "KUO-FUNDS");
         // 取得成員
         let fetchMembersPromise = fetchData({
-            api: "get_members_kf",
+            api: "get_members",
         }, "KUO-FUNDS");
         Promise.all([fetchFundsTotalPromise, fetchFundsMonthPromise, fetchMembersPromise]).then((values) => {
             console.log("fetchFundsPromise.values=", values);
@@ -175,13 +175,12 @@
 
 <template>
 
-<div class="w-1/1 h-1/6 overflow-x-auto overflow-y-hidden">
+<div class="w-1/1 overflow-x-auto overflow-y-hidden shadow-2xl">
     <button v-for="(f_mn, f_mn_i) in funds_months" @click="clickDataMN(f_mn)"
                 class="btn btn-ghost rounded-none border-0 border-b-2 hover:border-rose-500 mx-1"
-                :class="{'border-amber-600': f_mn == sel_dataMN}">
+                :class="{'border-amber-600': f_mn === sel_dataMN, 'border-gray-500': f_mn !== sel_dataMN}">
         {{ f_mn }}
     </button>
-    <div class="divider"></div>
 </div>
 <div class="w-1/1 h-4/6 mt-2 flex flex-col overflow-y-auto">
     <div v-for="(fundObj, fund_i) in funds" class="chat"
