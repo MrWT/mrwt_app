@@ -6,7 +6,7 @@
     const props = defineProps({
         title: String,
         account: String,
-        googleMapApiKey: String, 
+        user_role: String, 
     })
 
     onMounted(() => {
@@ -18,7 +18,9 @@
     let selActivityMonth = ref("");
     let activityMonthList = reactive([]);
     let showActivity = ref(false);
-    let activity = reactive({});
+    let activity_location = ref("");
+    let activity_date = ref("");
+    let activity_address = ref("");
     let manualPages = reactive([]);
 
     // 初始化 component
@@ -26,7 +28,7 @@
         console.log("Activity.init");
         console.log("Activity.props.title=", props.title);
         console.log("Activity.props.account=", props.account);
-        console.log("Activity.props.googleMapApiKey=", props.googleMapApiKey);
+        console.log("Activity.props.user_role=", props.user_role);
 
         get_activity_months();
     }   
@@ -76,30 +78,42 @@
             api: "get_activiy",
             data: {
                 activity_month: selActivityMonth.value,
+                user_role: props.user_role,
             },
         }, "KUO-FUNDS");
         Promise.all([getActivityPromise]).then((values) => {
             console.log("getActivityPromise.values=", values);
-            activity = values[0][0];
-            console.log("get_activity.activity=", activity);
 
-            manualPages.splice(0, manualPages.length);
-            if(activity){
-                activity.pages.forEach((pageObj, page_i) => {
-                    manualPages.push({
-                        src: pageObj["page"],
-                        alt: pageObj["memo"],
+            if(values[0].length > 0){
+                activity_location.value = values[0][0]["location_name"];
+                activity_address.value = values[0][0]["address"];
+                activity_date.value = values[0][0]["date"];
+
+                console.log("get_activity.activity_location=", activity_location.value);
+                console.log("get_activity.activity_address=", activity_address.value);
+                console.log("get_activity.activity_date=", activity_date.value);
+
+                manualPages.splice(0, manualPages.length);
+                if(activity_location.value){
+                    values[0][0].pages.forEach((pageObj, page_i) => {
+                        manualPages.push({
+                            src: pageObj["page"],
+                            alt: pageObj["memo"],
+                        });
                     });
-                });
-            }
+                }
 
-            // 決定是否呈現 activity
-            showActivity.value = activity ? true : false;
+                // 決定是否呈現 activity
+                showActivity.value = activity_location.value ? true : false;
+            }else{
+                // 決定是否呈現 activity
+                showActivity.value = false;
+            }
         });
     }
     // 開啟 google map 方便設定導航
     function openGoogleMap(){
-        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent( activity.location_name )}`;
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent( activity_location.value )}`;
         window.open(mapsUrl, '_blank');
     }
     
@@ -117,16 +131,16 @@
 
 <div v-if="showActivity === true" class="w-10/10 h-9/10 flex flex-col gap-2 mt-2 overflow-y-auto">
     <div class="w-10/10 h-2/10 p-1">
-        <div class="w-10/10 bg-emerald-200 text-gray-900 text-2xl text-center font-black">{{ activity.location_name }}</div>
+        <div class="w-10/10 bg-emerald-200 text-gray-900 text-2xl text-center font-black">{{ activity_location }}</div>
         <div class="w-10/10 mt-2 text-gray-900 text-xl flex justify-center">
             <svg class="size-6 text-gray-800 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
             </svg>
 
-            {{ activity.date }}
+            {{ activity_date }}
         </div>
         <div class="w-10/10 mt-2 text-gray-900 text-lg flex justify-center cursor-pointer" @click="openGoogleMap">
-            {{ activity.address }}
+            {{ activity_address }}
 
             <svg class="size-6 text-red-800 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>

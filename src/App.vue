@@ -242,7 +242,7 @@
 
                     let allFunctionKeys = ["quiz", "footmark", "finance", "chat", "plan_trip", "trip_schedule", "lockLucky", "readme", "recall", "survey", "finance_kf", "rule_kf", "activity_kf"];
                     let buildingFunctionKeys = [];
-                    let buildingFunctionKeys_kf = ["recall", "activity_kf"];
+                    let buildingFunctionKeys_kf = ["recall"];
                     allFunctionKeys.forEach((funKey, fk_i) => {
                         if(userInfo.funcs.indexOf(funKey) >= 0){
 
@@ -257,9 +257,6 @@
                             }
                         }
                     });
-
-                    //console.log("userInfo.role=" + userInfo.role);
-                    //console.log("appSetting.funButtons=", appSetting.funButtons);
                 }
 
                 // close signinModal
@@ -413,7 +410,7 @@
         <Survey v-else-if="appSetting.contentComponent === 'survey'" :title="appSetting.title" :account="userInfo.account" />
         <Finance_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Rule_KF v-else-if="appSetting.contentComponent === 'rule_kf'" :title="appSetting.title" :account="userInfo.account" :funSetting="kf_funSetting" />
-        <Activity_KF v-else-if="appSetting.contentComponent === 'activity_kf'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" />
+        <Activity_KF v-else-if="appSetting.contentComponent === 'activity_kf'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" />
     </div>
 
     <!-- signin modal -->
