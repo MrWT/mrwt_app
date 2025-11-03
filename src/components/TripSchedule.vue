@@ -27,10 +27,9 @@
     // 行程細節 - 選定要查看的日期
     let sel_day_sequence = ref("");
     // 選擇要刪除的行程
-    let selRemoveObj = {
-        destination: "",
-        trip_start_date: "",
-    };
+    let selRemove_destination = ref("");
+    let selRemove_trip_start_date = ref("");
+    let selRemove_trip_end_date = ref("");
 
     // InfoWindow options
     let infoWindowObj = reactive({});
@@ -198,9 +197,12 @@
     function openRemoveConfirmModal(scheduleObj){
         //console.log("openRemoveConfirmModal.scheduleObj=", scheduleObj);
 
-        selRemoveObj.destination = scheduleObj.destination;
-        selRemoveObj.trip_start_date = scheduleObj.trip_start_date;
-        console.log("openRemoveConfirmModal.selRemoveObj=", selRemoveObj);
+        selRemove_destination.value = scheduleObj.destination;
+        selRemove_trip_start_date.value = scheduleObj.trip_start_date;
+        selRemove_trip_end_date.value = scheduleObj.trip_end_date;
+        console.log("openRemoveConfirmModal.selRemove_destination=", selRemove_destination.value);
+        console.log("openRemoveConfirmModal.selRemove_trip_start_date=", selRemove_trip_start_date.value);
+        console.log("openRemoveConfirmModal.selRemove_trip_end_date=", selRemove_trip_end_date.value);
 
         document.getElementById("removeConfirmModal").showModal();
     }
@@ -216,8 +218,8 @@
             api: "delete_trip_schedule",
             data: {
                 account: props.account,
-                destination: selRemoveObj.destination,
-                trip_start_date: selRemoveObj.trip_start_date,
+                destination: selRemove_destination.value,
+                trip_start_date: selRemove_trip_start_date.value,
             },
         });
         Promise.all([removeTripPromise]).then((values) => {
@@ -349,10 +351,10 @@
         </div>
         <div class="h-3/10 w-10/10 text-left text-xl text-gray-100 flex flex-col p-2">
             <div>
-                目的地: {{ selRemoveObj.destination }}
+                目的地: {{ selRemove_destination }}
             </div>
             <div>
-                日期: {{ selRemoveObj.trip_start_date }} - {{ selRemoveObj.trip_end_date }}
+                日期: {{ selRemove_trip_start_date }} - {{ selRemove_trip_end_date }}
             </div>
         </div>
         <div class="divider divider-error"></div>
