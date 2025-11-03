@@ -279,6 +279,25 @@
     function closePromptModal(){
         document.getElementById("promptModal").close();
     }
+    // 開啟 NewChat 再確認 modal
+    function openNewChatConfirmModal(){
+        document.getElementById("newChatConfirmModal").showModal();
+    }
+    // 開新話題
+    function newChat(){
+        console.log("newChat");
+        // 關閉再確認 modal
+        closeNewChatConfirmModal();
+        // 清空對話錄
+        messages.splice(0, messages.length);
+        chat_room_uuid.value = "INIT";
+        // 開啟新對話
+        chat("HI");
+    }
+    // 關閉 NewChat 再確認 modal
+    function closeNewChatConfirmModal(){
+        document.getElementById("newChatConfirmModal").close();
+    }
 
     // 監聽
     watch(promptAction, (newValue, oldValue) => {
@@ -343,7 +362,13 @@
     </div>
 </div>
 
-<div class="join join-horizontal absolute bottom-5 left-0 z-10 w-1/1 justify-center md:justify-center bg-gray-200 px-2 gap-2">
+<div class="join join-horizontal absolute bottom-6 left-0 z-10 w-1/1 justify-center md:justify-center bg-gray-200 px-2 gap-2">
+    <!-- 開啟新話題 -->
+    <button class="btn join-item bg-red-300 text-gray-900 hover:underline hover:bg-gray-900 hover:text-gray-100 btn-circle" title="新話題" @click="openNewChatConfirmModal">
+        <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        </svg>
+    </button>
     <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-6/10" v-model="userMessage" @keyup.enter="send" />
     <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="傳送訊息" @click="send">
         <svg class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -468,6 +493,28 @@
 
             <button class="btn btn-ghost w-5/10 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click.stop="sendPrompt">
                 傳送
+            </button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+<!-- newChatConfirm modal -->
+<dialog id="newChatConfirmModal" class="modal">
+    <div class="modal-box h-3/10 w-10/10 flex flex-col bg-neutral-500">
+        <div class="h-10/10 w-10/10 text-center text-black font-black">
+            <span class="text-2xl">再跟您確認一次~</span>
+            <div class="divider divider-primary"></div>
+        </div>
+        <div class="modal-action">
+            <button class="btn btn-ghost w-1/2 text-gray-900 bg-gray-100 hover:bg-gray-500 hover:text-gray-100 hover:underline" @click="closeNewChatConfirmModal">
+                話題繼續
+            </button>
+
+            <button class="btn btn-ghost w-1/2 text-gray-900 bg-gray-100 hover:bg-gray-500 hover:text-gray-100 hover:underline" @click="newChat">
+                新話題
             </button>
         </div>
     </div>
