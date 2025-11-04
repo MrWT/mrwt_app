@@ -87,7 +87,8 @@
 
     <div class="divider">實作技術參考</div>
     <ul class="list bg-base-100 rounded-box h-fit w-10/10 overflow-y-auto shadow-2xl">
-        <li v-for="resObj in props.reference" class="list-row hover:bg-yellow-300/10">
+        <li v-for="resObj in props.reference" class="list-row hover:bg-yellow-300/10" 
+                :class="{'bg-gray-200': resObj.arch === 'frontend', 'bg-gray-300': resObj.arch === 'backend'}">
             <div class="text-4xl font-thin opacity-30 tabular-nums">{{ resObj.index }}</div>
             <div class="list-col-grow">
                 <div>{{ resObj.text }}</div>
