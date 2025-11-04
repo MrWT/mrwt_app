@@ -117,6 +117,18 @@
                 }
                 funds.push(fundObj);
             });
+            // 排序
+            funds.sort((x, y) => {
+                // 依日期排序
+                if( x["date"] < y["date"] ) return 1;
+                if( x["date"] > y["date"] ) return -1;
+                if( x["date"] === y["date"] ){
+                    // 依 code_name 排序
+                    if(x["code_name"] > y["code_name"]) return 1;
+                    if(x["code_name"] < y["code_name"]) return -1;
+                    return 0;
+                }
+            });
         });
 
     }
