@@ -199,6 +199,7 @@
                             name: appSetObj["key"],
                             text: appSetObj["display_text"],
                             link: appSetObj["link_url"],
+                            arch: appSetObj["architecture"],
                         });
                     });
                 }
