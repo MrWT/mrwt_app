@@ -37,18 +37,18 @@
             { value: "korea", text: "韓國", },
         ],
         scope: [
-            { value: "entertainment-ugly", text: "演藝圈(緋聞)", },
-            { value: "entertainment-ceremony", text: "演藝圈(頒獎典禮)", },
-            { value: "entertainment-show", text: "演藝圈(節目)", },
+            { value: "entertainment", text: "演藝圈", },
             { value: "house", text: "房地產", },
             { value: "stock", text: "股市", },
             { value: "basketball", text: "籃球", },
             { value: "baseball", text: "棒球", },
+            { value: "politic", text: "政治", },
         ],
         time: [
-            { value: "1week", text: "近一週", },
-            { value: "1month", text: "近一個月", },
             { value: "1day", text: "今天", },
+            { value: "1month", text: "近一個月", },
+            { value: "6month", text: "近期", },
+            { value: "1year", text: "近一年月", },
         ],
         type: [
             { value: "news", text: "新聞", },
@@ -58,8 +58,8 @@
     // 提詞機 - 選擇
     let promptAction = ref("summary");
     let promptNation = ref("taiwan");
-    let promptScope = ref("entertainment-ugly");
-    let promptTime = ref("1week");
+    let promptScope = ref("entertainment");
+    let promptTime = ref("6month");
     let promptType = ref("news");
     // 提詞機 - 結果
     let prompt = ref("");
