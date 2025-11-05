@@ -42,8 +42,8 @@
             { value: "entertainment-show", text: "演藝圈(節目)", },
             { value: "house", text: "房地產", },
             { value: "stock", text: "股市", },
-            { value: "nba", text: "NBA", },
-            { value: "mlb", text: "MLB", },
+            { value: "basketball", text: "籃球", },
+            { value: "baseball", text: "棒球", },
         ],
         time: [
             { value: "1week", text: "近一週", },
