@@ -18,7 +18,7 @@
     let financeObj = reactive({
         code_name: "",
         type: "IN",
-        money: 0,
+        money: 500,
         date: moment().format("YYYY-MM-DD"),
         memo: "",
     });
