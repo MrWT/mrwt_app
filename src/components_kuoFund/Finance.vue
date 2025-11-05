@@ -216,7 +216,12 @@
             <span v-if="fundObj.memo !== ''">( {{ fundObj.memo }} )</span>
         </div>
     </div>
-    <div v-if="funds.length === 0" class="text-3xl text-center w-1/1">查無資料</div>
+    <div v-if="funds.length === 0" class="text-3xl text-center w-1/1">
+        請稍等
+        <span class="loading loading-dots loading-xs"></span>
+        查詢資料中
+        <span class="loading loading-dots loading-xs"></span>
+    </div>
 </div>
 
 <div class="w-10/10 h-1/6 mt-1 flex flex-col text-3xl justify-center items-center rounded-full shadow-xl" :class="{'bg-gray-200': funds_total === 0, 'bg-green-200': funds_total > 0, 'bg-red-200': funds_total < 0}">
