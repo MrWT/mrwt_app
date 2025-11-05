@@ -1,8 +1,9 @@
 <script setup>
-    import { ref, reactive, onMounted } from 'vue'
+    import { ref, reactive, onMounted, watch } from 'vue'
     import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
 
+    const emit = defineEmits(['popupMessage']);
     const props = defineProps({
         title: String,
         account: String
@@ -22,6 +23,22 @@
     let userInfo = reactive({});
     let aiRoles = reactive([]);
     let currentAiRole = reactive({});
+    // 提詞機 - 選項
+    let promptOptions = reactive({
+        scope: [
+            { value: "temple-3year", text: "土城刈香", },
+            { value: "temple-7bridge", text: "過年活動( 大廟七星橋 )", },
+            { value: "temple-yearSafe", text: "過年活動( 大廟安太歲 )", },
+            { value: "temple-foodmart", text: "過年活動( 大廟美食市集 )", },
+            { value: "home-backMomHome", text: "過年活動( 回娘家 )", },
+            { value: "home-29night", text: "過年活動( 除夕圍爐夜 )", },
+            { value: "home-moon", text: "中秋烤肉活動", },
+        ],
+    });
+    // 提詞機 - 選擇
+    let promptScope = ref("home-moon");
+    // 提詞機 - 結果
+    let prompt = ref("");
 
     // 初始化 component
     function init(){
@@ -31,6 +48,8 @@
 
         fetchInitData();
         chat("HI");
+
+        combinePrompt();
     }
     // 取得 user 資料
     function fetchInitData(){
@@ -117,7 +136,48 @@
             chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
         }, 100);
     }        
-        
+    // 開啟 prompt modal
+    function openPromptModal(){
+        document.getElementById("promptModal").showModal();
+    }
+    // 組合提詞
+    function combinePrompt(){
+        let c_prompt = "";
+        /*
+        console.log("combinePrompt.promptScope=", promptScope.value);
+        */
+
+        if(promptScope.value){
+            promptOptions.scope.forEach((scopeObj, act_i) => {
+                if(promptScope.value === scopeObj.value){
+                    c_prompt += scopeObj.text;
+                }
+            });
+        }
+
+        prompt.value = "我想聊聊 " + c_prompt;
+    }
+    // 傳送提詞
+    function sendPrompt(){
+        if(prompt.value){
+            chat_room_uuid.value = "INIT";
+            userMessage.value = prompt.value;
+            send();
+        }else{
+            let error_msg = "你必須提供點內容, 不然提詞機要怎麼幫你轉送~~";
+            emit('popupMessage', false, error_msg); // Emitting the event with data
+        }
+        closePromptModal();
+    }
+    // 關閉 prompt modal
+    function closePromptModal(){
+        document.getElementById("promptModal").close();
+    }
+
+     // 監聽
+    watch(promptScope, (newValue, oldValue) => {
+        combinePrompt();
+    });
 
 </script>
 
@@ -164,14 +224,54 @@
     </div>
 </div>
 
-<div class="join join-horizontal absolute bottom-5 left-0 z-55 w-10/10 justify-center bg-gray-200">
+<div class="join join-horizontal absolute bottom-6 left-0 z-10 w-1/1 justify-center md:justify-center bg-gray-200 px-2 gap-2">
     <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-8/10" v-model="userMessage" @keyup.enter="send" />
-    <button class="btn join-item bg-gray-700 btn-circle" @click="send">
-        <svg class="w-6 h-6 text-white rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" @click="send">
+        <svg class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
         </svg>
     </button>
+    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="聊天提詞機" @click="openPromptModal">
+        <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 9h5m3 0h2M7 12h2m3 0h5M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.616a1 1 0 0 0-.67.257l-2.88 2.592A.5.5 0 0 1 8 18.477V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+        </svg>
+    </button>
 </div>
+
+<!-- prompt modal -->
+<dialog id="promptModal" class="modal modal-end">
+    <div class="modal-box h-10/10 max-w-10/10 flex flex-col bg-neutral-100">
+        <div class="flex flex-col justify-center">
+            <span class="text-lg text-gray-900 text-center">聊天提詞機</span>
+            <div class="divider divider-primary"></div>
+        </div>
+        <div class="h-3/4 md:h-4/5 w-1/1 flex flex-col overflow-y-auto gap-2 border rounded-2xl">           
+            <div class="h-1/3 w-1/1 flex flex-wrap rounded-lg bg-stone-200 px-2 gap-2 overflow-y-auto">
+                <label v-for="(sObj, s_i) in promptOptions.scope" class="label text-gray-900">
+                    <input type="radio" class="radio" :value="sObj.value" v-model="promptScope" />
+                    {{ sObj.text }}
+                </label>
+            </div>
+        </div>
+
+        <textarea class="textarea h-1/4 md:h-1/5 w-1/1 mt-1 bg-gray-900 text-gray-100" placeholder="想說點什麼嗎??" v-model="prompt"></textarea>
+
+        <div class="divider divider-primary"></div>
+        <div class="modal-action">
+            <button class="btn btn-ghost w-5/10 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click.stop="closePromptModal">
+                關閉
+            </button>
+
+            <button class="btn btn-ghost w-5/10 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click.stop="sendPrompt">
+                傳送
+            </button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
 
 </template>
 

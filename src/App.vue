@@ -407,7 +407,7 @@
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
         <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
 
-        <Recall v-else-if="appSetting.contentComponent === 'recall'" :title="appSetting.title" :account="userInfo.account" />
+        <Recall v-else-if="appSetting.contentComponent === 'recall'" :title="appSetting.title" :account="userInfo.account" @popup-message="popupMessage" />
         <Survey v-else-if="appSetting.contentComponent === 'survey'" :title="appSetting.title" :account="userInfo.account" />
         <Finance_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Rule_KF v-else-if="appSetting.contentComponent === 'rule_kf'" :title="appSetting.title" :account="userInfo.account" :funSetting="kf_funSetting" />
