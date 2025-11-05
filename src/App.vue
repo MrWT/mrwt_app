@@ -241,7 +241,7 @@
                 {
                     appSetting.funButtons.splice(0, appSetting.funButtons.length);
 
-                    let allFunctionKeys = ["quiz", "footmark", "finance", "chat", "plan_trip", "trip_schedule", "lockLucky", "readme", "recall", "survey", "finance_kf", "rule_kf", "activity_kf"];
+                    let allFunctionKeys = ["quiz", "finance", "chat", "plan_trip", "trip_schedule", "footmark", "lockLucky", "readme", "recall", "survey", "finance_kf", "rule_kf", "activity_kf"];
                     let buildingFunctionKeys = [];
                     let buildingFunctionKeys_kf = ["recall"];
                     allFunctionKeys.forEach((funKey, fk_i) => {
