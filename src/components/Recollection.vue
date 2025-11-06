@@ -120,7 +120,12 @@
             editSrc.value = editObj["src"];
         }else{
             editID.value = "NEW";
+            editDate.value = moment().format("YYYY-MM-DD");
+            editTags.splice(0, editTags.length);
+            editTag.value = "";
             editType.value = "youtube";
+            editMemo.value = "";
+            editSrc.value = "";
         }
 
         //console.log("openEditModal.editID=", editID.value);
@@ -196,12 +201,12 @@
 
 <div class="w-1/1 h-1/5 flex flex-row gap-1 bg-gray-200 p-2 rounded-2xl">
     <div class="flex flex-row gap-1 w-2/3">
-        <label class="text-md w-1/2">
+        <label class="text-md w-2/3 md:w-1/2">
             月份
             <input type="month" class="input" v-model="selDate" />
         </label>
 
-        <label class="text-md w-1/2">
+        <label class="text-md w-1/3 md:w-1/2">
             標籤
             <select class="select" v-model="selTag">
                 <option disabled selected>選擇一種標籤</option>
@@ -233,7 +238,7 @@
                     />
                 </svg>
             </div>
-            <div class="timeline-start mb-10 w-1/1">
+            <div :class="{'timeline-start mb-10 md:text-end': data_i % 2 === 0, 'timeline-end md:mb-10': data_i % 2 === 1}">
                 <time class="font-mono italic">{{ dataObj.date }}</time>
                 <div class="w-1/1 flex flex-row gap-2">
                     <div v-for="(tag, tag_i) in dataObj.tags" class="badge badge-md badge-soft badge-info">
@@ -248,12 +253,12 @@
                         </svg>
                     </button>
                 </div>
+                <!--
                 <div class="w-1/2 h-[100px] border border-black text-center content-center mt-2">
                     VIDEO
                 </div>
-                <!--
-                <iframe class="w-fit mt-2" :src="dataObj.src" frameborder="0"></iframe>
                 -->
+                <iframe class="w-fit md:w-[600px] md:h-[300px] mt-2" :src="dataObj.src" frameborder="0"></iframe>
             </div>
             <hr />
         </li>
@@ -266,7 +271,7 @@
 
 <!-- editModal -->
 <dialog id="editModal" class="modal modal-end">
-    <div class="modal-box h-1/1 w-2/3 flex flex-col bg-neutral-100">
+    <div class="modal-box h-1/1 md:w-1/3 w-2/3 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
             <span v-if="editID === 'NEW'" class="text-lg text-gray-900 text-center">新增一則回憶</span>
             <span v-if="editID !== 'NEW'" class="text-lg text-gray-900 text-center">調整一則回憶</span>
@@ -302,8 +307,7 @@
             </label>
 
             <label class="text-md w-1/1">
-                來源
-                <input type="text" class="input" v-model="editSrc" />
+                來源(YouTube ID): <input type="text" class="input w-1/3" v-model="editSrc" />
             </label>
 
             <label class="text-md w-1/1">
