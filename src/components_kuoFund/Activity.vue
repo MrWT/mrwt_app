@@ -14,10 +14,10 @@
         init();
     });
 
+    let isBuilding = ref(true);
     let appState = ref("");
     let selActivityMonth = ref("");
     let activityMonthList = reactive([]);
-    let showActivity = ref(false);
     let activity_location = ref("");
     let activity_date = ref("");
     let activity_address = ref("");
@@ -29,6 +29,8 @@
         console.log("Activity.props.title=", props.title);
         console.log("Activity.props.account=", props.account);
         console.log("Activity.props.user_role=", props.user_role);
+
+        isBuilding.value = props.user_role === "admin_kf" ? false : true;
 
         get_activity_months();
     }   
@@ -102,12 +104,6 @@
                         });
                     });
                 }
-
-                // 決定是否呈現 activity
-                showActivity.value = activity_location.value ? true : false;
-            }else{
-                // 決定是否呈現 activity
-                showActivity.value = false;
             }
         });
     }
@@ -121,7 +117,7 @@
 
 <template>
 
-<div class="w-1/1 overflow-x-auto overflow-y-hidden flex flex-row gap-2 shadow-3xl">
+<div v-if="isBuilding === false" class="w-1/1 overflow-x-auto overflow-y-hidden flex flex-row gap-2 shadow-3xl">
     <button v-for="(am, am_i) in activityMonthList" @click="sel_activity_month(am)"
         class="btn btn-ghost rounded-none border-0 border-b-2 hover:border-rose-500"
         :class="{'border-amber-600': am === selActivityMonth, 'border-gray-500': am !== selActivityMonth}">
@@ -129,7 +125,7 @@
     </button>
 </div>
 
-<div v-if="showActivity === true" class="w-10/10 h-9/10 flex flex-col gap-2 mt-2 overflow-y-auto">
+<div v-if="isBuilding === false" class="w-10/10 h-9/10 flex flex-col gap-2 mt-2 overflow-y-auto">
     <div class="w-10/10 h-2/10 p-1">
         <div class="w-10/10 bg-emerald-200 text-gray-900 text-2xl text-center font-black">{{ activity_location }}</div>
         <div class="w-10/10 mt-2 text-gray-900 text-xl flex justify-center">
@@ -162,14 +158,14 @@
     </div>
 </div>
 
-<div v-if="showActivity === false" class="w-10/10 h-9/10 flex flex-col gap-2 mt-5">
+<div v-if="isBuilding === true" class="w-10/10 h-9/10 flex flex-col gap-2 mt-5">
     <div class="w-1/1 h-1/2 justify-items-center">
         <svg class="size-full text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15v3c0 .5523.44772 1 1 1h4v-4m-5 0v-4m0 4h5m-5-4V6c0-.55228.44772-1 1-1h16c.5523 0 1 .44772 1 1v1.98935M3 11h5v4m9.4708 4.1718-.8696-1.4388-2.8164-.235-2.573-4.2573 1.4873-2.8362 1.4441 2.3893c.3865.6396 1.2183.8447 1.8579.4582.6396-.3866.8447-1.2184.4582-1.858l-1.444-2.38925h3.1353l2.6101 4.27715-1.0713 2.5847.8695 1.4388"/>
         </svg>
     </div>
     <div class="w-1/1 text-center text-5xl">
-        活動規劃中
+        功能規劃中
     </div>
 </div>
 
