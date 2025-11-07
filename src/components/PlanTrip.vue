@@ -17,6 +17,7 @@
     });
 
     let appState = ref("");
+    let chatBarStatus = ref(true);
     let chatState = ref("TALKING");
     let userMessage = ref("");    
     // 聊天室 UUID
@@ -169,6 +170,8 @@
         // 當沒有 keyin message 時, 不送出訊息
         if(!userMessage.value) return;
 
+        // 關閉對話 bar
+        chatBarStatus.value = false;
         let user_name = userInfo.language === "EN" ? userInfo.name : userInfo.cname;
 
         messages.push({
@@ -408,12 +411,16 @@
         replanTrip(json_onScheduleTrip);
      
     }
+    // 開關對話 bar
+    function toggleChatBar(){
+        chatBarStatus.value = !chatBarStatus.value;
+    }
 
 </script>
 
 <template>
 
-<div id="chatBox" class="flex flex-col w-10/10 h-8/10 overflow-y-auto">
+<div id="chatBox" class="flex flex-col w-10/10 h-10/10">
     <div v-for="(msgObj, msg_i) in messages" class="chat"
         :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
         <div class="chat-image avatar">
@@ -454,7 +461,23 @@
     </div>
 </div>
 
-<div class="join join-horizontal absolute bottom-5 left-0 w-10/10 justify-center md:justify-center bg-gray-200 px-2 gap-2">
+<div class="join join-horizontal absolute left-0 z-10 w-1/1 justify-end px-2 gap-2"
+     :class="{'bg-gray-200 bottom-12': chatBarStatus === true, 'bg-transparent bottom-2': chatBarStatus === false}">
+    <!-- toggle 對話 bar -->
+    <button class="btn join-item bg-gray-300 text-gray-900 font-black btn-circle border-0 border-black  hover:border-2" title="開關對話 bar" @click="toggleChatBar">
+        <!-- open -->
+        <svg v-if="chatBarStatus !== true" class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/>
+        </svg>
+
+        <!-- close -->
+        <svg v-if="chatBarStatus === true" class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+        </svg>
+    </button>
+</div>
+<div v-if="chatBarStatus === true" class="join join-horizontal absolute bottom-2 left-0 z-10 w-1/1 justify-center px-2 gap-2"
+     :class="{'bg-gray-200': chatBarStatus === true, 'bg-transparent': chatBarStatus === false}">
     <!-- 開啟新話題 -->
     <button class="btn join-item bg-red-300 text-gray-900 hover:underline hover:bg-gray-900 hover:text-gray-100 btn-circle" title="新話題" @click="openReplanConfirmModal">
         <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
