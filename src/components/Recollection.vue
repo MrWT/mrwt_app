@@ -19,6 +19,8 @@
     onUpdated(() => {
         console.log("Recollection updated.");
 
+        let tlList = [];
+
         // 檢查 iframe 是否已將 youtube 載入完成
         let iframe_el = document.querySelectorAll("iframe");
         iframe_el.forEach((el, el_i) => {
@@ -28,9 +30,10 @@
             // 讓 skeleton 閃爍
             let tl = gsap.timeline({ yoyo: true, repeat: -1 });
             tl.to("#" + div_id, {
-                duration: 0.5,
+                duration: 1,
                 opacity: 0,
             });
+            tlList.push(tl);
             // 當 iframe 已載入完成 youtube 
             el.addEventListener("load", function() {
                 //console.log("Iframe content has loaded!", el.id);
@@ -46,8 +49,9 @@
 
     let appState = ref("");
     let dataList = reactive([]);
+    let selectMnList = reactive([]);
     let selectTagList = reactive([]);
-    let selDate = ref( moment().format("YYYY-MM") );
+    let selDate = ref("");
     let selTag = ref("All");
 
     let editTagList = reactive([]);
@@ -72,6 +76,7 @@
     }     
     // 取得初始資料
     function getInitData(){
+        selectMnList.splice(0, selectMnList.length);
         selectTagList.splice(0, selectTagList.length);
         editTagList.splice(0, editTagList.length);
 
@@ -79,7 +84,11 @@
         let getRecollectionTagsPromise = fetchData({
             api: "get_recollection_tags",
         });
-        Promise.all([getRecollectionTagsPromise]).then((values) => {
+        // 取得回憶-年月
+        let getRecollectionMnsPromise = fetchData({
+            api: "get_recollection_mn",
+        });
+        Promise.all([getRecollectionTagsPromise, getRecollectionMnsPromise]).then((values) => {
             console.log("getRecollectionTagsPromise.values=", values);
 
             selectTagList.push( "All" );
@@ -87,6 +96,19 @@
                 selectTagList.push( tag );
                 editTagList.push( tag );
             });
+
+            values[1].forEach((mnObj, mn_i) => {
+                selectMnList.push( {
+                    mn: mnObj["mn"],
+                    text: mnObj["mn"] + " [ " + mnObj["tags"].join(",") + " ]",
+                } );
+            });
+            selectMnList.sort((x, y) => {
+                if(x["mn"] > y["mn"]) return -1;
+                if(x["mn"] < y["mn"]) return 1;
+                return 0;
+            });
+            selDate.value = selectMnList[0]["mn"];
         });
     }
     // 取得回憶清單
@@ -132,6 +154,12 @@
                     iframeID: "iframe_" + recObj["id"],
                     iframeSrc: iframeSrc,
                 });
+            });
+
+            dataList.sort((x, y) => {
+                if(x["date"] > y["date"]) return 1;
+                if(x["date"] < y["date"]) return -1;
+                return 0;
             });
         });
     }
@@ -211,12 +239,8 @@
         //console.log("watch.newDate=", newDate);
         //console.log("watch.oldDate=", oldDate);
 
-        if(selTag.value !== "All"){
-            selTag.value = "All";
-        }else{
-            // 取得回憶清單
-            getRecollectionList();
-        }
+        // 取得回憶清單
+        getRecollectionList();
     });
     watch(editTag, (newTag, oldTag) => {
         //console.log("watch.newTag=", newTag);
@@ -232,13 +256,16 @@
 <template>
 
 <div class="w-1/1 h-1/5 flex flex-row gap-1 bg-gray-200 p-2 rounded-2xl">
-    <div class="flex flex-row gap-1 w-2/3">
-        <label class="text-md w-2/3 md:w-1/2">
+    <div class="flex flex-col gap-1 w-4/5">
+        <label class="text-md w-1/1 flex flex-row items-center">
             月份
-            <input type="month" class="input" v-model="selDate" />
+            <select class="select" v-model="selDate">
+                <option disabled selected>選擇一個月份</option>
+                <option v-for="(mnObj, mn_i) in selectMnList" :value="mnObj.mn">{{ mnObj.text }}</option>
+            </select>
         </label>
 
-        <label class="text-md w-1/3 md:w-1/2">
+        <label class="text-md w-1/1 flex flex-row items-center">
             標籤
             <select class="select" v-model="selTag">
                 <option disabled selected>選擇一種標籤</option>
@@ -246,7 +273,7 @@
             </select>
         </label>
     </div>
-    <div class="flex flex-row w-1/3 justify-end">
+    <div class="flex flex-row w-1/5 justify-end">
         <button class="btn h-1/1" @click="openEditModal">新增</button>
     </div>
 </div>
