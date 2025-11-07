@@ -15,6 +15,7 @@
     });
 
     let appState = ref("");
+    let chatBarStatus = ref(true);
     let userMessage = ref("");
     let chatState = ref("TALKING");
     // 聊天室 UUID
@@ -150,6 +151,8 @@
         // 當沒有 keyin message 時, 不送出訊息
         if(!userMessage.value) return;
 
+        // 關閉對話 bar
+        chatBarStatus.value = false;
         let user_name = userInfo.language === "EN" ? userInfo.name : userInfo.cname;
 
         messages.push({
@@ -298,6 +301,10 @@
     function closeNewChatConfirmModal(){
         document.getElementById("newChatConfirmModal").close();
     }
+    //
+    function toggleChatBar(){
+        chatBarStatus.value = !chatBarStatus.value;
+    }
 
     // 監聽
     watch(promptAction, (newValue, oldValue) => {
@@ -320,7 +327,7 @@
 
 <template>
 
-<div id="chatBox" class="flex flex-col w-10/10 h-8/10 overflow-y-auto">
+<div id="chatBox" class="flex flex-col w-10/10 h-10/10">
     <div v-for="(msgObj, msg_i) in messages" class="chat"
         :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
         <div class="chat-image avatar">
@@ -361,25 +368,41 @@
     </div>
 </div>
 
-<div class="join join-horizontal absolute bottom-6 left-0 z-10 w-1/1 justify-center md:justify-center bg-gray-200 px-2 gap-2">
+<div class="join join-horizontal absolute bottom-2 left-0 z-10 w-1/1 justify-end px-2 gap-2"
+     :class="{'bg-gray-200': chatBarStatus === true, 'bg-transparent': chatBarStatus === false}">
+    <!-- 開啟對話 bar -->
+    <button class="btn join-item bg-gray-900 text-gray-100 hover:underline hover:bg-gray-300 hover:text-gray-900 btn-circle" title="開啟對話 bar" @click="toggleChatBar">
+        <!-- < -->
+        <svg v-if="chatBarStatus !== true" class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+        </svg>
+
+        <!-- > -->
+        <svg v-if="chatBarStatus === true" class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+        </svg>
+    </button>
     <!-- 開啟新話題 -->
-    <button class="btn join-item bg-red-300 text-gray-900 hover:underline hover:bg-gray-900 hover:text-gray-100 btn-circle" title="新話題" @click="openNewChatConfirmModal">
+    <button v-if="chatBarStatus === true" class="btn join-item bg-red-300 text-gray-900 hover:underline hover:bg-gray-900 hover:text-gray-100 btn-circle" title="新話題" @click="openNewChatConfirmModal">
         <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
     </button>
-    <input type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-6/10" v-model="userMessage" @keyup.enter="send" />
-    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="傳送訊息" @click="send">
+    <input v-if="chatBarStatus === true" type="text" placeholder="想說點什麼呢?" class="input input-info join-item w-6/10" v-model="userMessage" @keyup.enter="send" />
+    <!-- 傳送訊息 -->
+    <button v-if="chatBarStatus === true" class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="傳送訊息" @click="send">
         <svg class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
         </svg>
     </button>
-    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="調整 AI 角色" @click="openSettingModal">
+    <!-- 調整 AI 角色 -->
+    <button v-if="chatBarStatus === true" class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="調整 AI 角色" @click="openSettingModal">
         <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 19h4a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-2m-2.236-4a3 3 0 1 0 0-4M3 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
         </svg>
     </button>
-    <button class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="聊天提詞機" @click="openPromptModal">
+    <!-- 聊天提詞機 -->
+    <button v-if="chatBarStatus === true" class="btn join-item bg-gray-300 btn-circle hover:bg-blue-300" title="聊天提詞機" @click="openPromptModal">
         <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 9h5m3 0h2M7 12h2m3 0h5M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.616a1 1 0 0 0-.67.257l-2.88 2.592A.5.5 0 0 1 8 18.477V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
         </svg>
