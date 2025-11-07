@@ -242,7 +242,7 @@
                 {
                     appSetting.funButtons.splice(0, appSetting.funButtons.length);
 
-                    let allFunctionKeys = ["quiz", "finance", "chat", "plan_trip", "trip_schedule", "footmark", "recollection", "lockLucky", "readme", "recall", "survey", "finance_kf", "rule_kf", "activity_kf"];
+                    let allFunctionKeys = ["quiz", "finance", "chat", "plan_trip", "trip_schedule", "footmark", "recollection", "lockLucky", "recall", "survey", "finance_kf", "rule_kf", "activity_kf"];
                     let buildingFunctionKeys = [];
                     let buildingFunctionKeys_kf = ["recall"];
                     allFunctionKeys.forEach((funKey, fk_i) => {
@@ -356,7 +356,7 @@
         <span class="loading loading-bars loading-xl"></span>
     </div>
     <!-- 功能 component -->
-    <div class="navbar bg-slate-200/100 h-[10px] fixed top-0 left-0 z-50">
+    <div class="navbar bg-yellow-800/20 h-[10px] fixed top-0 left-0 z-50">
         <div class="flex-1">
             <a class="btn btn-ghost text-xl" @click="gotoPage('gallery')">
                 <span>{{ appSetting.title }}</span>
@@ -364,10 +364,18 @@
         </div>
         <div class="flex-none">
             <ul class="menu menu-horizontal bg-slate-200/100 rounded-box w-10/10">
+                <!-- readme -->
+                <li @click="gotoPage('readme')">
+                    <a class="tooltip tooltip-bottom" :data-tip="userInfo.languages.readme">
+                        <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>
+                    </a>
+                </li>
                 <!-- setting -->
                 <li v-if="userInfo.funcs.indexOf('setting') !== -1" @click="gotoPage('setting')">
                     <a class="tooltip tooltip-bottom" :data-tip="userInfo.languages.app_setting">
-                        <svg class="w-5 h-5 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd" d="M9.586 2.586A2 2 0 0 1 11 2h2a2 2 0 0 1 2 2v.089l.473.196.063-.063a2.002 2.002 0 0 1 2.828 0l1.414 1.414a2 2 0 0 1 0 2.827l-.063.064.196.473H20a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-.089l-.196.473.063.063a2.002 2.002 0 0 1 0 2.828l-1.414 1.414a2 2 0 0 1-2.828 0l-.063-.063-.473.196V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.089l-.473-.196-.063.063a2.002 2.002 0 0 1-2.828 0l-1.414-1.414a2 2 0 0 1 0-2.827l.063-.064L4.089 15H4a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h.09l.195-.473-.063-.063a2 2 0 0 1 0-2.828l1.414-1.414a2 2 0 0 1 2.827 0l.064.063L9 4.089V4a2 2 0 0 1 .586-1.414ZM8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" clip-rule="evenodd"/>
                         </svg>
                     </a>
@@ -387,10 +395,10 @@
     <div class="navbar bg-white opacity-70 h-[10px] fixed top-15 left-0 z-50">
     </div>
     <!-- 功能 menu -->
-    <div class="navbar shadow-lg h-[10px] fixed top-15 left-0 z-50 flex flex-row content-center gap-5 overflow-x-auto overflow-y-hidden">
+    <div class="navbar shadow-lg h-[10px] fixed top-15 left-0 z-50 flex flex-row justify-start content-center gap-5 overflow-x-auto overflow-y-hidden">
         <template v-for="(fbObj, fb_i) in appSetting.funButtons">
-            <button class="btn text-black font-black" 
-                    :class="{'btn-outline':appSetting.contentComponent === fbObj.key, 'btn-ghost': appSetting.contentComponent !== fbObj.key}" 
+            <button class="btn text-black font-black rounded-md hover:bg-violet-200/30" 
+                    :class="{'bg-violet-200/50':appSetting.contentComponent === fbObj.key, 'btn-ghost': appSetting.contentComponent !== fbObj.key}" 
                     @click="gotoPage(fbObj.key)">{{ fbObj.display_text }}</button>
         </template>
     </div>
