@@ -487,7 +487,7 @@
 
 <!-- chat modal -->
 <dialog id="chatModal" class="modal modal-end">
-    <div class="modal-box h-10/10 w-8/10 flex flex-col bg-neutral-100">
+    <div class="modal-box h-10/10 w-1/1 md:w-8/10 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
             <span class="text-xl text-gray-900 text-center"></span>
         </div>

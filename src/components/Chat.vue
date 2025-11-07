@@ -392,7 +392,7 @@
 
 <!-- chat modal -->
 <dialog id="chatModal" class="modal modal-end">
-    <div class="modal-box h-10/10 w-8/10 flex flex-col bg-neutral-100">
+    <div class="modal-box h-10/10 w-1/1 md:w-8/10 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
             <span class="text-xl text-gray-900 text-center"></span>
         </div>
@@ -408,23 +408,23 @@
             </button>
 
             <div class="divider divider-primary"></div>
-            <div class="w-1/1 flex flex-wrap gap-2">
+            <div class="w-1/1 flex flex-col gap-2">
                 <!-- 開啟新話題 -->
-                <button class="btn bg-red-300 text-gray-900 hover:bg-gray-900 hover:text-gray-100 w-1/3" title="新話題" @click="openNewChatConfirmModal">
+                <button class="btn bg-red-300 text-gray-900 hover:bg-gray-900 hover:text-gray-100 w-1/1" title="新話題" @click="openNewChatConfirmModal">
                     <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                     </svg>
                     新話題
                 </button>
                 <!-- 調整 AI 角色 -->
-                <button class="btn bg-gray-300 hover:bg-blue-300 w-1/3" title="調整 AI 角色" @click="openSettingModal">
+                <button class="btn bg-gray-300 hover:bg-blue-300 w-1/1" title="調整 AI 角色" @click="openSettingModal">
                     <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 19h4a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-2m-2.236-4a3 3 0 1 0 0-4M3 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                     </svg>
                     調整 AI 角色
                 </button>
                 <!-- 聊天提詞機 -->
-                <button class="btn bg-gray-300 hover:bg-blue-300 w-1/3" title="聊天提詞機" @click="openPromptModal">
+                <button class="btn bg-gray-300 hover:bg-blue-300 w-1/1" title="聊天提詞機" @click="openPromptModal">
                     <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 9h5m3 0h2M7 12h2m3 0h5M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.616a1 1 0 0 0-.67.257l-2.88 2.592A.5.5 0 0 1 8 18.477V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
                     </svg>
