@@ -28,7 +28,7 @@
             // 讓 skeleton 閃爍
             let tl = gsap.timeline({ yoyo: true, repeat: -1 });
             tl.to("#" + div_id, {
-                duration: 0.3,
+                duration: 0.5,
                 opacity: 0,
             });
             // 當 iframe 已載入完成 youtube 
@@ -110,26 +110,27 @@
 
             values[0].forEach((recObj, rec_i) => {
                 // 組合 video src
-                let src_of_dataObj = "";
+                let iframeSrc = "";
                 {
                     if(recObj["src"].indexOf("https://") >= 0){
-                        src_of_dataObj = recObj["src"];
+                        iframeSrc = recObj["src"];
                     }else{
-                        src_of_dataObj = "https://www.youtube.com/embed/" + recObj["src"];
+                        iframeSrc = "https://www.youtube.com/embed/" + recObj["src"];
                     }
-                    src_of_dataObj += "?autoplay=0";
+                    iframeSrc += "?autoplay=0";
                 }
 
                 dataList.push({
                     id: recObj["id"],
                     date: recObj["date"],
                     tags: recObj["tags"].split(","),
-                    src: src_of_dataObj,
+                    src: recObj["src"],
                     memo: recObj["memo"],
                     type: recObj["type"], 
 
                     divID: "div_" + recObj["id"],
                     iframeID: "iframe_" + recObj["id"],
+                    iframeSrc: iframeSrc,
                 });
             });
         });
@@ -287,7 +288,7 @@
                 <div :id="dataObj.divID" class="w-[300px] h-[150px] md:w-[600px] md:h-[300px] mt-2">
                     <div class="skeleton h-1/1 w-1/1"></div>
                 </div>
-                <iframe :id="dataObj.iframeID" class="w-fit md:w-[600px] md:h-[300px] mt-2 hidden" :src="dataObj.src" frameborder="0"></iframe>
+                <iframe :id="dataObj.iframeID" class="w-fit md:w-[600px] md:h-[300px] mt-2 hidden" :src="dataObj.iframeSrc" frameborder="0"></iframe>
             </div>
             <hr />
         </li>
