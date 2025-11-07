@@ -486,23 +486,12 @@
 </button>
 
 <!-- chat modal -->
-<dialog id="chatModal" class="modal modal-end">
+<dialog id="chatModal" class="modal modal-end md:modal-middle">
     <div class="modal-box h-10/10 w-1/1 md:w-8/10 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
             <span class="text-xl text-gray-900 text-center"></span>
         </div>
         <div class="h-8/10 w-10/10 flex flex-col overflow-y-auto gap-2">
-            <textarea class="textarea w-1/1 h-1/3" placeholder="想說點什麼呢?" v-model="userMessage"></textarea>
-
-            <!-- 傳送訊息 -->
-            <button class="btn bg-gray-300 hover:bg-blue-300 w-1/1" @click="send">
-                <svg class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                    <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
-                </svg>
-                傳送訊息
-            </button>
-
-            <div class="divider divider-primary"></div>
             <div class="w-1/1 flex flex-col gap-2">
                 <!-- 開啟新話題 -->
                 <button class="btn bg-red-300 text-gray-900 hover:bg-gray-900 hover:text-gray-100 w-1/1" @click="openReplanConfirmModal">
@@ -549,6 +538,17 @@
                     </ul>
                 </div>
             </div>
+
+            <div class="divider divider-primary"></div>
+            <textarea class="textarea w-1/1 h-1/3" placeholder="想說點什麼呢?" v-model="userMessage"></textarea>
+
+            <!-- 傳送訊息 -->
+            <button class="btn bg-gray-300 hover:bg-blue-300 w-1/1" @click="send">
+                <svg class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
+                </svg>
+                傳送訊息
+            </button>
         </div>
         <div class="divider divider-primary"></div>
         <div class="modal-action">
