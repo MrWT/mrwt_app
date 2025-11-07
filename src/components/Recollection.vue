@@ -213,6 +213,7 @@
             getInitData();
             getRecollectionList();
             closeEditModal();
+            closeRemoveConfirmModal();
         });
     }
     // 移除一個 tag
@@ -225,6 +226,48 @@
     // 關閉 editModal
     function closeEditModal(){
         document.getElementById("editModal").close();
+    }
+    // 開啟 Remove 再確認 modal
+    function openRemoveConfirmModal(editObj){
+        //console.log("openRemoveConfirmModal.scheduleObj=", scheduleObj);
+
+        editID.value = editObj["id"];
+        editDate.value = editObj["date"];
+        
+        editTags.splice(0, editTags.length);
+        editObj["tags"].forEach((tag, tag_i) => {
+            editTags.push(tag);
+        });
+        editTag.value = "";
+        
+        editType.value = editObj["type"];
+        editMemo.value = editObj["memo"];
+        editSrc.value = editObj["src"];
+
+        document.getElementById("removeConfirmModal").showModal();
+    }
+    // 關閉 Remove 再確認 modal
+    function closeRemoveConfirmModal(){
+        document.getElementById("removeConfirmModal").close();
+    }
+    // 刪除回憶內容
+    function removeRecollection(){
+        console.log("removeRecollection");
+
+        let removeRecollectionPromise = fetchData({
+            api: "del_recollection",
+            data: {
+                id: editID.value,
+            },
+        });
+        Promise.all([removeRecollectionPromise]).then((values) => {
+            console.log("removeRecollectionPromise.values=", values);
+            
+            getInitData();
+            getRecollectionList();
+            closeEditModal();
+            closeRemoveConfirmModal();
+        });
     }
 
     // 監視
@@ -319,6 +362,11 @@
                             <path fill-rule="evenodd" d="M14 4.182A4.136 4.136 0 0 1 16.9 3c1.087 0 2.13.425 2.899 1.182A4.01 4.01 0 0 1 21 7.037c0 1.068-.43 2.092-1.194 2.849L18.5 11.214l-5.8-5.71 1.287-1.31.012-.012Zm-2.717 2.763L6.186 12.13l2.175 2.141 5.063-5.218-2.141-2.108Zm-6.25 6.886-1.98 5.849a.992.992 0 0 0 .245 1.026 1.03 1.03 0 0 0 1.043.242L10.282 19l-5.25-5.168Zm6.954 4.01 5.096-5.186-2.218-2.183-5.063 5.218 2.185 2.15Z" clip-rule="evenodd"/>
                         </svg>
                     </button>
+                    <button class="btn btn-ghost" @click="openRemoveConfirmModal(dataObj)">
+                        <svg class="size-4 text-red-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>
+                    </button>
                 </div>
                 <div :id="dataObj.divID" class="w-[300px] h-[150px] md:w-[600px] md:h-[300px] mt-2">
                     <div class="skeleton h-1/1 w-1/1"></div>
@@ -392,6 +440,40 @@
 
             <button class="btn btn-ghost w-5/10 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click.stop="saveEdit">
                 儲存
+            </button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+<!-- removeConfirm modal -->
+<dialog id="removeConfirmModal" class="modal">
+    <div class="modal-box h-5/10 w-10/10 flex flex-col bg-neutral-500">
+        <div class="h-2/10 w-10/10 text-center text-gray-100 font-black">
+            <span class="text-2xl">刪除前, 再跟您確認一次~</span>
+            <div class="divider divider-error"></div>
+        </div>
+        <div class="h-3/10 w-10/10 text-left text-xl text-gray-100 flex flex-col p-2">
+            <div>
+                日期: {{ editDate }}
+            </div>
+            <div>
+                說明: {{ editMemo }}
+            </div>
+            <div>
+                標籤: {{ editTags.join(", ") }}
+            </div>
+        </div>
+        <div class="divider divider-error"></div>
+        <div class="modal-action">
+            <button class="btn btn-ghost w-1/2 text-gray-100 hover:bg-gray-100 hover:text-gray-900 hover:underline" @click="closeRemoveConfirmModal">
+                取消
+            </button>
+
+            <button class="btn btn-ghost w-1/2 text-gray-100 hover:bg-gray-100 hover:text-gray-900 hover:underline" @click="removeRecollection">
+                確認
             </button>
         </div>
     </div>
