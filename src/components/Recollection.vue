@@ -303,7 +303,7 @@
         //console.log("watch.newTag=", newTag);
         //console.log("watch.oldTag=", oldTag);
 
-        if(editTags.indexOf(newTag) < 0){
+        if(newTag && editTags.indexOf(newTag) < 0){
             editTags.push(newTag);
         }
     });
