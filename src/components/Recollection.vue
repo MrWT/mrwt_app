@@ -232,8 +232,22 @@
         //console.log("watch.newTag=", newTag);
         //console.log("watch.oldTag=", oldTag);
 
-        // 取得回憶清單
-        getRecollectionList();
+        if(newTag === "All"){
+            selectMnList.splice(0, 1);
+            selDate.value = selectMnList[0]["mn"];
+        }else{
+            if(selectMnList[0]["mn"] === "All"){
+                // 取得回憶清單
+                getRecollectionList();
+            }else{
+                selectMnList.splice(0, 0, { 
+                    mn: "All",
+                    text: "All",
+                });
+                selDate.value = "All";
+            }
+        }
+
     });
     watch(selDate, (newDate, oldDate) => {
         //console.log("watch.newDate=", newDate);
@@ -257,21 +271,15 @@
 
 <div class="w-1/1 h-1/5 flex flex-row gap-1 bg-gray-200 p-2 rounded-2xl">
     <div class="flex flex-col gap-1 w-4/5">
-        <label class="text-md w-1/1 flex flex-row items-center">
-            月份
-            <select class="select" v-model="selDate">
-                <option disabled selected>選擇一個月份</option>
-                <option v-for="(mnObj, mn_i) in selectMnList" :value="mnObj.mn">{{ mnObj.text }}</option>
-            </select>
-        </label>
+        <select class="select w-1/1" v-model="selDate">
+            <option disabled selected>選擇一個月份</option>
+            <option v-for="(mnObj, mn_i) in selectMnList" :value="mnObj.mn">{{ mnObj.text }}</option>
+        </select>
 
-        <label class="text-md w-1/1 flex flex-row items-center">
-            標籤
-            <select class="select" v-model="selTag">
-                <option disabled selected>選擇一種標籤</option>
-                <option v-for="(tag, tag_i) in selectTagList" :value="tag">{{ tag }}</option>
-            </select>
-        </label>
+        <select class="select w-1/1" v-model="selTag">
+            <option disabled selected>選擇一種標籤</option>
+            <option v-for="(tag, tag_i) in selectTagList" :value="tag">{{ tag }}</option>
+        </select>
     </div>
     <div class="flex flex-row w-1/5 justify-end">
         <button class="btn h-1/1" @click="openEditModal">新增</button>
