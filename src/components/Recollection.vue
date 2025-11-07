@@ -139,7 +139,7 @@
                     }else{
                         iframeSrc = "https://www.youtube.com/embed/" + recObj["src"];
                     }
-                    iframeSrc += "?autoplay=0";
+                    iframeSrc += "?autoplay=0&fs=0";
                 }
 
                 dataList.push({
