@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, reactive, onMounted, watch } from 'vue'
+    import { ref, reactive, onMounted, onUpdated, watch } from 'vue'
     import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
 
@@ -13,6 +13,26 @@
     onMounted(() => {
         console.log("Recollection mounted.");
         init();
+    });
+
+    onUpdated(() => {
+        console.log("Recollection updated.");
+
+        // 檢查 iframe 是否已將 youtube 載入完成
+        let iframe_el = document.querySelectorAll("iframe");
+        iframe_el.forEach((el, el_i) => {
+            el.addEventListener("load", function() {
+                //console.log("Iframe content has loaded!", el.id);
+
+                let iframe_id = el.id;
+                let div_id = "div_" + iframe_id.substring(7);
+                //console.log("iframe_id=" + iframe_id);
+                //console.log("div_id=" + div_id);
+
+                document.getElementById(div_id).classList.add("hidden");
+                el.classList.remove("hidden");
+            });
+        });
     });
 
     let appState = ref("");
@@ -39,7 +59,7 @@
         // 取得初始資料
         getInitData();
         // 取得回憶清單
-        getRecollectionList();
+        getRecollectionList();        
     }     
     // 取得初始資料
     function getInitData(){
@@ -97,10 +117,12 @@
                     tags: recObj["tags"].split(","),
                     src: src_of_dataObj,
                     memo: recObj["memo"],
-                    type: recObj["type"]
+                    type: recObj["type"], 
+
+                    divID: "div_" + recObj["id"],
+                    iframeID: "iframe_" + recObj["id"],
                 });
             });
-
         });
     }
     // 開啟 editModal
@@ -253,12 +275,10 @@
                         </svg>
                     </button>
                 </div>
-                <!--
-                <div class="w-1/2 h-[100px] border border-black text-center content-center mt-2">
-                    VIDEO
+                <div :id="dataObj.divID" class="w-[300px] h-[150px] md:w-[600px] md:h-[300px] mt-2">
+                    <div class="skeleton h-1/1 w-1/1"></div>
                 </div>
-                -->
-                <iframe class="w-fit md:w-[600px] md:h-[300px] mt-2" :src="dataObj.src" frameborder="0"></iframe>
+                <iframe :id="dataObj.iframeID" class="w-fit md:w-[600px] md:h-[300px] mt-2 hidden" :src="dataObj.src" frameborder="0"></iframe>
             </div>
             <hr />
         </li>
