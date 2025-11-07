@@ -1,6 +1,7 @@
 <script setup>
     import { ref, reactive, onMounted, onUpdated, watch } from 'vue'
     import moment from 'moment'
+    import { gsap } from "gsap"
     import { fetchData } from "@/composables/fetchData"
 
     const emit = defineEmits(['popupMessage']);
@@ -21,11 +22,19 @@
         // 檢查 iframe 是否已將 youtube 載入完成
         let iframe_el = document.querySelectorAll("iframe");
         iframe_el.forEach((el, el_i) => {
+            let iframe_id = el.id;
+            let div_id = "div_" + iframe_id.substring(7);
+
+            // 讓 skeleton 閃爍
+            let tl = gsap.timeline({ yoyo: true, repeat: -1 });
+            tl.to("#" + div_id, {
+                duration: 0.3,
+                opacity: 0,
+            });
+            // 當 iframe 已載入完成 youtube 
             el.addEventListener("load", function() {
                 //console.log("Iframe content has loaded!", el.id);
 
-                let iframe_id = el.id;
-                let div_id = "div_" + iframe_id.substring(7);
                 //console.log("iframe_id=" + iframe_id);
                 //console.log("div_id=" + div_id);
 
