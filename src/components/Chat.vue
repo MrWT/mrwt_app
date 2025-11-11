@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, reactive, onMounted, watch } from 'vue'
+    import { ref, reactive, onMounted, watch, nextTick } from 'vue'
     import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
 
@@ -139,12 +139,15 @@
                 time: moment().format("HH:mm:ss"),
             });
 
-            setTimeout(() => {
-                let chatBoxElement = document.getElementById("chatBox");
-                chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
-
+            // Vue3 因資料改變 DOM 後觸發
+            nextTick(() => {
                 chatState.value = "DONE";
-            }, 100);
+                userMessage.value = "";
+
+                // 讓 app scroll 到底
+                let chatBoxElement = document.getElementById("app");
+                chatBoxElement.scrollTop = chatBoxElement.scrollHeight;
+            });
         });
 
     }
@@ -164,12 +167,6 @@
         });
 
         chat(userMessage.value);
-
-        setTimeout(() => {
-            userMessage.value = "";
-            let chatBoxElement = document.getElementById("chatBox");
-            chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
-        }, 100);
     }        
     // 開啟 setting modal
     function openSettingModal(){

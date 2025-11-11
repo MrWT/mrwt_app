@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, reactive, onMounted } from 'vue'
+    import { ref, reactive, onMounted, nextTick } from 'vue'
     import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
     import { GoogleMap, AdvancedMarker, CustomControl, InfoWindow } from 'vue3-google-map'
@@ -148,12 +148,15 @@
                     time: moment().format("HH:mm:ss"),
                 });
 
-                setTimeout(() => {
-                    let chatBoxElement = document.getElementById("chatBox");
-                    chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
-
+                // Vue3 因資料改變 DOM 後觸發
+                nextTick(() => {
                     chatState.value = "DONE";
-                }, 100);
+                    userMessage.value = "";
+
+                    // 讓 app scroll 到底
+                    let chatBoxElement = document.getElementById("app");
+                    chatBoxElement.scrollTop = chatBoxElement.scrollHeight;
+                });
             }catch(ex){
                 let opObj = {
                     message: "剛剛 AI 可能暫離開位置, 麻煩再操作一次.",
@@ -183,12 +186,6 @@
         });
 
         chat(userMessage.value);
-
-        setTimeout(() => {
-            userMessage.value = "";
-            let chatBoxElement = document.getElementById("chatBox");
-            chatBoxElement.scrollTo(0, chatBoxElement.scrollHeight);
-        }, 100);
     }        
     // 一鍵列出之前聊天內容
     function remindPlan(){
