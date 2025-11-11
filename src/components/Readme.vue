@@ -43,27 +43,41 @@
 <template>
 
     <div class="divider">系統架構</div>
-    <div class="flex flex-col md:flex-row w-10/10 xs:h-10/10 md:h-[200px]">
+    <div class="flex flex-col md:flex-row w-10/10 h-[600px] md:h-[600px]">
         <div v-if="screenSize !== 'md'" class="divider">User Interfase</div>
-        <div class="card bg-base-300 rounded-box grid h-[200px] md:h-10/10 w-10/10 md:w-3/10 place-items-center">
-            <div class="w-10/10 h-10/10 p-2">
-                <div class="text-2xl underline text-center mb-2">github.io</div>
 
-                <div class="flex flex-wrap justify-center">
-                    <div class="p-2 justify-center content-center rounded-4xl w-fit text-base bg-green-200">DaisyUI</div>
-                    <div class="p-2 justify-center content-center rounded-4xl w-fit text-xl bg-teal-300">TailwindCSS</div>
-                    <div class="p-2 justify-center content-center rounded-4xl w-fit text-lg bg-yellow-300/50">gsap.js</div>
-                    <div class="py-2 px-1 justify-center content-center rounded-4xl w-fit text-sm bg-blue-100">ApexChart</div>
-                    <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-red-300">Vue3</div>
-                    <div class="p-2 justify-center content-center rounded-4xl w-fit text-xl bg-orange-200">Vite</div>
+        <div class="flex md:flex-col flex-row gap-1">
+            <div class="card bg-base-300 rounded-box grid h-[300px] w-1/1 place-items-center">
+                <div class="w-10/10 h-10/10 p-2">
+                    <div class="text-2xl underline text-center mb-2">github.io</div>
+
+                    <div class="flex flex-wrap gap-1 justify-center">
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-base bg-green-200">DaisyUI</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-xl bg-teal-300">TailwindCSS</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-lg bg-yellow-300/50">gsap.js</div>
+                        <div class="py-2 px-1 justify-center content-center rounded-4xl w-fit text-sm bg-blue-100">ApexChart</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-red-300">Vue3</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-xl bg-orange-200">Vite</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-base-300 rounded-box grid h-[300px] w-1/1 place-items-center">
+                <div class="w-10/10 h-10/10 p-2">
+                    <div class="text-2xl underline text-center mb-2">Line App</div>
+
+                    <div class="flex flex-wrap gap-1 justify-center">
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-red-300">Message API</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-blue-300">Rich Menu</div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div v-if="screenSize === 'md'" class="divider md:divider-horizontal"><--></div>
         <div v-if="screenSize !== 'md'" class="divider">Web API</div>
-        <div class="card bg-base-300 rounded-box grid h-[200px] md:h-10/10 w-10/10 md:w-3/10 place-items-center">
-            <div class="w-10/10 text-center text-2xl underline">Cloud Run ( Python )</div>
+        <div class="card bg-base-300 rounded-box grid h-[600px] w-10/10 md:w-3/10 place-items-center">
+            <div class="w-10/10 h-1/1 text-center content-center text-2xl underline">Cloud Run<br />( Python )</div>
         </div>
 
         <div v-if="screenSize === 'md'" class="divider md:divider-horizontal"><--></div>
@@ -75,12 +89,12 @@
                 <div class="divider">AI Agent</div>
             </div>
         </div>
-        <div class="flex flex-row md:flex-col h-[200px] md:h-10/10 w-10/10 md:w-3/10 gap-2">
-            <div class="card bg-base-300 rounded-box grid h-10/10 w-5/10 md:h-5/10 md:w-10/10 place-items-center">
-                <div class="w-10/10 text-center text-2xl underline">Firestore <br v-if="screenSize !== 'md'" />( NoSQL )</div>
+        <div class="flex flex-row md:flex-col h-[600px] w-10/10 md:w-3/10 gap-2">
+            <div class="card bg-base-300 rounded-box grid h-1/1 w-5/10 md:h-5/10 md:w-10/10 place-items-center">
+                <div class="w-10/10 text-center text-2xl underline">Firestore <br />( NoSQL )</div>
             </div>
-            <div class="card bg-base-300 rounded-box grid h-10/10 w-5/10 md:h-5/10 md:w-10/10 place-items-center">
-                <div class="w-10/10 text-center text-2xl underline">Vertex AI <br v-if="screenSize !== 'md'" />( Gemini )</div>
+            <div class="card bg-base-300 rounded-box grid h-1/1 w-5/10 md:h-5/10 md:w-10/10 place-items-center">
+                <div class="w-10/10 text-center text-2xl underline">Vertex AI <br />( Gemini )</div>
             </div>
         </div>
     </div>
