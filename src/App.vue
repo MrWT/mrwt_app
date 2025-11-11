@@ -396,11 +396,11 @@
     </div>
     <!-- 功能 menu -->
     <div class="navbar shadow-lg h-[10px] fixed top-15 left-0 z-50 flex flex-row justify-start content-center gap-5 overflow-x-auto overflow-y-hidden">
-        <template v-for="(fbObj, fb_i) in appSetting.funButtons">
-            <button class="btn text-black font-black rounded-md hover:bg-violet-200/30" 
-                    :class="{'bg-violet-200/50':appSetting.contentComponent === fbObj.key, 'btn-ghost': appSetting.contentComponent !== fbObj.key}" 
-                    @click="gotoPage(fbObj.key)">{{ fbObj.display_text }}</button>
-        </template>
+        <button v-for="(fbObj, fb_i) in appSetting.funButtons" class="btn text-black font-black rounded-md hover:bg-violet-200/30" 
+                :class="{'bg-violet-200/50':appSetting.contentComponent === fbObj.key, 'btn-ghost': appSetting.contentComponent !== fbObj.key}" 
+                @click="gotoPage(fbObj.key)">
+            {{ fbObj.display_text }}
+        </button>
     </div>
     <!-- 功能 component -->
     <div class="p-4 h-8/10 mt-30">
@@ -426,7 +426,7 @@
 
     <!-- signin modal -->
     <dialog id="signinModal" class="modal">
-        <div class="modal-box h-5/10 w-10/10 md:h-8/10 md:w-8/10 flex flex-col place-content-center bg-neutral-500 overflow-hidden">
+        <div class="modal-box h-4/5 max-w-1/1 flex flex-col place-content-center bg-transparent overflow-hidden">
 
             <div class="h-auto w-10/10 flex flex-col place-content-center rounded-2xl bg-white p-3 z-51">
                 <h3 class="text-lg font-bold text-center">Hello!</h3>
