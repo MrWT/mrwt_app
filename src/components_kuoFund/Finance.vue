@@ -217,10 +217,7 @@
         </div>
     </div>
     <div v-if="funds.length === 0" class="text-3xl text-center w-1/1">
-        請稍等
-        <span class="loading loading-dots loading-xs"></span>
-        查詢資料中
-        <span class="loading loading-dots loading-xs"></span>
+        請稍等, 查詢資料中<span class="loading loading-dots loading-xs"></span>
     </div>
 </div>
 
