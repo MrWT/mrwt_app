@@ -275,12 +275,12 @@
         </div>
         <div class="divider">股票</div>
         <div class="flex flex-col md:flex-row w-10/10 h-10/10 gap-2">
-            <div class="card bg-base-300 rounded-box grid p-5 h-10/10 w-10/10 md:w-5/10 place-items-center">
-                <div class="w-10/10 text-2xl">總股數: {{ stockTW.totalValue }}</div>
-                <div class="w-10/10 text-lg">台股總市值 TWD: {{ stockTW.totalTWD }}</div>
+            <div class="bg-base-300 rounded-box flex flex-col p-5 h-10/10 w-1/1 md:w-1/2 items-center">
+                <div class="w-1/1 text-2xl">總股數: {{ stockTW.totalValue }}</div>
+                <div class="w-1/1 text-lg">台股總市值 TWD: {{ stockTW.totalTWD }}</div>
             </div>
             <div class="divider md:divider-horizontal"></div>
-            <div class="flex flex-row gap-1">
+            <div class="flex flex-row gap-1 w-1/1 md:w-1/2">
                 <div class="card bg-gray-300 rounded-box grid p-5 h-10/10 w-1/2 place-items-start">
                     <span class="text-2xl">0056 </span> 
                     <span class="text-lg">股數: {{ stockTW.tw0056 }}</span>
