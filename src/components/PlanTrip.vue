@@ -515,7 +515,7 @@
                     總結對話
                 </button>
                 <!-- 調整已排定的旅行 -->
-                <div v-if="scheduleList.length > 0" class="dropdown dropdown-top dropdown-end">
+                <div v-if="scheduleList.length > 0" class="dropdown dropdown-bottom dropdown-end">
                     <div tabindex="0" role="button">
                         <button class="btn bg-gray-300 w-1/1 hover:bg-blue-300">
                             <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -552,7 +552,7 @@
         </div>
         <div class="divider divider-primary"></div>
         <div class="modal-action">
-            <button class="btn btn-ghost w-1/1 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click="closeChatModal">
+            <button class="btn btn-ghost w-1/1 bg-gray-900 text-gray-100 hover:bg-gray-100 hover:text-gray-900" @click="closeChatModal">
                 關閉
             </button>
         </div>

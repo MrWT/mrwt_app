@@ -129,7 +129,7 @@
         progressSetting.house.max = 100;
         progressSetting.house.value = Math.floor( currentValue * 100 / (targetValue * 0.3) );
 
-        progressSetting.house.targetText = "目標: " + (new Intl.NumberFormat().format(targetValue));
+        progressSetting.house.targetText = "購屋目標: " + (new Intl.NumberFormat().format(targetValue));
         progressSetting.house.progressText = "";
         progressSetting.house.progressText += "進度: ";
         progressSetting.house.progressText += (new Intl.NumberFormat().format(currentValue)) + " / ";
@@ -145,7 +145,7 @@
         progressSetting.credit.max = 100;
         progressSetting.credit.value = Math.floor( (targetValue - currentValue) * 100 / targetValue );
 
-        progressSetting.credit.targetText = "目標: " + (new Intl.NumberFormat().format(targetValue));
+        progressSetting.credit.targetText = "還款目標: " + (new Intl.NumberFormat().format(targetValue));
         progressSetting.credit.progressText = "";
         progressSetting.credit.progressText += "進度: ";
         progressSetting.credit.progressText += (new Intl.NumberFormat().format(targetValue - currentValue)) + " / ";
@@ -273,38 +273,38 @@
                 </div>
             </div>
         </div>
-        <div class="divider"></div>
+        <div class="divider">股票</div>
         <div class="flex flex-col md:flex-row w-10/10 h-10/10 gap-2">
             <div class="card bg-base-300 rounded-box grid p-5 h-10/10 w-10/10 md:w-5/10 place-items-center">
-                <div class="w-10/10 text-xl">總股數: {{ stockTW.totalValue }}</div>
+                <div class="w-10/10 text-2xl">總股數: {{ stockTW.totalValue }}</div>
                 <div class="w-10/10 text-lg">台股總市值 TWD: {{ stockTW.totalTWD }}</div>
             </div>
             <div class="divider md:divider-horizontal"></div>
-            <div class="card bg-gray-300 rounded-box grid p-5 h-10/10 w-10/10 md:w-5/10 place-items-start">
-                <span>0056.TW </span> 
-                <span>股數: {{ stockTW.tw0056 }} / TWD: {{ stockTW.tw0056_TWD }}</span>
-                <div class="divider"></div>
-                <span>00878.TW </span>
-                <span>股數: {{ stockTW.tw00878 }} / TWD: {{ stockTW.tw00878_TWD }}</span>
-                <div class="divider"></div>            
-                <span>00919.TW </span>
-                <span>股數: {{ stockTW.tw00919 }} / TWD: {{ stockTW.tw00919_TWD }}</span>
+            <div class="flex flex-row gap-1">
+                <div class="card bg-gray-300 rounded-box grid p-5 h-10/10 w-1/2 place-items-start">
+                    <span class="text-2xl">0056 </span> 
+                    <span class="text-lg">股數: {{ stockTW.tw0056 }}</span>
+                    <span class="text-lg">TWD: {{ stockTW.tw0056_TWD }}</span>
+                </div>
+                <div class="card bg-gray-300 rounded-box grid p-5 h-10/10 w-1/2 place-items-start">
+                    <span class="text-2xl">00878 </span>
+                    <span class="text-lg">股數: {{ stockTW.tw00878 }}</span>
+                    <span class="text-lg">TWD: {{ stockTW.tw00878_TWD }}</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="divider"></div>
+    <div class="divider">TWD 計價</div>
 
     <div class="card bg-base-300 rounded-box grid h-3/10 w-10/10 p-5 place-items-center">
-        <div class="w-10/10 text-2xl">台幣存款: {{ deposit_TWD }}</div>
+        <div class="w-10/10 text-2xl">存款(TWD): {{ deposit_TWD }}</div>
     </div>
 
-    <div class="divider"></div>
-
-    <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 p-5 place-items-center">
+    <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 p-5 place-items-center mt-1">
         <div class="flex flex-col w-10/10">
-            <span>{{ progressSetting.credit.targetText }}</span>
-            <span>{{ progressSetting.credit.progressText }}</span>
+            <span class="text-2xl">{{ progressSetting.credit.targetText }}</span>
+            <span class="text-lg">{{ progressSetting.credit.progressText }}</span>
         </div>
         <progress class="w-10/10 progress"
                 :class="{ 'progress-error': progressSetting.credit.value && progressSetting.credit.value < 50,
@@ -325,12 +325,10 @@
         </progress>
     </div>
 
-    <div class="divider"></div>
-
-    <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 p-5 place-items-center">
+    <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 p-5 place-items-center mt-1">
         <div class="flex flex-col w-10/10">
-            <span>{{ progressSetting.house.targetText }}</span>
-            <span>{{ progressSetting.house.progressText }}</span>
+            <span class="text-2xl">{{ progressSetting.house.targetText }}</span>
+            <span class="text-lg">{{ progressSetting.house.progressText }}</span>
         </div>
         <progress class="w-10/10 progress"
                 :class="{ 'progress-error': progressSetting.house.value && progressSetting.house.value < 50,
@@ -341,7 +339,7 @@
         </progress>
     </div>
 
-    <div class="divider">美元計價區域</div>
+    <div class="divider">USD 計價</div>
     
     <div class="flex flex-col md:flex-row w-10/10 h-10/10 gap-2">
         <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">

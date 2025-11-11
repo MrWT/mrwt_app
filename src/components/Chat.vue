@@ -434,7 +434,7 @@
         </div>
         <div class="divider divider-primary"></div>
         <div class="modal-action">
-            <button class="btn btn-ghost w-1/1 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click="closeChatModal">
+            <button class="btn btn-ghost w-1/1 bg-gray-900 text-gray-100 hover:bg-gray-100 hover:text-gray-900" @click="closeChatModal">
                 關閉
             </button>
         </div>
