@@ -67,7 +67,7 @@
                     <div class="text-2xl underline text-center mb-2">Line App</div>
 
                     <div class="flex flex-wrap gap-1 justify-center">
-                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-red-300">Message API</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-red-300">Messaging API</div>
                         <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-blue-300">Rich Menu</div>
                     </div>
                 </div>
