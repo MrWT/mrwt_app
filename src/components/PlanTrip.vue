@@ -487,41 +487,37 @@
 
 <!-- chat modal -->
 <dialog id="chatModal" class="modal modal-end md:modal-middle">
-    <div class="modal-box h-10/10 w-1/1 md:w-8/10 flex flex-col bg-neutral-100">
+    <div class="modal-box h-1/1 w-1/1 md:w-8/10 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
             <span class="text-xl text-gray-900 text-center"></span>
         </div>
         <div class="h-8/10 w-10/10 flex flex-col overflow-y-auto gap-2">
-            <div class="w-1/1 flex flex-col gap-2">
+            <div class="w-1/1 flex flex-row gap-2 justify-center">
                 <!-- 開啟新話題 -->
-                <button class="btn bg-red-300 text-gray-900 hover:bg-gray-900 hover:text-gray-100 w-1/1" @click="openReplanConfirmModal">
+                <button class="btn btn-circle bg-red-300 text-gray-900 hover:bg-gray-900 hover:text-gray-100" title="新話題" @click="openReplanConfirmModal">
                     <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                     </svg>
-                    新話題
                 </button>
-                <!-- 列出之前聊天內容 -->
-                <button class="btn bg-gray-300 w-1/1 hover:bg-blue-300" @click="remindPlan">
+                <!-- 回顧之前聊天內容 -->
+                <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" title="回顧之前聊天內容" @click="remindPlan">
                     <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
                     </svg>
-                    列出之前聊天內容
                 </button>
                 <!-- 總結對話 -->
-                <button class="btn bg-gray-300 w-1/1 hover:bg-blue-300" @click="openSumupModal">
+                <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" title="總結對話" @click="openSumupModal">
                     <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4a1 1 0 0 0-1-1H8.914a1 1 0 0 0-.707.293L4.293 7.207A1 1 0 0 0 4 7.914V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5M9 3v4a1 1 0 0 1-1 1H4m11.383.772 2.745 2.746m1.215-3.906a2.089 2.089 0 0 1 0 2.953l-6.65 6.646L9 17.95l.739-3.692 6.646-6.646a2.087 2.087 0 0 1 2.958 0Z"/>
                     </svg>
-                    總結對話
                 </button>
                 <!-- 調整已排定的旅行 -->
                 <div v-if="scheduleList.length > 0" class="dropdown dropdown-bottom dropdown-end">
                     <div tabindex="0" role="button">
-                        <button class="btn bg-gray-300 w-1/1 hover:bg-blue-300">
+                        <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" title="調整已排定的旅行">
                             <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
                             </svg>
-                            調整已排定的旅行
                         </button>
                     </div>
                     <ul tabindex="-1" class="dropdown-content menu bg-base-100 border border-gray-900 rounded-box z-1 w-52 p-2 gap-2 shadow-sm">
@@ -540,20 +536,18 @@
             </div>
 
             <div class="divider divider-primary"></div>
-            <textarea class="textarea w-1/1 h-1/3" placeholder="想說點什麼呢?" v-model="userMessage"></textarea>
-
-            <!-- 傳送訊息 -->
-            <button class="btn bg-gray-300 hover:bg-blue-300 w-1/1" @click="send">
+            <textarea class="textarea w-1/1 h-1/1" placeholder="想說點什麼呢?" v-model="userMessage"></textarea>
+        </div>
+        <div class="divider divider-primary"></div>
+        <div class="modal-action">
+            <button class="btn btn-ghost w-1/2 bg-gray-900 text-gray-100 hover:bg-gray-100 hover:text-gray-900" @click="closeChatModal">
+                關閉
+            </button>
+            <button class="btn bg-gray-300 hover:bg-blue-300 w-1/2" @click="send">
                 <svg class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                     <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
                 </svg>
                 傳送訊息
-            </button>
-        </div>
-        <div class="divider divider-primary"></div>
-        <div class="modal-action">
-            <button class="btn btn-ghost w-1/1 bg-gray-900 text-gray-100 hover:bg-gray-100 hover:text-gray-900" @click="closeChatModal">
-                關閉
             </button>
         </div>
     </div>
