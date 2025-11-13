@@ -31,6 +31,8 @@
     let tripSumupList = reactive([]);
     let sel_day_sequence = ref("");
     let scheduleList = reactive([]);
+    // 行程規劃範本
+    let samplePromptList = reactive([]);
     // InfoWindow options
     let infoWindowObj = reactive({});
     // 圖標類型
@@ -51,6 +53,8 @@
         fetchInitData();
         //chat("HI");
         remindPlan();
+        // 建立行程規劃範本
+        buildSamplePromptList();
     }
     // 取得初始資料
     function fetchInitData(){
@@ -103,6 +107,77 @@
                 });
             }
         });
+    }
+    // 建立行程規劃範本
+    function buildSamplePromptList(){
+        // 電動機車行程
+        {
+            let samplePrompt = `
+幫我安排一段機車之旅
+交通工具: gogoro 電動機車
+出發點: 台南市安南區 7-eleven 淵安門市
+目的地: 新北市法鼓山佛教園區
+天數: 1 天 0 夜
+開始日期: 未定
+結束日期: 未定
+行程安排條件:
+1. 休息停靠點, 皆安排在 gogoro 換電站
+2. 休息停靠點之間, 騎車時間不超過 1 小時
+3. 路線一路往北
+            `;
+            samplePromptList.push({
+                title: "電動機車行程",
+                content: samplePrompt,
+            });
+        }
+
+        // 出國旅行
+        {
+            let samplePrompt = `
+幫我安排一段出國旅行
+出發點: 台南市安南區
+目的地: 韓國釜山
+參與人員: 2 位大人 2 位小孩, 小孩年齡分別是9歲和6歲
+天數: 5 天 4 夜
+開始日期: 未定
+結束日期: 未定
+行程安排條件:
+1. 當地交通工具: 以地鐵為主
+2. 飲食習慣: 都安排熟食, 以不辣為主
+3. 景點安排以戶外為主
+            `;
+            samplePromptList.push({
+                title: "出國旅行",
+                content: samplePrompt,
+            });
+        }
+
+        // 國內旅行
+        {
+            let samplePrompt = `
+幫我安排一段國內旅行
+出發點: 台南市安南區
+目的地: 宜蘭縣蘇澳
+參與人員: 2 位大人 2 位小孩, 小孩年齡分別是9歲和6歲
+天數: 3 天 2 夜
+開始日期: 未定
+結束日期: 未定
+行程安排條件:
+1. 交通工具: 以汽車為主
+2. 飲食習慣: 都安排熟食, 以不辣為主
+3. 景點安排以戶外為主
+            `;
+            samplePromptList.push({
+                title: "國內旅行",
+                content: samplePrompt,
+            });
+        }
+    }
+
+    function importSamplePrompt(samplePromptObj){
+        console.log("importSamplePrompt.samplePromptObj=", samplePromptObj);
+
+        userMessage.value = samplePromptObj.content;
     }
     // chat with ai
     function chat(message){
@@ -413,6 +488,7 @@
     }
     // 開啟 chat modal
     function openChatModal(){
+        userMessage.value = "";
         chatModalStatus.value = "OPEN";
         document.getElementById("chatModal").showModal();
     }
@@ -496,6 +572,26 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                     </svg>
                 </button>
+                <!-- 匯入行程規劃範本 -->
+                <div v-if="samplePromptList.length > 0" class="dropdown dropdown-bottom dropdown-end">
+                    <div tabindex="0" role="button">
+                        <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" title="匯入行程規劃範本">
+                            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-4m5-13v4a1 1 0 0 1-1 1H5m0 6h9m0 0-2-2m2 2-2 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <ul tabindex="-1" class="dropdown-content menu bg-base-100 border border-gray-900 rounded-box z-1 w-52 p-2 gap-2 shadow-sm">
+                        <li class="bg-yellow-100 text-gray-900 p-1 flex flex-col rounded-xl">
+                            <div class="text-base md:text-lg">行程規劃範本</div>
+                        </li>
+                        <li v-for="(spObj, sp_i) in samplePromptList" class="bg-gray-200">
+                            <a @click="importSamplePrompt(spObj)" class="flex flex-col">
+                                <div>{{ spObj.title }}</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
                 <!-- 回顧之前聊天內容 -->
                 <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" title="回顧之前聊天內容" @click="remindPlan">
                     <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -503,7 +599,7 @@
                     </svg>
                 </button>
                 <!-- 總結對話 -->
-                <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" title="總結對話" @click="openSumupModal">
+                <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" title="總結對話" @click="openSumupModal">
                     <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4a1 1 0 0 0-1-1H8.914a1 1 0 0 0-.707.293L4.293 7.207A1 1 0 0 0 4 7.914V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5M9 3v4a1 1 0 0 1-1 1H4m11.383.772 2.745 2.746m1.215-3.906a2.089 2.089 0 0 1 0 2.953l-6.65 6.646L9 17.95l.739-3.692 6.646-6.646a2.087 2.087 0 0 1 2.958 0Z"/>
                     </svg>
@@ -511,7 +607,7 @@
                 <!-- 調整已排定的旅行 -->
                 <div v-if="scheduleList.length > 0" class="dropdown dropdown-bottom dropdown-end">
                     <div tabindex="0" role="button">
-                        <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" title="調整已排定的旅行">
+                        <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" title="調整已排定的旅行">
                             <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
                             </svg>
