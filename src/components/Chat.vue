@@ -416,7 +416,10 @@
             </div>
 
             <div class="divider divider-primary"></div>
-            <textarea class="textarea w-1/1 h-2/3" placeholder="想說點什麼呢?" v-model="userMessage"></textarea>
+            <div class="w-1/1 h-2/3 flex flex-col">
+                <textarea class="textarea w-1/1 h-1/1" placeholder="想說點什麼呢?" v-model="userMessage" @keyup.shift.enter="send"></textarea>
+                <span class="w-1/1 text-xs text-gray-900/60 text-center hidden sm:block">( enter: 換行 / shift + enter: 直接傳送訊息 )</span>
+            </div>
         </div>
         <div class="divider divider-primary"></div>
         <div class="modal-action">
