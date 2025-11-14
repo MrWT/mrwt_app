@@ -27,6 +27,7 @@
     // 行程細節 - 選定要查看的日期
     let sel_day_sequence = ref("");
     // 選擇要刪除的行程
+    let selRemove_id = ref("");
     let selRemove_destination = ref("");
     let selRemove_trip_start_date = ref("");
     let selRemove_trip_end_date = ref("");
@@ -83,6 +84,7 @@
             });
             values[0].forEach((schObj, sch_i) => {
                 let schedule = JSON.parse(schObj["schedule"]);
+                schedule["id"] = schObj["id"];
                 scheduleList.push( schedule );
             });
 
@@ -195,11 +197,13 @@
     }
     // 開啟 Remove 再確認 modal
     function openRemoveConfirmModal(scheduleObj){
-        //console.log("openRemoveConfirmModal.scheduleObj=", scheduleObj);
+        console.log("openRemoveConfirmModal.scheduleObj=", scheduleObj);
 
+        selRemove_id.value = scheduleObj.id;
         selRemove_destination.value = scheduleObj.destination;
         selRemove_trip_start_date.value = scheduleObj.trip_start_date;
         selRemove_trip_end_date.value = scheduleObj.trip_end_date;
+        console.log("openRemoveConfirmModal.selRemove_id=", selRemove_id.value);
         console.log("openRemoveConfirmModal.selRemove_destination=", selRemove_destination.value);
         console.log("openRemoveConfirmModal.selRemove_trip_start_date=", selRemove_trip_start_date.value);
         console.log("openRemoveConfirmModal.selRemove_trip_end_date=", selRemove_trip_end_date.value);
@@ -217,9 +221,7 @@
         let removeTripPromise = fetchData({
             api: "delete_trip_schedule",
             data: {
-                account: props.account,
-                destination: selRemove_destination.value,
-                trip_start_date: selRemove_trip_start_date.value,
+                id: selRemove_id.value,
             },
         });
         Promise.all([removeTripPromise]).then((values) => {
@@ -233,7 +235,7 @@
             };
             opObj.status = values[0]["result"];
             if(values[0]["result"] === true){
-                opObj.message = "儲存成功";
+                opObj.message = "刪除成功";
             }else{
                 opObj.message = "Error: " + values[0]["message"];
             }
@@ -267,12 +269,12 @@
                 </div>
                 <div class="text-md uppercase font-semibold">{{ sObj.trip_start_date }} - {{ sObj.trip_end_date }}</div>
             </div>
-            <button class="btn btn-square btn-ghost text-red-900" @click="openRemoveConfirmModal(sObj)">
+            <button class="btn btn-square btn-ghost text-red-900" title="刪除規劃" @click="openRemoveConfirmModal(sObj)">
                 <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                 </svg>
             </button>
-            <button class="btn btn-square btn-ghost" @click="openTripDetailModal(sObj)">
+            <button class="btn btn-square btn-ghost" title="規劃內容" @click="openTripDetailModal(sObj)">
                 <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
                 </svg>
