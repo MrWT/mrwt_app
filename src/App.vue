@@ -356,7 +356,7 @@
         <span class="loading loading-bars loading-xl"></span>
     </div>
     <!-- 功能 component -->
-    <div class="navbar bg-yellow-800/20 h-[10px] fixed top-0 left-0 z-50">
+    <div class="navbar bg-yellow-800/50 h-[10px] fixed top-0 left-0 z-50">
         <div class="flex-1">
             <a class="btn btn-ghost text-xl" @click="gotoPage('gallery')">
                 <span>{{ appSetting.title }}</span>
@@ -392,7 +392,7 @@
         </div>
     </div>
     <!-- 為了製造出"功能 menu 白霧底效果" -->
-    <div class="navbar bg-white opacity-70 h-[10px] fixed top-15 left-0 z-50">
+    <div class="navbar bg-white opacity-80 h-[10px] fixed top-15 left-0 z-50">
     </div>
     <!-- 功能 menu -->
     <div class="navbar shadow-lg h-[10px] fixed top-15 left-0 z-50 flex flex-row justify-start content-center gap-5 overflow-x-auto overflow-y-hidden">
