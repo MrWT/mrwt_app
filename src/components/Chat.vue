@@ -39,16 +39,18 @@
         ],
         scope: [
             { value: "entertainment", text: "演藝圈", },
-            { value: "house", text: "房地產", },
+            { value: "vehicle", text: "汽車/機車", },
             { value: "stock", text: "股市", },
+            { value: "house", text: "房地產", },
+            { value: "politic", text: "政治", },
             { value: "basketball", text: "籃球", },
             { value: "baseball", text: "棒球", },
-            { value: "politic", text: "政治", },
         ],
         time: [
             { value: "1day", text: "今天", },
             { value: "1month", text: "近一個月", },
-            { value: "6month", text: "近期", },
+            { value: "3month", text: "近三個月", },
+            { value: "6month", text: "近半年", },
             { value: "1year", text: "近一年月", },
         ],
         type: [
