@@ -16,12 +16,28 @@
 
     let isBuilding = ref(true);
     let appState = ref("");
+
     let selActivityMonth = ref("");
     let activityMonthList = reactive([]);
     let activity_location = ref("");
     let activity_date = ref("");
     let activity_address = ref("");
     let manualPages = reactive([]);
+
+    let annoucement = reactive({
+        reasons: [
+            "",
+            "",
+            "",
+            "",
+            "目前基金處於經費累積階段, 不宜花費太多",
+        ],
+        newTypes: [
+            "公益捐贈-實物", 
+            "孩子教育-交通安全", 
+            "孩子教育-環境保護(淨灘)",
+        ],
+    });
 
     // 初始化 component
     function init(){
@@ -33,6 +49,10 @@
         isBuilding.value = props.user_role === "admin_kf" ? false : true;
 
         get_activity_months();
+
+        if(props.user_role !== "admin_kf"){
+            //openAnnouceModal();
+        }
     }   
     // 取得活動月份
     function get_activity_months(){
@@ -112,6 +132,21 @@
         const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent( activity_location.value )}`;
         window.open(mapsUrl, '_blank');
     }
+
+    // 發出公告
+    function openAnnouceModal(){
+        buildAdjustReasonList();
+
+        document.getElementById("annouceModal").showModal();
+    }
+    // 調整型態的理由
+    function buildAdjustReasonList(){
+
+    }
+    // 關閉公告
+    function closeAnnouceModal(){
+        document.getElementById("annouceModal").close();
+    }
     
 </script>
 
@@ -168,6 +203,37 @@
         功能規劃中
     </div>
 </div>
+
+<!-- annouce modal -->
+<dialog id="annouceModal" class="modal">
+    <div class="modal-box h-9/10 w-9/10 flex flex-col bg-neutral-100">
+        <div class="flex flex-col justify-center">
+            <span class="text-3xl text-gray-900 text-center bg-emerald-200/50 rounded-xl">活動規劃預告</span>
+            <div class="divider divider-primary"></div>
+        </div>
+        <div class="h-4/5 w-1/1 flex flex-col overflow-y-auto">
+            <ul class="list bg-base-100 rounded-box shadow-md">
+                <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">活動型態調整</li>
+                
+                <li class="list-row">
+                    <div class="text-4xl font-thin opacity-30 tabular-nums">01</div>
+                    <div class="list-col-grow">
+                        <div>Dio Lupa</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="divider divider-primary"></div>
+        <div class="modal-action">
+            <button class="btn btn-ghost w-1/1 bg-gray-900 text-gray-200 hover:bg-yellow-100 hover:text-gray-900" @click="closeAnnouceModal">
+                關閉
+            </button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
 
 </template>
 
