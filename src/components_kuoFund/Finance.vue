@@ -23,6 +23,7 @@
     let funds = reactive([]);
     let funds_months = reactive([]);
     let sel_dataMN = ref("");
+    let todayMN = ref(moment().format("YYYY-MM"));
 
     let delRecordObj = reactive({});
 
@@ -211,7 +212,7 @@
             <time class="text-base opacity-50">{{ fundObj.date }}</time>
         </div>
         <div class="chat-bubble">
-            <span v-if="userRole === 'admin_kf'" class="mr-2 font-black text-red-900 cursor-pointer" @click="popupDelConfirmModal(fundObj)">X</span>
+            <span v-if="userRole === 'admin_kf' && todayMN <= sel_dataMN" class="mr-2 font-black text-red-900 cursor-pointer" @click="popupDelConfirmModal(fundObj)">X</span>
             $ {{ new Intl.NumberFormat().format( fundObj.money ) }}
             <span v-if="fundObj.memo !== ''">( {{ fundObj.memo }} )</span>
         </div>
