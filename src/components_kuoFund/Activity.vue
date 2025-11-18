@@ -7,6 +7,8 @@
         title: String,
         account: String,
         user_role: String, 
+        annouce_period_start: String,
+        annouce_period_end: String,
     })
 
     onMounted(() => {
@@ -25,29 +27,33 @@
     let manualPages = reactive([]);
 
     let annoucement = reactive({
-        reasons: [
-"接任輪值代管人後,",
-"一直在思考這份匯聚大家的愛而成的基金,",
-"除了吃喝玩樂外, ",
-"是否還有另一種可能性呢 ?",
-"",
-"基金經費目前處於重建階段, ",
-"也想為基金建立一定的基礎, ",
-"方便繼任代管人好應用,",
-"那麼這一年還有什麼方式呢 ?",
-"",
-"'孩子教育', 將是這一年活動的主軸",
-"期望郭家的孩子們, 健康成長, 快樂茁壯",
-"因此這一年的活動設計出發點是,",
-"結合社會團體, 達到教育孩子的目的`,",
-"",
-"讓我們, 匯聚小愛, 變成大愛!",
+        thoughts: [
+            "教導孩子懂得感恩",
+            "教導孩子交通安全",
+            "教導孩子保護環境",
+            "壯大基金",
         ],
         newTypes: [
-            { title: "公益捐贈-實物", memo: "(預計)", time: "(預計)2026/01 或 2026/02( 農曆年前 )", }, 
-            { title: "孩子教育-環境保護(淨灘)", memo: "(預計)參與南部淨灘團體活動", time: "(預計)2026/03 或 2026/04", },
-            { title: "孩子教育-交通安全", memo: "(預計)與「YAMAHA 親子機車教室」合作", time: "(預計)2026/06 或 2026/07", }, 
-            { title: "中秋烤肉活動", memo: "土城烤肉歡聚", time: "(預計)2026/09/26( 晚 )", }, 
+            { 
+                title: "公益捐贈-實物", 
+                memo: "(預計)透過「臺南市政府公益平台」或是其他公益團體", 
+                time: "(預計)2026/01 或 2026/02( 農曆年前 )", 
+            }, 
+            { 
+                title: "孩子教育-環境保護(淨灘)", 
+                memo: "(預計)參與南部淨灘團體活動", 
+                time: "(預計)2026/03 或 2026/04", 
+            },
+            { 
+                title: "孩子教育-交通安全", 
+                memo: "(預計)與「YAMAHA 親子機車教室」合作", 
+                time: "(預計)2026/06 或 2026/07", 
+            }, 
+            { 
+                title: "中秋烤肉活動", 
+                memo: "土城烤肉歡聚", 
+                time: "(預計)2026/09/26( 晚 )", 
+            }, 
         ],
     });
 
@@ -57,12 +63,21 @@
         console.log("Activity.props.title=", props.title);
         console.log("Activity.props.account=", props.account);
         console.log("Activity.props.user_role=", props.user_role);
+        console.log("Activity.props.annouce_period_start=", props.annouce_period_start);
+        console.log("Activity.props.annouce_period_end=", props.annouce_period_end);
 
         isBuilding.value = props.user_role === "admin_kf" ? false : true;
 
         get_activity_months();
 
-        if(props.user_role === "admin_kf"){
+        // 發出 annoucement
+        if(props.user_role !== "admin_kf"){
+            let now_date = moment().format("YYYY-MM-DD");
+            if(props.annouce_period_start && props.annouce_period_start <= now_date 
+              && props.annouce_period_end && now_date <= props.annouce_period_end ){
+                openAnnouceModal();
+            }
+        }else{
             openAnnouceModal();
         }
     }   
@@ -219,21 +234,46 @@
         <div class="h-4/5 w-1/1 overflow-y-auto flex flex-col gap-2">
             <!-- 活動型態調整考量 -->
             <ul class="list bg-base-100 rounded-box shadow-md">
-                <li class="p-4 pb-2 tracking-wide font-semibold text-base bg-emerald-200/50 text-2xl">
+                <li class="p-4 pb-2 tracking-wide text-center font-semibold text-base bg-emerald-200/50 text-2xl">
                     規劃考量
                 </li>
                 <li class="list-row">
                     <div class="list-col-grow">
-                        <span v-for="(rs, rs_i) in annoucement.reasons">
-                            {{ rs }}
+                        <p>
+                            接任輪值代管人後,<br />
+                            一直在思考這份匯聚大家的愛而成的基金,<br />
+                            除了吃喝玩樂外, 是否還有另一種可能性呢 ?<br />
                             <br />
-                        </span>
+                            基金經費目前處於重建階段, <br />
+                            也想為基金建立一定的基礎, <br />
+                            方便繼任代管人好應用,<br />
+                            那麼這一年還有什麼方式呢 ?<br />
+                            <br />
+                            <span class="text-rotate text-xl duration-8000 mb-1 w-1/1">
+                                <span class="w-1/1 justify-items-center ">
+                                    <span v-for="(thought, th_i) in annoucement.thoughts" 
+                                        class="bg-gray-200 text-gray-900">
+                                        [ {{ thought }} ]
+                                    </span>
+                                </span>
+                            </span>
+                            <br />
+                            思考了好一陣子後, 在心中得到了這些答案. <br />
+                            對於孩子成長過程中, <br />
+                            一定要有的「交通安全觀念/環境保護觀念」, <br />
+                            透過基金的力量, 在孩子的心中種下那顆種子. <br />
+                            <br />
+                            因此這一年的活動設計主軸是"孩子教育"<br />
+                            期望郭家的孩子們, 健康成長, 快樂茁壯, <br />
+                            <br />
+                            透過大家的力量, 匯聚小愛, 發揮大愛 !<br />
+                        </p>
                     </div>
                 </li>
             </ul>
             <!-- 活動新型態 -->
             <ul class="list bg-base-100 rounded-box shadow-md">
-                <li class="p-4 pb-2 tracking-wide font-semibold text-base bg-yellow-200/50 text-2xl">
+                <li class="p-4 pb-2 tracking-wide text-center font-semibold text-base bg-yellow-200/50 text-2xl">
                     規劃內容
                 </li>
                 <li v-for="(ntObj, nt_i) in annoucement.newTypes" class="list-row">
