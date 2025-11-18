@@ -47,11 +47,11 @@
             { value: "baseball", text: "棒球", },
         ],
         time: [
-            { value: "1day", text: "今天", },
+            { value: "1week", text: "近一週", },
             { value: "1month", text: "近一個月", },
             { value: "3month", text: "近三個月", },
             { value: "6month", text: "近半年", },
-            { value: "1year", text: "近一年月", },
+            { value: "1year", text: "近一年", },
         ],
         type: [
             { value: "news", text: "新聞", },
