@@ -26,16 +26,28 @@
 
     let annoucement = reactive({
         reasons: [
-            "",
-            "",
-            "",
-            "",
-            "目前基金處於經費累積階段, 不宜花費太多",
+"接任輪值代管人後,",
+"一直在思考這份匯聚大家的愛而成的基金,",
+"除了吃喝玩樂外, ",
+"是否還有另一種可能性呢 ?",
+"",
+"基金經費目前處於重建階段, ",
+"也想為基金建立一定的基礎, ",
+"方便繼任代管人好應用,",
+"那麼這一年還有什麼方式呢 ?",
+"",
+"'孩子教育', 將是這一年活動的主軸",
+"期望郭家的孩子們, 健康成長, 快樂茁壯",
+"因此這一年的活動設計出發點是,",
+"結合社會團體, 達到教育孩子的目的`,",
+"",
+"讓我們, 匯聚小愛, 變成大愛!",
         ],
         newTypes: [
-            "公益捐贈-實物", 
-            "孩子教育-交通安全", 
-            "孩子教育-環境保護(淨灘)",
+            { title: "公益捐贈-實物", memo: "(預計)", time: "(預計)2026/01 或 2026/02( 農曆年前 )", }, 
+            { title: "孩子教育-環境保護(淨灘)", memo: "(預計)參與南部淨灘團體活動", time: "(預計)2026/03 或 2026/04", },
+            { title: "孩子教育-交通安全", memo: "(預計)與「YAMAHA 親子機車教室」合作", time: "(預計)2026/06 或 2026/07", }, 
+            { title: "中秋烤肉活動", memo: "土城烤肉歡聚", time: "(預計)2026/09/26( 晚 )", }, 
         ],
     });
 
@@ -50,8 +62,8 @@
 
         get_activity_months();
 
-        if(props.user_role !== "admin_kf"){
-            //openAnnouceModal();
+        if(props.user_role === "admin_kf"){
+            openAnnouceModal();
         }
     }   
     // 取得活動月份
@@ -132,16 +144,9 @@
         const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent( activity_location.value )}`;
         window.open(mapsUrl, '_blank');
     }
-
     // 發出公告
     function openAnnouceModal(){
-        buildAdjustReasonList();
-
         document.getElementById("annouceModal").showModal();
-    }
-    // 調整型態的理由
-    function buildAdjustReasonList(){
-
     }
     // 關閉公告
     function closeAnnouceModal(){
@@ -200,25 +205,53 @@
         </svg>
     </div>
     <div class="w-1/1 text-center text-5xl">
-        功能規劃中
+        活動規劃中
     </div>
 </div>
 
 <!-- annouce modal -->
 <dialog id="annouceModal" class="modal">
-    <div class="modal-box h-9/10 w-9/10 flex flex-col bg-neutral-100">
+    <div class="modal-box h-49/50 w-49/50 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
-            <span class="text-3xl text-gray-900 text-center bg-emerald-200/50 rounded-xl">活動規劃預告</span>
+            <span class="text-3xl text-gray-900 text-center bg-stone-800/50 rounded-xl">活動規劃預告</span>
             <div class="divider divider-primary"></div>
         </div>
-        <div class="h-4/5 w-1/1 flex flex-col overflow-y-auto">
+        <div class="h-4/5 w-1/1 overflow-y-auto flex flex-col gap-2">
+            <!-- 活動型態調整考量 -->
             <ul class="list bg-base-100 rounded-box shadow-md">
-                <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">活動型態調整</li>
-                
+                <li class="p-4 pb-2 tracking-wide font-semibold text-base bg-emerald-200/50 text-2xl">
+                    規劃考量
+                </li>
                 <li class="list-row">
-                    <div class="text-4xl font-thin opacity-30 tabular-nums">01</div>
                     <div class="list-col-grow">
-                        <div>Dio Lupa</div>
+                        <span v-for="(rs, rs_i) in annoucement.reasons">
+                            {{ rs }}
+                            <br />
+                        </span>
+                    </div>
+                </li>
+            </ul>
+            <!-- 活動新型態 -->
+            <ul class="list bg-base-100 rounded-box shadow-md">
+                <li class="p-4 pb-2 tracking-wide font-semibold text-base bg-yellow-200/50 text-2xl">
+                    規劃內容
+                </li>
+                <li v-for="(ntObj, nt_i) in annoucement.newTypes" class="list-row">
+                    <div class="text-4xl font-thin opacity-30 tabular-nums">{{ ((nt_i+1) < 10 ? "0" : "") + (nt_i+1) }}</div>
+                    <div class="list-col-grow">
+                        <div class="text-xl font-black">{{ ntObj.title }}</div>
+                        <div class="flex flex-row items-center gap-2">
+                            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m17 21-5-4-5 4V3.889a.92.92 0 0 1 .244-.629.808.808 0 0 1 .59-.26h8.333a.81.81 0 0 1 .589.26.92.92 0 0 1 .244.63V21Z"/>
+                            </svg>
+                            {{ ntObj.memo }}
+                        </div>
+                        <div class="flex flex-row items-center gap-2">
+                            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                            </svg>
+                            {{ ntObj.time }}
+                        </div>
                     </div>
                 </li>
             </ul>
