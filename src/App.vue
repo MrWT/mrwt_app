@@ -57,6 +57,10 @@
         bank_info: {},
         excel_info: {},
         member: {},
+        activity_annouce_period: {
+            start: "",
+            end: "",
+        },
     });
     // 使用者資訊
     let signinError = ref(false);
@@ -187,6 +191,8 @@
                 kf_funSetting.bank_info = appSettingObj["kf_bank_info"];
                 kf_funSetting.excel_info = appSettingObj["kf_excel_info"];
                 kf_funSetting.member = appSettingObj["kf_member"];
+                kf_funSetting.activity_annouce_period.start = appSettingObj["kf_activity_annouce_period"]["value1"];
+                kf_funSetting.activity_annouce_period.end = appSettingObj["kf_activity_annouce_period"]["value2"];
 
                 // appSetting.reference
                 {
@@ -421,7 +427,7 @@
         <Survey v-else-if="appSetting.contentComponent === 'survey'" :title="appSetting.title" :account="userInfo.account" />
         <Finance_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Rule_KF v-else-if="appSetting.contentComponent === 'rule_kf'" :title="appSetting.title" :account="userInfo.account" :funSetting="kf_funSetting" />
-        <Activity_KF v-else-if="appSetting.contentComponent === 'activity_kf'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" />
+        <Activity_KF v-else-if="appSetting.contentComponent === 'activity_kf'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" :annouce_period_start="kf_funSetting.activity_annouce_period.start" :annouce_period_end="kf_funSetting.activity_annouce_period.end" />
     </div>
 
     <!-- signin modal -->
