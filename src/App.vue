@@ -33,9 +33,10 @@
         if(!userInfo.account){
             document.getElementById("signinModal").showModal();
             setTimeout(() => {
-                document.getElementById("signinName").focus();
-
-                genSigninAnimation_gsap();
+                if(!isAutoSignin.value){
+                    document.getElementById("signinName").focus();
+                    genSigninAnimation_gsap();
+                }
             }, 400);
 
         }
@@ -63,6 +64,7 @@
         },
     });
     // 使用者資訊
+    let isAutoSignin = ref(false);
     let signinError = ref(false);
     const tempAccount = ref("");
     const userInfo = reactive({
@@ -93,13 +95,14 @@
         console.log("window.innerWidth=" + window.innerWidth);
         console.log("screenSize.value=" + screenSize.value);
 
-
         // 自動登入控制
         {
             const urlParams = new URLSearchParams(window.location.search);
             const user = urlParams.get('user'); // 取得 user
 
             if(user && user.trim()){
+                isAutoSignin.value = true;
+
                 // get_all_account
                 let fetchAllAccount = fetchData({
                     api: "get_all_account",
@@ -441,13 +444,16 @@
             <div class="h-auto w-10/10 flex flex-col place-content-center rounded-2xl bg-white p-3 z-51">
                 <h3 class="text-lg font-bold text-center">Hello!</h3>
                 <h4 v-if="signinError" class="text-red-900 text-center mb-5">Error! 登入失敗~ 請檢查登入帳號!</h4>
-                <div class="flex justify-center items-center join">
+                <div v-if="!isAutoSignin" class="flex justify-center items-center join">
                     <input id="signinName" type="text" placeholder="What's your name?" class="input input-ghost join-item" :value="tempAccount" @change="keyinAccount" @keyup.enter="signin" autofocus />
                     <button class="btn btn-primary join-item ml-1" @click="signin" >
                         <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12H4m12 0-4 4m4-4-4-4m3-4h2a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-2"/>
                         </svg>
                     </button>
+                </div>
+                <div v-if="isAutoSignin" class="flex justify-center items-center">
+                    歡迎光臨, 請稍等 <span class="loading loading-dots loading-xs"></span>
                 </div>
             </div>
             
