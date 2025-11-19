@@ -93,24 +93,28 @@
         console.log("window.innerWidth=" + window.innerWidth);
         console.log("screenSize.value=" + screenSize.value);
 
-        // KuoFamily - 自動登入控制
+
+        // 自動登入控制
         {
             const urlParams = new URLSearchParams(window.location.search);
-            const fun = urlParams.get('fun'); // 取得 'John'
+            const user = urlParams.get('user'); // 取得 user
 
-            if(fun && fun.trim().toUpperCase() === "KUOFAMILY"){
-                tempAccount.value = "KUOFAMILY";
-                signin();
-            }
-        }
-        // Survey - 自動登入控制
-        {
-            const urlParams = new URLSearchParams(window.location.search);
-            const fun = urlParams.get('fun'); // 取得 'John'
+            if(user && user.trim()){
+                // get_all_account
+                let fetchAllAccount = fetchData({
+                    api: "get_all_account",
+                });
 
-            if(fun && fun.trim().toUpperCase().startsWith("SURVEY")){
-                tempAccount.value = fun.trim().toUpperCase();
-                signin();
+                Promise.all([fetchAllAccount]).then((values) => {
+                    console.log("get_all_account.values=", values);
+
+                    values[0].forEach((account, account_i) => {
+                        if(account.toUpperCase() === user.trim().toUpperCase()){
+                            tempAccount.value = account.toUpperCase();
+                            signin();
+                        }
+                    });
+                });
             }
         }
     }
