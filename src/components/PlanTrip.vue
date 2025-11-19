@@ -129,7 +129,7 @@
 1. 沒有
             `;
             samplePromptList.push({
-                title: "電動機車行程",
+                title: "電動機車旅行範本",
                 content: samplePrompt,
             });
         }
@@ -154,7 +154,7 @@
 
             `;
             samplePromptList.push({
-                title: "出國旅行",
+                title: "出國旅行範本",
                 content: samplePrompt,
             });
         }
@@ -179,7 +179,7 @@
 
             `;
             samplePromptList.push({
-                title: "國內旅行",
+                title: "國內旅行範本",
                 content: samplePrompt,
             });
         }
@@ -508,11 +508,20 @@
         chatModalStatus.value = "CLOSE";
         document.getElementById("chatModal").close();
     }
+    // 開啟 adjust schedule modal
+    function openAdjustScheduleModal(){
+        document.getElementById("adjustScheduleModal").showModal();
+    }
+    // 關閉 adjust schedule modal
+    function closeAdjustScheduleModal(){
+        document.getElementById("adjustScheduleModal").close();
+    }
     // 關閉全部 modal
     function closeAllModal(){
         closeChatModal();
         closeReplanConfirmModal();
         closeSumupModal();
+        closeAdjustScheduleModal();
     }
 
 </script>
@@ -560,88 +569,78 @@
     </div>
 </div>
 
-<!-- 開啟對話 modal -->
-<button class="btn btn-circle absolute right-2 bottom-2 z-10 bg-gray-900 text-gray-100 border-0 border-black hover:border-2"  
-       :class="{'hidden': chatModalStatus === 'OPEN'}" title="開啟對話 bar" @click="openChatModal">
-    <!-- open -->
-    <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
-    </svg>
-</button>
+<div class="fab absolute right-2 bottom-2 z-10" :class="{'hidden': chatModalStatus === 'OPEN'}">
+    <!-- a focusable div with tabindex is necessary to work on all browsers. role="button" is necessary for accessibility -->
+    <div tabindex="0" role="button" class="btn btn-circle bg-gray-300 text-gray-900 hover:bg-blue-300">
+        <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14"/>
+        </svg>
+    </div>
+
+    <div class="fab-close">
+        <span class="btn btn-circle btn-error">✕</span>
+    </div>
+
+    <!-- buttons that show up when FAB is open -->
+    <div>
+        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">說點什麼</span>
+        <button class="btn btn-circle bg-green-300 text-gray-900 hover:bg-blue-300" @click="openChatModal">
+            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
+            </svg>
+        </button>
+    </div>
+    <div>
+        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">開啟新話題</span> 
+        <button class="btn btn-circle bg-red-300 text-gray-900 hover:bg-blue-300" @click="openReplanConfirmModal">
+            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+            </svg>
+        </button>
+    </div>
+    <div>
+        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">回顧之前聊天內容</span>
+        <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" @click="remindPlan">
+            <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
+            </svg>
+        </button>
+    </div>
+    <div>
+        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">預覽行程</span>
+        <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openSumupModal">
+            <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4a1 1 0 0 0-1-1H8.914a1 1 0 0 0-.707.293L4.293 7.207A1 1 0 0 0 4 7.914V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5M9 3v4a1 1 0 0 1-1 1H4m11.383.772 2.745 2.746m1.215-3.906a2.089 2.089 0 0 1 0 2.953l-6.65 6.646L9 17.95l.739-3.692 6.646-6.646a2.087 2.087 0 0 1 2.958 0Z"/>
+            </svg>
+        </button>
+    </div>
+    <div v-if="scheduleList.length > 0">
+        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">調整已排定的旅行</span>
+        <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openAdjustScheduleModal">
+            <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+            </svg>
+        </button>
+    </div>
+</div>
 
 <!-- chat modal -->
 <dialog id="chatModal" class="modal modal-end md:modal-middle">
-    <div class="modal-box h-1/1 w-1/1 md:w-8/10 flex flex-col bg-neutral-100">
+    <div class="modal-box h-9/10 w-1/1 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
-            <span class="text-xl text-gray-900 text-center"></span>
+            <span class="text-xl text-gray-900 text-center">想說點什麼呢?</span>
         </div>
-        <div class="h-8/10 w-10/10 flex flex-col overflow-y-auto gap-2">
-            <div class="w-1/1 flex flex-row gap-2 justify-center">
-                <!-- 開啟新話題 -->
-                <button class="btn btn-circle bg-red-300 text-gray-900 hover:bg-gray-900 hover:text-gray-100" title="新話題" @click="openReplanConfirmModal">
-                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                    </svg>
+        <div class="h-9/10 w-10/10 flex flex-col overflow-y-auto gap-2">
+            <div class="divider divider-primary"></div>
+
+            <div class="w-1/1 grid grid-cols-2 gap-2">
+                <button v-for="(spObj, sp_i) in samplePromptList" class="btn" @click="importSamplePrompt(spObj)">
+                    {{ spObj.title }}
                 </button>
-                <!-- 匯入行程規劃範本 -->
-                <div v-if="samplePromptList.length > 0" class="dropdown dropdown-bottom dropdown-end">
-                    <div tabindex="0" role="button">
-                        <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" title="匯入行程規劃範本">
-                            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-4m5-13v4a1 1 0 0 1-1 1H5m0 6h9m0 0-2-2m2 2-2 2"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <ul tabindex="-1" class="dropdown-content menu bg-base-100 border border-gray-900 rounded-box z-1 w-52 p-2 gap-2 shadow-sm">
-                        <li class="bg-yellow-100 text-gray-900 p-1 flex flex-col rounded-xl">
-                            <div class="text-base md:text-lg">行程規劃範本</div>
-                        </li>
-                        <li v-for="(spObj, sp_i) in samplePromptList" class="bg-gray-200">
-                            <a @click="importSamplePrompt(spObj)" class="flex flex-col">
-                                <div>{{ spObj.title }}</div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- 回顧之前聊天內容 -->
-                <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" title="回顧之前聊天內容" @click="remindPlan">
-                    <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
-                    </svg>
-                </button>
-                <!-- 總結對話 -->
-                <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" title="總結對話" @click="openSumupModal">
-                    <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 5V4a1 1 0 0 0-1-1H8.914a1 1 0 0 0-.707.293L4.293 7.207A1 1 0 0 0 4 7.914V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5M9 3v4a1 1 0 0 1-1 1H4m11.383.772 2.745 2.746m1.215-3.906a2.089 2.089 0 0 1 0 2.953l-6.65 6.646L9 17.95l.739-3.692 6.646-6.646a2.087 2.087 0 0 1 2.958 0Z"/>
-                    </svg>
-                </button>
-                <!-- 調整已排定的旅行 -->
-                <div v-if="scheduleList.length > 0" class="dropdown dropdown-bottom dropdown-end">
-                    <div tabindex="0" role="button">
-                        <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" title="調整已排定的旅行">
-                            <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <ul tabindex="-1" class="dropdown-content menu bg-base-100 border border-gray-900 rounded-box z-1 w-52 p-2 gap-2 shadow-sm">
-                        <li class="bg-yellow-100 text-gray-900 p-1 flex flex-col rounded-xl">
-                            <div class="text-base md:text-lg">注意!</div>
-                            <div class="text-base md:text-lg">調整'已排定的旅行'會清空現有聊天內容!</div>
-                        </li>
-                        <li v-for="(schObj, sch_i) in scheduleList" class="bg-gray-200">
-                            <a @click="editOnScheduleTrip(schObj)" class="flex flex-col">
-                                <div>{{ schObj.destination }}</div>
-                                <div class="text-xs">( {{ schObj.trip_start_date }} - {{ schObj.trip_end_date }} )</div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
             </div>
 
-            <div class="divider divider-primary"></div>
             <div class="w-1/1 h-1/1 flex flex-col">
-                <textarea class="textarea w-1/1 h-1/1" placeholder="想說點什麼呢?" v-model="userMessage" @keyup.shift.enter="send"></textarea>
+                <textarea class="textarea w-1/1 h-1/1" placeholder="" v-model="userMessage" @keyup.shift.enter="send"></textarea>
                 <span class="w-1/1 text-xs text-gray-900/60 text-center hidden sm:block">( enter: 換行 / shift + enter: 直接傳送訊息 )</span>
             </div>
         </div>
@@ -655,6 +654,36 @@
                     <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
                 </svg>
                 傳送訊息
+            </button>
+        </div>
+    </div>
+</dialog>
+
+<!-- adjust schedule modal -->
+<dialog id="adjustScheduleModal" class="modal modal-end md:modal-middle">
+    <div class="modal-box h-9/10 w-1/1 flex flex-col bg-neutral-100">
+        <div class="flex flex-col justify-center">
+            <span class="text-xl text-gray-900 text-center">調整已排定的旅行</span>
+        </div>
+        <div class="h-9/10 w-10/10 flex flex-col overflow-y-auto gap-2">
+            <div class="divider divider-primary"></div>
+
+            <div class="w-1/1 bg-yellow-100 text-gray-900 p-1 flex flex-col rounded-xl">
+                <div class="text-base md:text-lg">注意!</div>
+                <div class="text-base md:text-lg">調整'已排定的旅行'會清空現有聊天內容!</div>
+            </div>
+
+            <div class="w-1/1 flex flex-col gap-2">
+                <button v-for="(schObj, sch_i) in scheduleList" class="btn" @click="editOnScheduleTrip(schObj)">
+                    <div>{{ schObj.destination }}</div>
+                    <div class="text-xs">( {{ schObj.trip_start_date }} - {{ schObj.trip_end_date }} )</div>
+                </button>
+            </div>
+        </div>
+        <div class="divider divider-primary"></div>
+        <div class="modal-action">
+            <button class="btn btn-ghost w-1/1 bg-gray-900 text-gray-100 hover:bg-gray-100 hover:text-gray-900" @click="closeAdjustScheduleModal">
+                關閉
             </button>
         </div>
     </div>
