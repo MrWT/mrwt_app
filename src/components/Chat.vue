@@ -435,8 +435,8 @@
         <div class="h-8/10 w-10/10 flex flex-col overflow-y-auto gap-2">
             <div class="divider divider-primary"></div>
             <div class="w-1/1 h-1/1 flex flex-col">
-                <textarea class="textarea w-1/1 h-1/1" v-model="userMessage" @keyup.shift.enter="send"></textarea>
-                <span class="w-1/1 text-xs text-gray-900/60 text-center hidden sm:block">( enter: 換行 / shift + enter: 直接傳送訊息 )</span>
+                <textarea class="textarea w-1/1 h-1/1" v-model="userMessage" @keyup.ctrl.enter="send"></textarea>
+                <span class="w-1/1 text-xs text-gray-900/60 text-center hidden sm:block">( enter: 換行 / ctrl + enter: 直接傳送訊息 )</span>
             </div>
         </div>
         <div class="divider divider-primary"></div>
