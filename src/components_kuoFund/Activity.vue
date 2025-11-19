@@ -9,7 +9,7 @@
         user_role: String, 
         annouce_period_start: String,
         annouce_period_end: String,
-    })
+    });
 
     onMounted(() => {
         console.log("Activity mounted.");
