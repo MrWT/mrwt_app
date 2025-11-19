@@ -94,7 +94,7 @@
                 <div class="w-10/10 text-center text-2xl underline">Firestore <br />( NoSQL )</div>
             </div>
             <div class="card bg-base-300 rounded-box grid h-1/1 w-5/10 md:h-5/10 md:w-10/10 place-items-center">
-                <div class="w-10/10 text-center text-2xl underline">Vertex AI <br />( Gemini )</div>
+                <div class="w-10/10 text-center text-2xl underline">Vertex AI <br />( gemini-2.5-flash-lite )</div>
             </div>
         </div>
     </div>
