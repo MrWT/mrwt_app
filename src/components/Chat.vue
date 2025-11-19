@@ -249,7 +249,17 @@
         if(promptTime.value){
             promptOptions.time.forEach((timeObj, act_i) => {
                 if(promptTime.value === timeObj.value){
-                    c_prompt += timeObj.text;
+                    let today = moment().format("YYYY-MM-DD");
+                    let stDate = "";
+
+                    switch(promptTime.value){
+                        case "1week": stDate = moment().add(-7, "d").format("YYYY-MM-DD"); break;
+                        case "1month": stDate = moment().add(-1, "M").format("YYYY-MM-DD"); break;
+                        case "3month": stDate = moment().add(-3, "M").format("YYYY-MM-DD"); break;
+                        case "6month": stDate = moment().add(-6, "M").format("YYYY-MM-DD"); break;
+                        case "1year": stDate = moment().add(-12, "M").format("YYYY-MM-DD"); break;
+                    }
+                    c_prompt += " " + stDate + "~" + today + " ";
                 }
             });
         }
