@@ -14,6 +14,7 @@
     import TripSchedule from './components/TripSchedule.vue'
     import Author from './components/Author.vue'
     import Recollection from './components/Recollection.vue'
+    import Achievement from './components/Achievement.vue'
     import PopupMessage from './components/PopupMessage.vue'
 
     // 郭家基金相關 component - 先寄生於此專案, 待成熟後, 再分家出去
@@ -253,7 +254,7 @@
                 {
                     appSetting.funButtons.splice(0, appSetting.funButtons.length);
 
-                    let allFunctionKeys = ["finance", "chat", "plan_trip", "trip_schedule", "footmark", "recollection", "recall", "finance_kf", "rule_kf", "activity_kf"];
+                    let allFunctionKeys = ["finance", "chat", "plan_trip", "trip_schedule", "footmark", "recollection", "achievement", "recall", "finance_kf", "rule_kf", "activity_kf"];
                     let buildingFunctionKeys = [];
                     let buildingFunctionKeys_kf = ["recall"];
                     allFunctionKeys.forEach((funKey, fk_i) => {
@@ -425,6 +426,7 @@
         <TripSchedule v-else-if="appSetting.contentComponent === 'trip_schedule'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
         <Recollection v-else-if="appSetting.contentComponent === 'recollection'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
+        <Achievement v-else-if="appSetting.contentComponent === 'achievement'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" />
 
         <Recall v-else-if="appSetting.contentComponent === 'recall'" :title="appSetting.title" :account="userInfo.account" @popup-message="popupMessage" />
         <Survey v-else-if="appSetting.contentComponent === 'survey'" :title="appSetting.title" :account="userInfo.account" />
