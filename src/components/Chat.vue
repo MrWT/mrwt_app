@@ -6,7 +6,8 @@
     const emit = defineEmits(['popupMessage']);
     const props = defineProps({
         title: String,
-        account: String
+        account: String,
+        user_role: String,
     })
 
     onMounted(() => {
@@ -26,9 +27,6 @@
     let currentAiRole = reactive({});
     // 提詞機 - 選項
     let promptOptions = reactive({
-        action: [
-            { value: "summary", text: "整理出", },
-        ],
         nation: [
             { value: "global", text: "國際", },
             { value: "taiwan", text: "台灣", },
@@ -38,7 +36,8 @@
         ],
         scope: [
             { value: "entertainment", text: "演藝圈", },
-            { value: "vehicle", text: "汽車/機車", },
+            { value: "car", text: "汽車", },
+            { value: "motorcycle", text: "機車", },
             { value: "stock", text: "股市", },
             { value: "house", text: "房地產", },
             { value: "politic", text: "政治", },
@@ -46,6 +45,8 @@
             { value: "baseball", text: "棒球", },
         ],
         time: [
+            { value: "today", text: "今天", },
+            { value: "24hours", text: "過去24小時", },
             { value: "1week", text: "近一週", },
             { value: "1month", text: "近一個月", },
             { value: "3month", text: "近三個月", },
@@ -55,6 +56,7 @@
         type: [
             { value: "news", text: "新聞", },
             { value: "sport", text: "賽況", },
+            { value: "business", text: "市場", },
         ],
     });
     // 提詞機 - 選擇
@@ -71,9 +73,11 @@
         console.log("chat.init");
         console.log("chat.props.title", props.title);
         console.log("chat.props.account", props.account);
+        console.log("chat.props.user_role", props.user_role);
 
         fetchInitData();
-        chat("HI");
+        userMessage.value = "Hi";
+        chat();
 
         // 先組合出預設 prompt
         combinePrompt();
@@ -98,8 +102,8 @@
         });
     }
     // chat with ai
-    function chat(message){
-        console.log("chat.message=" + message);
+    function chat(){
+        console.log("chat.message=" + userMessage.value);
         // 關閉全部 modal
         closeAllModal();
         
@@ -109,7 +113,7 @@
             data: {
                 account: props.account,
                 chat_room_uuid: chat_room_uuid.value,
-                message: message,
+                message: userMessage.value,
                 time: moment().format("YYYY-MM-DD HH:mm:ss"),
             }
         }, "AI");
@@ -167,8 +171,25 @@
             time: moment().format("HH:mm:ss"),
         });
 
-        chat(userMessage.value);
-    }        
+        chat();
+    }      
+    // 傳送至 Line
+    function sendToLine(){
+        let linePromise = fetchData({
+            api: "send_to_line",
+            data: {
+                account: props.account,
+                messages: userMessage.value,
+            }
+        });
+        Promise.all([linePromise]).then((values) => {
+            console.log("linePromise.values=", values);
+            userMessage.value = "";
+
+            // 關閉全部 modal
+            closeAllModal();
+        });
+    }
     // 開啟 setting modal
     function openSettingModal(){
         document.getElementById("settingModal").showModal();
@@ -204,7 +225,8 @@
         // 清空聊天清單
         messages.splice(0, messages.length);
 
-        chat(msg);
+        userMessage.value = msg;
+        chat();
         // 關閉設定 modal
         closeSettingModal();
     }
@@ -214,18 +236,29 @@
     }
     // 組合提詞
     function combinePrompt(){
-        let c_prompt = "";
+        let c_prompt = "整理出";
         /*
-        console.log("combinePrompt.promptAction=", promptAction.value);
         console.log("combinePrompt.promptNation=", promptNation.value);
         console.log("combinePrompt.promptScope=", promptScope.value);
         console.log("combinePrompt.promptTime=", promptTime.value);
         console.log("combinePrompt.promptType=", promptType.value);
         */
-        if(promptAction.value){
-            promptOptions.action.forEach((actObj, act_i) => {
-                if(promptAction.value === actObj.value){
-                    c_prompt += actObj.text;
+        if(promptTime.value){
+            promptOptions.time.forEach((timeObj, act_i) => {
+                if(promptTime.value === timeObj.value){
+                    let today = moment().format("YYYY-MM-DD");
+                    let stDate = "";
+
+                    switch(promptTime.value){
+                        case "today": stDate = today; break;
+                        case "24hours": stDate = moment().add(-1, "d").format("YYYY-MM-DD"); break;
+                        case "1week": stDate = moment().add(-7, "d").format("YYYY-MM-DD"); break;
+                        case "1month": stDate = moment().add(-1, "M").format("YYYY-MM-DD"); break;
+                        case "3month": stDate = moment().add(-3, "M").format("YYYY-MM-DD"); break;
+                        case "6month": stDate = moment().add(-6, "M").format("YYYY-MM-DD"); break;
+                        case "1year": stDate = moment().add(-12, "M").format("YYYY-MM-DD"); break;
+                    }
+                    c_prompt += " " + stDate + "~" + today + " ";
                 }
             });
         }
@@ -242,24 +275,6 @@
             promptOptions.scope.forEach((scopeObj, act_i) => {
                 if(promptScope.value === scopeObj.value){
                     c_prompt += scopeObj.text;
-                }
-            });
-        }
-
-        if(promptTime.value){
-            promptOptions.time.forEach((timeObj, act_i) => {
-                if(promptTime.value === timeObj.value){
-                    let today = moment().format("YYYY-MM-DD");
-                    let stDate = "";
-
-                    switch(promptTime.value){
-                        case "1week": stDate = moment().add(-7, "d").format("YYYY-MM-DD"); break;
-                        case "1month": stDate = moment().add(-1, "M").format("YYYY-MM-DD"); break;
-                        case "3month": stDate = moment().add(-3, "M").format("YYYY-MM-DD"); break;
-                        case "6month": stDate = moment().add(-6, "M").format("YYYY-MM-DD"); break;
-                        case "1year": stDate = moment().add(-12, "M").format("YYYY-MM-DD"); break;
-                    }
-                    c_prompt += " " + stDate + "~" + today + " ";
                 }
             });
         }
@@ -303,7 +318,8 @@
         messages.splice(0, messages.length);
         chat_room_uuid.value = "INIT";
         // 開啟新對話
-        chat("HI");
+        userMessage.value = "Hi";
+        chat();
     }
     // 關閉 NewChat 再確認 modal
     function closeNewChatConfirmModal(){
@@ -451,14 +467,22 @@
         </div>
         <div class="divider divider-primary"></div>
         <div class="modal-action">
-            <button class="btn btn-ghost w-1/2 bg-gray-900 text-gray-100 hover:bg-gray-100 hover:text-gray-900" @click="closeChatModal">
+            <button class="btn btn-ghost bg-gray-900 text-gray-100 hover:bg-gray-100 hover:text-gray-900" @click="closeChatModal"
+                    :class="{'w-1/3': props.user_role === 'admin', 'w-1/2': props.user_role !== 'admin'}">
                 關閉
             </button>
-            <button class="btn bg-gray-300 hover:bg-blue-300 w-1/2" @click="send">
+            <button class="btn bg-gray-300 hover:bg-blue-300" @click="send"
+                    :class="{'w-1/3': props.user_role === 'admin', 'w-1/2': props.user_role !== 'admin'}">
                 <svg class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                     <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
                 </svg>
-                傳送訊息
+                傳給 AI
+            </button>
+            <button v-if="props.user_role === 'admin'" class="btn bg-gray-300 hover:bg-blue-300 w-1/3" @click="sendToLine">
+                <svg class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
+                </svg>
+                傳送至 Line
             </button>
         </div>
     </div>
@@ -528,12 +552,6 @@
             <div class="divider divider-primary"></div>
         </div>
         <div class="h-3/4 md:h-4/5 w-1/1 flex flex-col overflow-y-auto gap-2 border rounded-2xl">
-            <div class="h-1/3 w-1/1 flex flex-row rounded-lg bg-stone-200 px-2 gap-1 overflow-x-auto">
-                <label v-for="(aObj, a_i) in promptOptions.action" class="label text-gray-900">
-                    <input type="radio" class="radio" :value="aObj.value" v-model="promptAction" />
-                    {{ aObj.text }}
-                </label>
-            </div>
             <div class="h-1/3 w-1/1 flex flex-row rounded-lg bg-state-200 px-2 gap-1 overflow-x-auto">
                 <label v-for="(nObj, n_i) in promptOptions.nation" class="label text-gray-900">
                     <input type="radio" class="radio" :value="nObj.value" v-model="promptNation" />
