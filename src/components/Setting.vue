@@ -1,13 +1,10 @@
 <script setup>
     import { ref, reactive, onBeforeMount, onMounted } from 'vue'
 
-    //import SettingAward from '@/components/SettingAward.vue'
     import SettingFinance from '@/components/SettingFinance.vue'
     import SettingPersonal from '@/components/SettingPersonal.vue'
-    //import SettingQuiz from '@/components/SettingQuiz.vue'
     import SettingActivityKF from '@/components_kuoFund/SettingActivity.vue'
     import SettingFinanceKF from '@/components_kuoFund/SettingFinance.vue'
-    //import SettingAnalyze from '@/components_kuoFund/SettingAnalyze.vue'
 
     const emit = defineEmits(['popupMessage']);
     const props = defineProps({
@@ -70,22 +67,6 @@
         <SettingPersonal :account="account" @popup-message="popupMessage"></SettingPersonal>
     </div>
 
-    <!-- Quiz 預設值 -->
-    <!--
-    <input v-if="userRole === 'admin'" type="radio" name="setting_tabs" class="tab" aria-label="設定 Quiz 預設值" />
-    <div v-if="userRole === 'admin'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
-        <SettingQuiz @popup-message="popupMessage"></SettingQuiz>
-    </div>
-    -->
-
-    <!-- Award -->
-    <!--
-    <input v-if="userRole === 'admin'" type="radio" name="setting_tabs" class="tab" aria-label="設定獎項清單" />
-    <div v-if="userRole === 'admin'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
-        <SettingAward @popup-message="popupMessage"></SettingAward>
-    </div>
-    -->
-
     <!-- Finance - 郭家基金 -->
     <input v-if="userRole === 'admin_kf'" type="radio" name="setting_tabs" class="tab" aria-label="設定存款/提領款項-KF" />
     <div v-if="userRole === 'admin_kf'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
@@ -98,13 +79,6 @@
         <SettingActivityKF :user_role="userRole" @popup-message="popupMessage"></SettingActivityKF>
     </div>
 
-    <!-- 分析問卷結果 - 郭家基金 -->
-    <!--
-    <input v-if="userRole === 'admin_kf'" type="radio" name="setting_tabs" class="tab" aria-label="分析問卷結果" />
-    <div v-if="userRole === 'admin_kf'" class="tab-content border-base-300 bg-base-100 pt-1 px-5">
-        <SettingAnalyze></SettingAnalyze>
-    </div>
-    -->
 </div>
 
 </template>

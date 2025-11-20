@@ -7,14 +7,12 @@
     import Finance from './components/Finance.vue'
     import Gallery from './components/Gallery.vue'
     import Footmark from './components/Footmark.vue'
-    import Quiz from './components/Quiz.vue'
     import Readme from './components/Readme.vue'
     import Setting from './components/Setting.vue'
     import Chat from './components/Chat.vue'
     import PlanTrip from './components/PlanTrip.vue'
     import TripSchedule from './components/TripSchedule.vue'
     import Author from './components/Author.vue'
-    import LockLucky from './components/LockLucky.vue'
     import Recollection from './components/Recollection.vue'
     import PopupMessage from './components/PopupMessage.vue'
 
@@ -255,7 +253,7 @@
                 {
                     appSetting.funButtons.splice(0, appSetting.funButtons.length);
 
-                    let allFunctionKeys = ["quiz", "finance", "chat", "plan_trip", "trip_schedule", "footmark", "recollection", "lockLucky", "recall", "survey", "finance_kf", "rule_kf", "activity_kf"];
+                    let allFunctionKeys = ["finance", "chat", "plan_trip", "trip_schedule", "footmark", "recollection", "recall", "finance_kf", "rule_kf", "activity_kf"];
                     let buildingFunctionKeys = [];
                     let buildingFunctionKeys_kf = ["recall"];
                     allFunctionKeys.forEach((funKey, fk_i) => {
@@ -418,7 +416,6 @@
     <!-- 功能 component -->
     <div class="p-4 h-8/10 mt-30">
         <Gallery v-if="appSetting.contentComponent === 'gallery'" :title="appSetting.title" :account="userInfo.account" :cname="userInfo.cname" :user_role="userInfo.role" />
-        <Quiz v-else-if="appSetting.contentComponent === 'quiz'" :title="appSetting.title" :setting="appSetting.quiz" />
         <Readme v-else-if="appSetting.contentComponent === 'readme'" :title="appSetting.title" :reference="appSetting.reference"  @introduce-author="gotoIntroduceAuthor" />
         <Footmark v-else-if="appSetting.contentComponent === 'footmark'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <Finance v-else-if="appSetting.contentComponent === 'finance'" :title="appSetting.title" :account="userInfo.account" />
@@ -427,7 +424,6 @@
         <PlanTrip v-else-if="appSetting.contentComponent === 'plan_trip'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <TripSchedule v-else-if="appSetting.contentComponent === 'trip_schedule'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
-        <LockLucky v-else-if="appSetting.contentComponent === 'lockLucky'" />
         <Recollection v-else-if="appSetting.contentComponent === 'recollection'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
 
         <Recall v-else-if="appSetting.contentComponent === 'recall'" :title="appSetting.title" :account="userInfo.account" @popup-message="popupMessage" />
