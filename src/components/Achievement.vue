@@ -123,57 +123,109 @@
             closeEditModal();
         });
     }
-    
+    // 開啟 delete modal
+    function openDeleteModal(selObj){
+        document.getElementById("deleteModal").showModal();
+
+        editObj_id.value = selObj.id;
+        editObj_description.value = "";
+        editObj_achieveTime.value = "";
+
+        console.log("openEditModal.editObj_id=" + editObj_id.value);
+    }
+    // 關閉 delete modal
+    function closeDeleteModal(){
+        document.getElementById("deleteModal").close();
+    }
+    // 儲存 delete 結果
+    function deleteAchievement(){
+        let api_name = "del_achievement";
+        let doc_id = editObj_id.value;
+        console.log("deleteAchievement.api_name=" + api_name);
+        console.log("deleteAchievement.doc_id=" + doc_id);
+
+        let deleteAchievementPromise = fetchData({
+            api: api_name,
+            data: {
+                id: doc_id,
+            }
+        });
+        Promise.all([deleteAchievementPromise]).then((values) => {
+            console.log("deleteAchievementPromise.values=", values);
+
+            fetchInitData();
+            closeEditModal();
+            closeDeleteModal();
+        });
+    }
+
 </script>
 
 <template>
 
 <div class="h-1/1 w-1/1 flex flex-col gap-2 overflow-y-auto">
     <!-- 待解鎖清單 -->
-    <ul class="h-1/2 list bg-base-100 rounded-box shadow-md overflow-y-auto">
-        <li class="p-4 pb-2 tracking-wide text-center font-semibold text-base bg-gray-300 text-2xl flex flex-row">
+    <div class="w-1/1 p-4 font-semibold bg-gray-300/50 text-2xl flex flex-row justify-center items-center rounded-xl shadow-2xl">
+        <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M8 10V7a4 4 0 1 1 8 0v3h1a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h1Zm2-3a2 2 0 1 1 4 0v3h-4V7Zm2 6a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0v-3a1 1 0 0 1 1-1Z" clip-rule="evenodd"/>
+        </svg>
+        <span>
             待解鎖清單
-        </li>
-        <li v-for="(naObj, na_i) in nonAchieveEvents" class="list-row">
-            <div class="text-4xl font-thin opacity-30 tabular-nums">{{ ((na_i+1) < 10 ? "0" : "") + (na_i+1) }}</div>
-            <div class="list-col-grow">
+        </span>
+    </div>
+    <div class="w-1/1 h-1/2 flex flex-wrap overflow-y-auto justify-center">
+        <div v-for="(naObj, na_i) in nonAchieveEvents" class="w-1/1 sm:w-1/3 md:w-1/3 lg:w-1/4 flex flex-row border border-black rounded-xl p-1 m-1 items-center">
+            <div class="w-2/3 flex flex-col justify-start">
                 <div class="text-xl font-black">{{ naObj.description }}</div>
                 <div class="text-base">{{ naObj.achieve_time }}</div>
             </div>
-            <button class="btn btn-square bg-gray-300 border-0 border-black hover:border-2" @click="openEditModal(naObj)">
-                <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
-                </svg>
-            </button>
-        </li>
-    </ul>
-    <!-- 已解鎖清單 -->
-    <ul class="h-1/2 list bg-base-100 rounded-box shadow-md overflow-y-auto">
-        <li class="p-4 pb-2 tracking-wide text-center font-semibold text-base bg-emerald-200/50 text-2xl">
-            已解鎖清單
-        </li>
-        <li v-for="(aeObj, ae_i) in achieveEvents" class="list-row">
-            <div class="text-4xl font-thin opacity-30 tabular-nums">{{ ((ae_i+1) < 10 ? "0" : "") + (ae_i+1) }}</div>
-            <div class="list-col-grow">
-                <div class="text-xl font-black">{{ aeObj.description }}</div>
-                <div class="text-base flex flex-row items-center">
-                    <svg class="size-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14v3m4-6V7a3 3 0 1 1 6 0v4M5 11h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
+            <div class="w-1/3 flex flex-row justify-end">
+                <button class="btn btn-square bg-red-300 border-0 border-red-900 hover:border-2" @click="openDeleteModal(naObj)">
+                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
                     </svg>
-                    {{ aeObj.achieve_time }}
-                </div>
+                </button>
+                <button class="btn btn-square bg-gray-300 border-0 border-black hover:border-2" @click="openEditModal(naObj)">
+                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
+                    </svg>
+                </button>
             </div>
-            <button class="btn btn-square bg-gray-300 border-0 border-black hover:border-2" @click="openEditModal(aeObj)">
-                <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
-                </svg>
-            </button>
-        </li>
-    </ul>
+        </div>
+    </div>
+    <!-- 已解鎖清單 -->
+    <div class="w-1/1 p-4 font-semibold bg-yellow-300/50 text-2xl flex flex-row justify-center items-center rounded-xl shadow-2xl">
+        <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14v3m4-6V7a3 3 0 1 1 6 0v4M5 11h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
+        </svg>
+        <span>
+            已解鎖清單
+        </span>
+    </div>
+    <div class="w-1/1 h-1/2 flex flex-wrap overflow-y-auto justify-center">
+        <div v-for="(aeObj, ae_i) in achieveEvents" class="w-1/1 sm:w-1/3 md:w-1/3 lg:w-1/4 flex flex-row border border-black rounded-xl p-1 m-1 items-center">
+            <div class="w-2/3 flex flex-col justify-start">
+                <div class="text-xl font-black">{{ aeObj.description }}</div>
+                <div class="text-base">{{ aeObj.achieve_time }}</div>
+            </div>
+            <div class="w-1/3 flex flex-row justify-end">
+                <button class="btn btn-square bg-red-300 border-0 border-red-900 hover:border-2" @click="openDeleteModal(aeObj)">
+                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                    </svg>
+                </button>
+                <button class="btn btn-square bg-gray-300 border-0 border-black hover:border-2" @click="openEditModal(aeObj)">
+                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- 新增功能 -->
-<button class="btn btn-square bg-yellow-300/50 border-0 border-black hover:border-2 absolute right-2 bottom-2 z-10" @click="openEditModal">
+<button class="btn btn-square bg-blue-300/50 border-0 border-black hover:border-2 absolute right-2 bottom-2 z-10" @click="openEditModal">
     <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
     </svg>
@@ -217,6 +269,29 @@
         <button>close</button>
     </form>
 </dialog>
+
+<!-- delete modal -->
+<dialog id="deleteModal" class="modal">
+    <div class="modal-box h-3/10 w-10/10 flex flex-col bg-neutral-500">
+        <div class="h-10/10 w-10/10 text-center text-black font-black">
+            <span class="text-2xl">再跟您確認一次~</span>
+            <div class="divider divider-primary"></div>
+        </div>
+        <div class="modal-action">
+            <button class="btn btn-ghost w-1/2 text-gray-900 bg-gray-100 hover:bg-gray-500 hover:text-gray-100 hover:underline" @click="closeDeleteModal">
+                取消
+            </button>
+
+            <button class="btn btn-ghost w-1/2 text-gray-900 bg-gray-100 hover:bg-gray-500 hover:text-gray-100 hover:underline" @click="deleteAchievement">
+                確認
+            </button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
 
 </template>
 
