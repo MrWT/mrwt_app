@@ -364,7 +364,7 @@
 
 <template>
 
-<div id="chatBox" class="flex flex-col w-10/10 h-10/10">
+<div id="chatBox" class="flex flex-col w-1/1 h-1/1 md:w-10/12">
     <div v-for="(msgObj, msg_i) in messages" class="chat"
         :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
         <div class="chat-image avatar">
@@ -405,7 +405,45 @@
     </div>
 </div>
 
-<div class="fab absolute right-2 bottom-2 z-10" :class="{'hidden': chatModalStatus === 'OPEN'}">
+<div class="w-2/12 flex flex-col absolute right-5 top-40 z-10 hidden md:block">
+    <div class="w-1/1 flex flex-row justify-end items-center gap-2">
+        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">說點什麼</span> 
+        <button class="btn btn-circle bg-green-300 text-gray-900 hover:bg-blue-300" @click="openChatModal">
+            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="w-1/1 flex flex-row justify-end items-center gap-2">
+        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">開啟新話題</span> 
+        <button class="btn btn-circle bg-red-300 text-gray-900 hover:bg-blue-300" @click="openNewChatConfirmModal">
+            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="w-1/1 flex flex-row justify-end items-center gap-2">
+        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">調整 AI 角色</span>
+        <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" @click="openSettingModal">
+            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 19h4a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-2m-2.236-4a3 3 0 1 0 0-4M3 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="w-1/1 flex flex-row justify-end items-center gap-2">
+        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">聊天提詞機</span>
+        <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openPromptModal">
+            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 9h5m3 0h2M7 12h2m3 0h5M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.616a1 1 0 0 0-.67.257l-2.88 2.592A.5.5 0 0 1 8 18.477V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+            </svg>
+        </button>
+    </div>
+
+</div>
+
+
+
+<div class="fab absolute right-2 bottom-2 z-10 md:hidden" :class="{'hidden': chatModalStatus === 'OPEN'}">
     <!-- a focusable div with tabindex is necessary to work on all browsers. role="button" is necessary for accessibility -->
     <div tabindex="0" role="button" class="btn btn-circle bg-gray-300 text-gray-900 hover:bg-blue-300">
         <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -453,7 +491,7 @@
 </div>
 
 <!-- chat modal -->
-<dialog id="chatModal" class="modal modal-end md:modal-middle">
+<dialog id="chatModal" class="modal modal-end">
     <div class="modal-box h-8/10 w-1/1 md:w-8/10 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
             <span class="text-xl text-gray-900 text-center">想說點什麼呢?</span>
