@@ -175,23 +175,22 @@
             </span>
         </div>
         <div class="w-1/1 h-11/12 flex flex-wrap overflow-y-auto justify-center">
-            <div v-for="(naObj, na_i) in nonAchieveEvents" class="w-1/1 sm:w-1/3 md:w-1/3 lg:w-1/4 flex flex-row border border-black rounded-xl p-1 m-1 items-center">
-                <div class="w-2/3 flex flex-col justify-start">
+            <div v-for="(naObj, na_i) in nonAchieveEvents" class="w-1/1 flex flex-row border border-black rounded-xl p-1 m-1 items-center">
+                <button class="w-1/6 btn btn-ghost text-red-900 border-0 border-red-900 hover:border-2" @click="openDeleteModal(naObj)">
+                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                    </svg>
+                </button>
+
+                <div class="w-4/6 flex flex-col text-center">
                     <div class="text-xl font-black">{{ naObj.description }}</div>
-                    <div class="text-base">{{ naObj.achieve_time }}</div>
                 </div>
-                <div class="w-1/3 flex flex-row justify-end self-end">
-                    <button class="btn btn-square bg-red-300 border-0 border-red-900 hover:border-2" @click="openDeleteModal(naObj)">
-                        <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
-                        </svg>
-                    </button>
-                    <button class="btn btn-square bg-gray-300 border-0 border-black hover:border-2" @click="openEditModal(naObj)">
-                        <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
-                        </svg>
-                    </button>
-                </div>
+
+                <button class="w-1/6 btn btn-ghost text-gray-900 border-0 border-gray-900 hover:border-2" @click="openEditModal(naObj)">
+                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
@@ -206,23 +205,23 @@
             </span>
         </div>
         <div class="w-1/1 h-11/12 flex flex-wrap overflow-y-auto justify-center">
-            <div v-for="(aeObj, ae_i) in achieveEvents" class="w-1/1 sm:w-1/3 md:w-1/3 lg:w-1/4 flex flex-row border border-black rounded-xl p-1 m-1 items-center">
-                <div class="w-2/3 flex flex-col justify-start">
+            <div v-for="(aeObj, ae_i) in achieveEvents" class="w-1/1 flex flex-row border border-black rounded-xl p-1 m-1 items-center">
+                <button class="w-1/6 btn btn-ghost text-red-900 border-0 border-red-900 hover:border-2" @click="openDeleteModal(aeObj)">
+                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                    </svg>
+                </button>
+
+                <div class="w-4/6 flex flex-col text-center">
                     <div class="text-xl font-black">{{ aeObj.description }}</div>
                     <div class="text-base">{{ aeObj.achieve_time }}</div>
                 </div>
-                <div class="w-1/3 flex flex-row justify-end self-end">
-                    <button class="btn btn-square bg-red-300 border-0 border-red-900 hover:border-2" @click="openDeleteModal(aeObj)">
-                        <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
-                        </svg>
-                    </button>
-                    <button class="btn btn-square bg-gray-300 border-0 border-black hover:border-2" @click="openEditModal(aeObj)">
-                        <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
-                        </svg>
-                    </button>
-                </div>
+
+                <button class="w-1/6 btn btn-ghost text-gray-900 border-0 border-black hover:border-2" @click="openEditModal(aeObj)">
+                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
@@ -277,7 +276,7 @@
 <!-- delete modal -->
 <dialog id="deleteModal" class="modal">
     <div class="modal-box h-3/10 w-10/10 flex flex-col bg-neutral-500">
-        <div class="h-10/10 w-10/10 text-center text-black font-black">
+        <div class="h-10/10 w-10/10 text-center text-white font-black">
             <span class="text-2xl">再跟您確認一次~</span>
             <div class="divider divider-primary"></div>
         </div>
