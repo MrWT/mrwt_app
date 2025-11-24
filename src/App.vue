@@ -74,6 +74,7 @@
         role: null,
         funcs: [],
         languages: {},
+        focus_news_topic: null,
     });
     let opObj = reactive({
         status: false,
@@ -234,6 +235,7 @@
                     userInfo.mail = userInfoObj["mail"];
                     userInfo.role = userInfoObj["role"];
                     userInfo.funcs = userInfoObj["function"];
+                    userInfo.focus_news_topic = userInfoObj["focus_news_topic"];
                     appSetting.title = userInfoObj["app_title"];
                 }
 
@@ -276,15 +278,15 @@
                 // close signinModal
                 document.getElementById("signinModal").close();
 
-                // 郭家基金成員 - 預設開啟基金明細 component
-                if(userInfoObj["account"].toUpperCase() === "KUOFAMILY" || userInfoObj["role"] === "admin_kf")
-                {
+                if(userInfoObj["account"].toUpperCase() === "KUOFAMILY" || userInfoObj["role"] === "admin_kf"){
+                    // 郭家基金成員 - 預設開啟基金明細 component
                     gotoPage("finance_kf");
-                }
-                // 郭家基金-問卷帳號 - 預設開啟問卷 component
-                if(userInfoObj["account"].toUpperCase().startsWith("SURVEY"))
-                {
+                } else if(userInfoObj["account"].toUpperCase().startsWith("SURVEY")){
+                    // 郭家基金-問卷帳號 - 預設開啟問卷 component
                     gotoPage("survey");
+                }else{
+                    // 預設開啟 gallery component
+                    gotoPage('gallery');
                 }
             });
         }
@@ -416,7 +418,7 @@
     </div>
     <!-- 功能 component -->
     <div class="p-4 h-8/10 mt-30">
-        <Gallery v-if="appSetting.contentComponent === 'gallery'" :title="appSetting.title" :account="userInfo.account" :cname="userInfo.cname" :user_role="userInfo.role" />
+        <Gallery v-if="appSetting.contentComponent === 'gallery'" :title="appSetting.title" :account="userInfo.account" :cname="userInfo.cname" :user_role="userInfo.role" :focus_news_topic="userInfo.focus_news_topic" />
         <Readme v-else-if="appSetting.contentComponent === 'readme'" :title="appSetting.title" :reference="appSetting.reference"  @introduce-author="gotoIntroduceAuthor" />
         <Footmark v-else-if="appSetting.contentComponent === 'footmark'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <Finance v-else-if="appSetting.contentComponent === 'finance'" :title="appSetting.title" :account="userInfo.account" />
