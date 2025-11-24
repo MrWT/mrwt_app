@@ -141,8 +141,15 @@
                     desc: newsObj["desc"],
                     key: newsObj["key"],
                     tags: newsObj["tag"].split(","),
+                    seq: newsObj["seq"] ?? topicList.length,
                 });
 
+                // 排序主題
+                topicList.sort((x, y) => {
+                    if(x["seq"] > y["seq"]) return 1;
+                    if(x["seq"] < y["seq"]) return -1;
+                    return 0;
+                });
 
                 let contentList = [];
                 try{
