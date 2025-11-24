@@ -116,6 +116,16 @@
     }
     // 取得初始資料 - 取得新聞資訊
     function fetchInitData(){
+        // 清空資料
+        {
+            for (const prop in newsList) {
+                if (Object.prototype.hasOwnProperty.call(newsList, prop)) {
+                    delete newsList[prop];
+                }
+            }
+            topicList.splice(0, topicList.length);
+        }
+        
         // 取得新聞資訊
         let fetchNewsPromise = fetchData({
             api: "get_news",
@@ -137,17 +147,11 @@
                 let contentList = [];
                 try{
                     let content = newsObj["content"];
-                    content = content.replace(/```json/g, " ");
-                    content = content.replace(/```/g, " ");
+                    content = content.replace(/```json/g, "");
+                    content = content.replace(/```/g, "");
 
-                    let second_array_index = content.indexOf("[", 5);
-                    //console.log("second_array_index=", second_array_index);
-                    if(second_array_index >= 0){
-                        content = content.substr(0, second_array_index);
-                        //console.log("after remove second_array_index=", content);
-                    }
-
-                    contentList = JSON.parse("   " + content + "   ");
+                    //console.log("before parse.content=", content);
+                    contentList = JSON.parse(" " + content + " ");
                 }catch(ex){
                     console.log("newsObj.key=", newsObj.key);
                     console.log("newsObj.content=", newsObj.content);
