@@ -184,21 +184,25 @@
     <div v-if="appState === 'normal'" class="text-center text-3xl w-1/1 bg-violet-200 rounded-2xl mb-2">{{ yesterday }} 關注新聞整理</div>
     <div v-if="appState === 'normal'" class="w-1/1 h-11/12 overflow-y-auto">
         <ul v-for="(topicObj, topic_i) in topicList" class="list bg-base-100 rounded-box shadow-2xl">
-            <li class="p-4 pb-2 tracking-wide flex flex-row items-end text-gray-900 rounded-xl shadow-2xl" 
+            <li class="p-4 pb-2 tracking-wide flex flex-row items-end text-gray-900 rounded-xl shadow-2xl z-10" 
                 :class="{
-                    'bg-lime-200': topic_i % topicBgColorCount === 0, 
-                    'bg-amber-200': topic_i % topicBgColorCount === 1, 
-                    'bg-indigo-200': topic_i % topicBgColorCount === 2, 
-                    'bg-fuchsia-200': topic_i % topicBgColorCount === 3, 
+                    'bg-lime-200/80': topic_i % topicBgColorCount === 0, 
+                    'bg-amber-200/80': topic_i % topicBgColorCount === 1, 
+                    'bg-indigo-200/80': topic_i % topicBgColorCount === 2, 
+                    'bg-fuchsia-200/80': topic_i % topicBgColorCount === 3, 
                 }"                
                 style="position: sticky; top:0;">
-                <div class="font-black text-xl mr-5">{{ topicObj.desc }}</div> 
-                <div v-for="(tag, tag_i) in topicObj.tags" class="mr-2 text-blue-900">{{ "#" + tag }}</div>
-                <button class="btn btn-ghost hover:bg-transparent" @click="refetchSpecifyTopic(topicObj)">
-                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"/>
-                    </svg>
-                </button>
+                <div class="flex-1 flex flex-row items-end">
+                    <div class="font-black text-xl mr-5">{{ topicObj.desc }}</div> 
+                    <div v-for="(tag, tag_i) in topicObj.tags" class="mr-2 text-blue-900">{{ "#" + tag }}</div>
+                </div>
+                <div class="flex-none">
+                    <button class="btn btn-ghost hover:bg-transparent" title="重新下載" @click="refetchSpecifyTopic(topicObj)">
+                        <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 15v2a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-2m-8 1V4m0 12-4-4m4 4 4-4"/>
+                        </svg>
+                    </button>
+                </div>
             </li>
             <li v-if="newsList[topicObj.key].length === 0" class="list-row">
                 <div class="list-col-grow">
