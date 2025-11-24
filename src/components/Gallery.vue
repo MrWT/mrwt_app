@@ -29,7 +29,7 @@
     let appState = ref("");
     let yesterday = ref("");
     let topicList = reactive([]);
-    let topicBgColorCount = ref(10);
+    let topicBgColorCount = ref(4);
     let newsList = reactive({});
 
     // 初始化 component
@@ -116,7 +116,7 @@
     }
     // 取得初始資料 - 取得新聞資訊
     function fetchInitData(){
-         // 取得新聞資訊
+        // 取得新聞資訊
         let fetchNewsPromise = fetchData({
             api: "get_news",
             data: {
@@ -137,15 +137,43 @@
                 let contentList = [];
                 try{
                     let content = newsObj["content"];
-                    content = content.substr(7);
-                    content = content.substr(0, content.length-3);
-                    contentList = JSON.parse(content);
+                    content = content.replace(/```json/g, " ");
+                    content = content.replace(/```/g, " ");
+
+                    let second_array_index = content.indexOf("[", 5);
+                    //console.log("second_array_index=", second_array_index);
+                    if(second_array_index >= 0){
+                        content = content.substr(0, second_array_index);
+                        //console.log("after remove second_array_index=", content);
+                    }
+
+                    contentList = JSON.parse("   " + content + "   ");
                 }catch(ex){
+                    console.log("newsObj.key=", newsObj.key);
+                    console.log("newsObj.content=", newsObj.content);
+                    console.error("JSON.parse(content).ex=", ex);
                 }
                 newsList[newsObj["key"]] = contentList;
             });
 
             console.log("newsList=", newsList);
+        });
+    }
+    // 請 AI 重新取得指定 topic 的新聞資料
+    function refetchSpecifyTopic(selTopicObj){
+        console.log("refetchSpecifyTopic.selTopicObj=", selTopicObj);
+
+        // 請 AI 重新取得指定 topic 的新聞資料
+        let refetchPromise = fetchData({
+            api: "fetch_daily_news",
+            data: {
+                specify_topic: selTopicObj["key"],
+            }
+        }, "AI");
+        Promise.all([refetchPromise]).then((values) => {
+            console.log("refetchPromise.values=", values);
+
+            fetchInitData();
         });
     }
 
@@ -162,16 +190,15 @@
                     'bg-amber-200': topic_i % topicBgColorCount === 1, 
                     'bg-indigo-200': topic_i % topicBgColorCount === 2, 
                     'bg-fuchsia-200': topic_i % topicBgColorCount === 3, 
-                    'bg-cyan-200': topic_i % topicBgColorCount === 4, 
-                    'bg-cyan-300': topic_i % topicBgColorCount === 5, 
-                    'bg-fuchsia-300': topic_i % topicBgColorCount === 6, 
-                    'bg-indigo-300': topic_i % topicBgColorCount === 7, 
-                    'bg-amber-300': topic_i % topicBgColorCount === 8, 
-                    'bg-lime-300': topic_i % topicBgColorCount === 9, 
                 }"                
                 style="position: sticky; top:0;">
                 <div class="font-black text-xl mr-5">{{ topicObj.desc }}</div> 
                 <div v-for="(tag, tag_i) in topicObj.tags" class="mr-2 text-blue-900">{{ "#" + tag }}</div>
+                <button class="btn btn-ghost hover:bg-transparent" @click="refetchSpecifyTopic(topicObj)">
+                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"/>
+                    </svg>
+                </button>
             </li>
             <li v-if="newsList[topicObj.key].length === 0" class="list-row">
                 <div class="list-col-grow">
@@ -183,7 +210,6 @@
                 <div class="list-col-grow">
                     <div class="text-black text-lg underline">{{ newsObj["topic"] }}</div>
                     <div class="text-md">{{ newsObj["content"] }}</div>
-                    <div class="uppercase font-semibold opacity-60 mt-5">{{ "*   " + newsObj["reference"] }}</div>
                 </div>
             </li>
         </ul>
