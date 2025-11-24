@@ -1,5 +1,8 @@
 <script setup>
     import { ref, reactive, onMounted } from 'vue'
+    import moment from 'moment'
+    import { fetchData } from "@/composables/fetchData"
+
     import { gsap } from "gsap"
     import { DrawSVGPlugin } from "gsap/DrawSVGPlugin"
     import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
@@ -10,6 +13,7 @@
         account: String,
         cname: String,
         user_role: String,
+        focus_news_topic: String,
     })
 
     onMounted(() => {
@@ -18,210 +22,176 @@
 
         setTimeout(() => {
             window.dispatchEvent(new Event('resize'));
-
         }, 1000);
 
     });
 
     let appState = ref("");
-    // 選擇的圖片 url
-    let selImgUrl = ref("");
-    // 生成的 channels
-    let channelCount = 1;
-    let channels = reactive([]);
-    // 圖片候選清單
-    let imageCount = 100;
-    let candidateImageUrls = [
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg",
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-1.jpg",
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-2.jpg",
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-3.jpg",
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-4.jpg",
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-5.jpg",
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-6.jpg",
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-7.jpg",
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-8.jpg",
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-9.jpg",
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-10.jpg",
-        "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-11.jpg",
-    ];
-    let imageUrls = [];
-
-    let account = ref("");
-    let cname = ref("");
-    let user_role = ref("");
-    let repeatRows = ref(1000);
-    let repeatWords_3 = ref(3);
-    let repeatWords_4 = ref(4);
-    let repeatWords_6 = ref(6);
-    let repeatWords_7 = ref(7);
+    let yesterday = ref("");
+    let topicList = reactive([]);
+    let topicBgColorCount = ref(10);
+    let newsList = reactive({});
 
     // 初始化 component
     function init(){
-        console.log("Gallery.init");
-        console.log("Gallery.props.title=", props.title);
-        console.log("Gallery.props.account=", props.account);
-        console.log("Gallery.props.cname=", props.cname);
-        console.log("Gallery.props.user_role=", props.user_role);
-        account.value = props.account;
-        cname.value = "郭"; // props.cname;
-        user_role.value = props.user_role;
+        console.log("gallery.init");
+        console.log("gallery.props.title=", props.title);
+        console.log("gallery.props.account=", props.account);
+        console.log("gallery.props.cname=", props.cname);
+        console.log("gallery.props.user_role=", props.user_role);
+        console.log("gallery.props.focus_news_topic=", props.focus_news_topic);
+        appState.value = props.account === "KUOFAMILY" || props.user_role === "admin_kf" ? "k_funds" : "normal";
 
-        if(account.value !== "KUOFAMILY" && user_role.value !== "admin_kf"){
-            // 依據 imageCount 生成 imageUrls
-            imageCount = getRandomNumber(candidateImageUrls.length, 100);
-            for(let img_i = 0; img_i < imageCount; img_i++){
-                let imgIndex = getRandomNumber(0, candidateImageUrls.length -1);
-                let imgUrl = candidateImageUrls[ imgIndex ];
-                imageUrls.push( imgUrl );
-            }
+        yesterday.value = moment().add(-1, "d").format("YYYY-MM-DD");
 
-            // w-sm 約等於 384px
-            // w-md 約等於 448px
-            //console.log("window.innerWidth=" + window.innerWidth);
-            if(window.innerWidth > 448){
-                channelCount = getRandomNumber(3, 4);
-            }else if(304 < window.innerWidth && window.innerWidth < 448 ){
-                channelCount = getRandomNumber(1, 2);
-            }else{
-                channelCount = getRandomNumber(1, 1);
-            }
-            // 依據 channelCount 生成 channel
-            for(let c_i = 0; c_i < channelCount; c_i++){
-                channels.push( [] );
-            }
-            // 建立 channel 內容
-            genChannels();
+        if(appState.value === "k_funds"){
+            initGsap();
         }else{
+            fetchInitData();
+        }
+    }    
+    // 初始化 - 動畫效果
+    function initGsap(){
+        gsap.registerPlugin(DrawSVGPlugin);
+        gsap.registerPlugin(MotionPathPlugin);
 
-            gsap.registerPlugin(DrawSVGPlugin);
-            gsap.registerPlugin(MotionPathPlugin);
+        // 候選顏色
+        let candidateColors = ["green", "blue", "purple", "gold", "peru", "blanchedalmond", "blueviolet", "goldenrod"];
+        let durations = [];
+        for(let d_i = 0; d_i < 10; d_i++){
+            durations.push( getRandomNumber(10, 20)/10 );
+        }
 
-            // 候選顏色
-            let candidateColors = ["green", "blue", "purple", "gold", "peru", "blanchedalmond", "blueviolet", "goldenrod"];
-            let durations = [];
-            for(let d_i = 0; d_i < 10; d_i++){
-                durations.push( getRandomNumber(10, 20)/10 );
+        setTimeout(() => {
+            let tl_back = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
+            let tl_word = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
+
+            for(let c_i = 0; c_i < candidateColors.length; c_i++){
+                // 郭字背景
+                tl_back.to("#" + "kuoBack", {
+                    id: "tween_" + "kuoBack",
+                    duration: getRandomNumber(30, 40)/10,
+                    background: candidateColors[c_i],
+                    ease: "bounce.inOut",
+                });
+
+                // 郭字
+                tl_word.to("#" + "kuoWord", {
+                    id: "tween_" + "kuoWord",
+                    duration: getRandomNumber(20, 30)/10,
+                    color: candidateColors[ candidateColors.length - 1 - c_i],
+                    //ease: "bounce.inOut",
+                });
             }
 
-            setTimeout(() => {
-                let tl_back = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
-                let tl_word = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
-
-                for(let c_i = 0; c_i < candidateColors.length; c_i++){
-                    // 郭字背景
-                    tl_back.to("#" + "kuoBack", {
-                        id: "tween_" + "kuoBack",
-                        duration: getRandomNumber(30, 40)/10,
-                        background: candidateColors[c_i],
-                        ease: "bounce.inOut",
-                    });
-
-                    // 郭字
-                    tl_word.to("#" + "kuoWord", {
-                        id: "tween_" + "kuoWord",
-                        duration: getRandomNumber(20, 30)/10,
-                        color: candidateColors[ candidateColors.length - 1 - c_i],
-                        //ease: "bounce.inOut",
-                    });
-                }
-
-                // 玩 SVG
-                let tl_path = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
-                let tl_circle = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
-                {
-                    tl_path.from("#myPath", {
-                        drawSVG: false, 
+            // 玩 SVG
+            let tl_path = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
+            let tl_circle = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
+            {
+                tl_path.from("#myPath", {
+                    drawSVG: false, 
+                    duration: 2, 
+                    repeat: -1,
+                    repeatDelay: 3,
+                    yoyo: true,
+                    ease: "power1.inOut"
+                });
+                for(let c_i = 1; c_i <= 5; c_i++){
+                    tl_circle.to("#myCircle" + c_i, {
                         duration: 2, 
                         repeat: -1,
                         repeatDelay: 3,
                         yoyo: true,
-                        ease: "power1.inOut"
+                        ease: "power1.inOut",
+                        motionPath:{
+                            path: "#myPath",
+                            align: "#myPath",
+                            autoRotate: true,
+                            alignOrigin: [0.5, 0.5]
+                        }
                     });
-                    for(let c_i = 1; c_i <= 5; c_i++){
-                        tl_circle.to("#myCircle" + c_i, {
-                            duration: 2, 
-                            repeat: -1,
-                            repeatDelay: 3,
-                            yoyo: true,
-                            ease: "power1.inOut",
-                            motionPath:{
-                                path: "#myPath",
-                                align: "#myPath",
-                                autoRotate: true,
-                                alignOrigin: [0.5, 0.5]
-                            }
-                        });
-                    }
                 }
-            }, 100);
-        }
+            }
+        }, 100);
     }
-    // 建立 channel
-    function genChannels(){
-        // 清空 channels
-        for(let c_i = 0; c_i < channelCount; c_i++){
-            channels[c_i].splice(0, channels[c_i].length);
-        }
-
-        let imgCount = imageUrls.length / channelCount;
-        console.log("imgCount=", imgCount);
-
-        let channelIndex = 0;
-        let imgGrpIndex = 0;
-        imageUrls.forEach((imgSrc, is_i) => {
-            imgGrpIndex = imgGrpIndex % imgCount;
-            channelIndex += imgGrpIndex === 0 ? 1 : 0;
-            channelIndex = channelIndex % channelCount;
-
-            channels[channelIndex].push( imgSrc );
+    // 取得初始資料 - 取得新聞資訊
+    function fetchInitData(){
+         // 取得新聞資訊
+        let fetchNewsPromise = fetchData({
+            api: "get_news",
+            data: {
+                focus_topic: props.focus_news_topic ?? "All",
+            }
         });
-    }
-    // showModal
-    function showModal(imgUrl){
-        selImgUrl.value = imgUrl;
-        document.getElementById("imgModal").showModal();
+        Promise.all([fetchNewsPromise]).then((values) => {
+            console.log("fetchNewsPromise.values=", values);
+
+            values[0].forEach((newsObj, news_i) => {
+                topicList.push({
+                    desc: newsObj["desc"],
+                    key: newsObj["key"],
+                    tags: newsObj["tag"].split(","),
+                });
+
+
+                let contentList = [];
+                try{
+                    let content = newsObj["content"];
+                    content = content.substr(7);
+                    content = content.substr(0, content.length-3);
+                    contentList = JSON.parse(content);
+                }catch(ex){
+                }
+                newsList[newsObj["key"]] = contentList;
+            });
+
+            console.log("newsList=", newsList);
+        });
     }
 
 </script>
 
 <template>
     <!-- 一般使用者 -->
-    <div v-if="account !== 'KUOFAMILY' && user_role !== 'admin_kf'" class="grid gap-4"
-    :class="{ 'grid-cols-1': channels.length === 1,
-            'grid-cols-2': channels.length === 2,
-            'grid-cols-3': channels.length === 3,
-            'grid-cols-4': channels.length === 4 }">
-        <div v-for="(channel, c_i) in channels" class="grid"
-        :class="{ 'gap-16': channels.length === 1,
-                    'gap-20': channels.length === 2,
-                    'gap-20': channels.length === 3,
-                    'gap-20': channels.length === 4 }">
-            <div v-for="(imgSrc, is_i) in channel">
-                <img class="h-auto max-w-full rounded-lg shadow-2xl" :src="imgSrc" alt="" @click="showModal(imgSrc)">
-            </div>
-        </div>
+    <div v-if="appState === 'normal'" class="text-center text-3xl w-1/1 bg-violet-200 rounded-2xl mb-2">{{ yesterday }} 關注新聞整理</div>
+    <div v-if="appState === 'normal'" class="w-1/1 h-11/12 overflow-y-auto">
+        <ul v-for="(topicObj, topic_i) in topicList" class="list bg-base-100 rounded-box shadow-2xl">
+            <li class="p-4 pb-2 tracking-wide flex flex-row items-end text-gray-900 rounded-xl shadow-2xl" 
+                :class="{
+                    'bg-lime-200': topic_i % topicBgColorCount === 0, 
+                    'bg-amber-200': topic_i % topicBgColorCount === 1, 
+                    'bg-indigo-200': topic_i % topicBgColorCount === 2, 
+                    'bg-fuchsia-200': topic_i % topicBgColorCount === 3, 
+                    'bg-cyan-200': topic_i % topicBgColorCount === 4, 
+                    'bg-cyan-300': topic_i % topicBgColorCount === 5, 
+                    'bg-fuchsia-300': topic_i % topicBgColorCount === 6, 
+                    'bg-indigo-300': topic_i % topicBgColorCount === 7, 
+                    'bg-amber-300': topic_i % topicBgColorCount === 8, 
+                    'bg-lime-300': topic_i % topicBgColorCount === 9, 
+                }"                
+                style="position: sticky; top:0;">
+                <div class="font-black text-xl mr-5">{{ topicObj.desc }}</div> 
+                <div v-for="(tag, tag_i) in topicObj.tags" class="mr-2 text-blue-900">{{ "#" + tag }}</div>
+            </li>
+            <li v-if="newsList[topicObj.key].length === 0" class="list-row">
+                <div class="list-col-grow">
+                    <div class="text-black text-lg text-center">{{ "AI: 很抱歉 ! 百忙之中, 漏了資料 !" }}</div>
+                </div>
+            </li>
+            <li v-for="(newsObj, news_i) in newsList[topicObj.key]" class="list-row">
+                <div class="text-4xl font-thin opacity-30 tabular-nums">{{ ((news_i+1) < 10 ? "0" : "") + (news_i+1) }}</div>
+                <div class="list-col-grow">
+                    <div class="text-black text-lg underline">{{ newsObj["topic"] }}</div>
+                    <div class="text-md">{{ newsObj["content"] }}</div>
+                    <div class="uppercase font-semibold opacity-60 mt-5">{{ "*   " + newsObj["reference"] }}</div>
+                </div>
+            </li>
+        </ul>
     </div>
 
-    <dialog id="imgModal" class="modal">
-        <div class="modal-box w-10/10 h-8/10">
-            <h3 class="text-lg font-bold">Hello!</h3>
-            <div class="w-10/10 h-8/10 justify-items-center content-center">
-            <img :src="selImgUrl" class="max-h-full object-fill rounded-lg" />
-            </div>
-
-            <div class="modal-action">
-            <form method="dialog">
-                <!-- if there is a button in form, it will close the modal -->
-                <button class="btn">Close</button>
-            </form>
-            </div>
-        </div>
-    </dialog>
-
     <!-- 郭家基金 - 使用者 -->
-    <div v-if="account === 'KUOFAMILY' || user_role === 'admin_kf'" id="kuoBack" class="w-10/10 h-10/10 flex flex-col justify-center items-center bg-gray-950">
-        <div id="kuoWord" class="text-9xl text-yellow-500">{{ cname }}</div>
+    <div v-if="appState === 'k_funds'" id="kuoBack" class="w-10/10 h-10/10 flex flex-col justify-center items-center bg-gray-950">
+        <div id="kuoWord" class="text-9xl text-yellow-500">{{ "郭" }}</div>
 
         <svg width="300" height="100" viewBox="0 0 300 100">
             <path id="myPath" d="M0 0 Q150 100,300 0" fill="none" stroke="#88ce02" stroke-width="3px" />
