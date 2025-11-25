@@ -167,7 +167,7 @@
                 newsList[newsObj["key"]] = contentList;
             });
 
-            console.log("newsList=", newsList);
+            //console.log("newsList=", newsList);
         });
     }
     // 請 AI 重新取得指定 topic 的新聞資料
@@ -192,7 +192,9 @@
 
 <template>
     <!-- 一般使用者 -->
-    <div v-if="appState === 'normal'" class="text-center text-3xl w-1/1 bg-violet-200 rounded-2xl mb-2">{{ yesterday }} 關注新聞整理</div>
+    <div v-if="appState === 'normal' && topicList.length > 0" class="text-center text-3xl w-1/1 bg-violet-200 rounded-2xl mb-2">
+        {{ yesterday }} 關注新聞整理
+    </div>
     <div v-if="appState === 'normal'" class="w-1/1 h-11/12 overflow-y-auto">
         <ul v-for="(topicObj, topic_i) in topicList" class="list bg-base-100 rounded-box shadow-2xl">
             <li class="p-4 pb-2 tracking-wide flex flex-row items-end text-gray-900 rounded-xl shadow-2xl z-10" 
