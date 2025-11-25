@@ -37,7 +37,7 @@
         ],
         newTypes: [
             { 
-                title: "一起發揮大愛(公益捐贈-實物)", 
+                title: "一起發揮大愛(公益捐贈)", 
                 memo: "(預計)透過「臺南市政府公益平台」或是其他公益團體", 
                 time: "(預計)2026/01 或 2026/02( 農曆年前 )", 
             }, 
@@ -236,7 +236,8 @@
         <div class="h-4/5 w-1/1 overflow-y-auto flex flex-col gap-2">
             <!-- 活動型態調整考量 -->
             <ul class="list bg-base-100 rounded-box shadow-md">
-                <li class="p-4 pb-2 tracking-wide text-center font-semibold text-base bg-emerald-200/50 text-2xl">
+                <li class="p-4 pb-2 tracking-wide text-center font-semibold text-base bg-emerald-200/50 text-2xl z-10" 
+                    style="position: sticky; top:0px;">
                     規劃考量
                 </li>
                 <li class="list-row">
@@ -273,7 +274,8 @@
             </ul>
             <!-- 活動新型態 -->
             <ul class="list bg-base-100 rounded-box shadow-md">
-                <li class="p-4 pb-2 tracking-wide text-center font-semibold text-base bg-yellow-200/50 text-2xl">
+                <li class="p-4 pb-2 tracking-wide text-center font-semibold text-base bg-yellow-200/50 text-2xl z-10"
+                    style="position:sticky; top:0px;">
                     規劃內容
                 </li>
                 <li v-for="(ntObj, nt_i) in annoucement.newTypes" class="list-row">
