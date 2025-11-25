@@ -155,12 +155,22 @@
 
                 let contentList = [];
                 try{
-                    let content = newsObj["content"];
-                    content = content.replace(/```json/g, "");
-                    content = content.replace(/```/g, "");
+                    let second_start_index = newsObj["content"].indexOf("```json", 5);
+                    let content = "";
+                    if(second_start_index === -1){
+                        content = newsObj["content"].replace(/```json/g, "").replace(/```/g, "");
+                    }else{
+                        content = newsObj["content"].substr(0, second_start_index);
+                        content = content.replace(/```json/g, "").replace(/```/g, "");
+                    }
 
                     //console.log("before parse.content=", content);
-                    contentList = JSON.parse(" " + content + " ");
+                    contentList = JSON.parse(content);
+                    contentList.forEach((contentObj, content_i) => {
+                        if(!contentObj.hasOwnProperty("keyword")){
+                            contentObj["keyword"] = "";
+                        }
+                    });
                 }catch(ex){
                     console.log("newsObj.key=", newsObj.key);
                     console.log("newsObj.content=", newsObj.content);
@@ -188,6 +198,13 @@
 
             fetchInitData();
         });
+    }
+    // 另外搜尋新聞相關 keyword
+    function browseNewsKeyword(selNewsObj){
+        console.log("browseNewsKeyword.selNewsObj=", selNewsObj);
+
+        let q = selNewsObj["keyword"].trim().replace(/,/g, "+");
+        window.open("https://www.google.com/search?q=" + q, "_blank");
     }
 
 </script>
@@ -225,10 +242,24 @@
                 </div>
             </li>
             <li v-for="(newsObj, news_i) in newsList[topicObj.key]" class="list-row">
-                <div class="text-4xl font-thin opacity-30 tabular-nums">{{ ((news_i+1) < 10 ? "0" : "") + (news_i+1) }}</div>
+                <div class="text-4xl font-thin opacity-30 tabular-nums">
+                    {{ ((news_i+1) < 10 ? "0" : "") + (news_i+1) }}
+                </div>
                 <div class="list-col-grow">
-                    <div class="text-black text-lg underline">{{ newsObj["topic"] }}</div>
-                    <div class="text-md">{{ newsObj["content"] }}</div>
+                    <div class="text-black underline text-lg">
+                        <span v-if="newsObj.keyword.length === 0">
+                            {{ newsObj["topic"] }}
+                        </span>
+
+                        <a v-if="newsObj.keyword.length > 0" class="link link-hover cursor-pointer flex flex-row gap-4 items-center text-blue-900" @click="browseNewsKeyword(newsObj)">
+                            {{ newsObj["topic"] }}
+    
+                            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="text-md mt-2">{{ newsObj["content"] }}</div>
                 </div>
             </li>
         </ul>
