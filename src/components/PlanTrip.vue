@@ -528,7 +528,46 @@
 
 <template>
 
-<div id="chatBox" class="flex flex-col w-10/10 h-10/10">
+<div class="flex flex-row md:flex-col absolute top:40 right-15 z-10">
+    <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="說點什麼">
+        <button class="btn btn-circle bg-green-300 text-gray-900 hover:bg-blue-300" @click="openChatModal">
+            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="開啟新話題">
+        <button class="btn btn-circle bg-red-300 text-gray-900 hover:bg-blue-300" @click="openReplanConfirmModal">
+            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="回顧之前聊天內容">
+        <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" @click="remindPlan">
+            <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="預覽行程">
+        <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openSumupModal">
+            <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
+                <path stroke="currentColor" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="調整已排定的旅行">
+        <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openAdjustScheduleModal">
+            <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<div id="chatBox" class="flex flex-col w-1/1 h-1/1 md:w-10/12  mt-10 md:mt-5">
     <div v-for="(msgObj, msg_i) in messages" class="chat"
         :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
         <div class="chat-image avatar">
@@ -569,69 +608,13 @@
     </div>
 </div>
 
-<div class="fab absolute right-2 bottom-2 z-10" :class="{'hidden': chatModalStatus === 'OPEN'}">
-    <!-- a focusable div with tabindex is necessary to work on all browsers. role="button" is necessary for accessibility -->
-    <div tabindex="0" role="button" class="btn btn-circle bg-gray-300 text-gray-900 hover:bg-blue-300">
-        <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14"/>
-        </svg>
-    </div>
-
-    <div class="fab-close">
-        <span class="btn btn-circle btn-error">✕</span>
-    </div>
-
-    <!-- buttons that show up when FAB is open -->
-    <div>
-        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">說點什麼</span>
-        <button class="btn btn-circle bg-green-300 text-gray-900 hover:bg-blue-300" @click="openChatModal">
-            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
-            </svg>
-        </button>
-    </div>
-    <div>
-        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">開啟新話題</span> 
-        <button class="btn btn-circle bg-red-300 text-gray-900 hover:bg-blue-300" @click="openReplanConfirmModal">
-            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-            </svg>
-        </button>
-    </div>
-    <div>
-        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">回顧之前聊天內容</span>
-        <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" @click="remindPlan">
-            <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
-            </svg>
-        </button>
-    </div>
-    <div>
-        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">預覽行程</span>
-        <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openSumupModal">
-            <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
-                <path stroke="currentColor" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-            </svg>
-        </button>
-    </div>
-    <div v-if="scheduleList.length > 0">
-        <span class="bg-gray-500 text-gray-100 p-1 rounded-full">調整已排定的旅行</span>
-        <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openAdjustScheduleModal">
-            <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
-            </svg>
-        </button>
-    </div>
-</div>
-
 <!-- chat modal -->
 <dialog id="chatModal" class="modal modal-end md:modal-middle">
-    <div class="modal-box h-9/10 w-1/1 flex flex-col bg-neutral-100">
+    <div class="modal-box h-1/1 w-1/1 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
             <span class="text-xl text-gray-900 text-center">想說點什麼呢?</span>
         </div>
-        <div class="h-9/10 w-10/10 flex flex-col overflow-y-auto gap-2">
+        <div class="h-7/10 w-10/10 flex flex-col overflow-y-auto gap-2">
             <div class="divider divider-primary"></div>
 
             <div class="w-1/1 grid grid-cols-2 gap-2">
@@ -662,11 +645,11 @@
 
 <!-- adjust schedule modal -->
 <dialog id="adjustScheduleModal" class="modal modal-end md:modal-middle">
-    <div class="modal-box h-9/10 w-1/1 flex flex-col bg-neutral-100">
+    <div class="modal-box h-1/1 w-1/1 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
             <span class="text-xl text-gray-900 text-center">調整已排定的旅行</span>
         </div>
-        <div class="h-9/10 w-10/10 flex flex-col overflow-y-auto gap-2">
+        <div class="h-7/10 w-10/10 flex flex-col overflow-y-auto gap-2">
             <div class="divider divider-primary"></div>
 
             <div class="w-1/1 bg-yellow-100 text-gray-900 p-1 flex flex-col rounded-xl">
@@ -693,7 +676,7 @@
 <!-- sumup modal -->
 <dialog id="sumupModal" class="modal">
     <div class="modal-box h-10/10 w-10/10 max-w-3xl flex flex-col bg-neutral-100">
-        <div class="h-1/10 w-10/10 flex flex-row overflow-x-auto">
+        <div class="w-10/10 flex flex-row overflow-x-auto">
             <button v-for="(tdObj, td_i) in tripSumupList" class="btn btn-ghost" :class="{ 'border-black': sel_day_sequence === tdObj.day_sequence}" @click="clickSelTripSumup(tdObj)">
                 {{ tdObj.day_sequence }}
             </button>
@@ -715,7 +698,7 @@
 
             </div>
         </div>
-        <div class="h-5/10 w-10/10 flex flex-col mt-1">
+        <div class="h-4/10 w-10/10 flex flex-col mt-1">
             <GoogleMap class="w-10/10 h-10/10 border"
                 mapId="PLAN_TRIP_MAP_ID"
                 :api-key="props.googleMapApiKey"
@@ -757,7 +740,7 @@
 
 <!-- replanConfirm modal -->
 <dialog id="replanConfirmModal" class="modal">
-    <div class="modal-box h-3/10 w-10/10 flex flex-col bg-neutral-500">
+    <div class="modal-box h-3/10 w-8/10 flex flex-col bg-neutral-500">
         <div class="h-10/10 w-10/10 text-center text-black font-black">
             <span class="text-2xl">再跟您確認一次~</span>
             <div class="divider divider-primary"></div>
