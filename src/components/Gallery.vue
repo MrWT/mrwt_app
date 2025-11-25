@@ -40,7 +40,9 @@
         console.log("gallery.props.cname=", props.cname);
         console.log("gallery.props.user_role=", props.user_role);
         console.log("gallery.props.focus_news_topic=", props.focus_news_topic);
-        appState.value = props.account === "KUOFAMILY" || props.user_role === "admin_kf" ? "k_funds" : "normal";
+        if(props.account && props.user_role){
+            appState.value = props.account === "KUOFAMILY" || props.user_role === "admin_kf" ? "k_funds" : "normal";
+        }
 
         yesterday.value = moment().add(-1, "d").format("YYYY-MM-DD");
 
