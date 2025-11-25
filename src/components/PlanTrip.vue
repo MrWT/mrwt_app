@@ -528,7 +528,8 @@
 
 <template>
 
-<div class="flex flex-row md:flex-col absolute top:40 right-15 z-10">
+<!-- function button bar -->
+<div class="flex flex-row md:flex-col absolute right-1/4 md:right-5 top:40 z-10 shadow-2xl">
     <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="說點什麼">
         <button class="btn btn-circle bg-green-300 text-gray-900 hover:bg-blue-300" @click="openChatModal">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -545,14 +546,14 @@
     </div>
     <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="回顧之前聊天內容">
         <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" @click="remindPlan">
-            <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
+            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.556 8.5h8m-8 3.5H12m7.111-7H4.89a.896.896 0 0 0-.629.256.868.868 0 0 0-.26.619v9.25c0 .232.094.455.26.619A.896.896 0 0 0 4.89 16H9l3 4 3-4h4.111a.896.896 0 0 0 .629-.256.868.868 0 0 0 .26-.619v-9.25a.868.868 0 0 0-.26-.619.896.896 0 0 0-.63-.256Z"/>
             </svg>
         </button>
     </div>
     <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="預覽行程">
         <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openSumupModal">
-            <svg class="size-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
                 <path stroke="currentColor" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
             </svg>
@@ -560,14 +561,15 @@
     </div>
     <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="調整已排定的旅行">
         <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openAdjustScheduleModal">
-            <svg class="size-5 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
             </svg>
         </button>
     </div>
 </div>
 
-<div id="chatBox" class="flex flex-col w-1/1 h-1/1 md:w-10/12  mt-10 md:mt-5">
+<!-- 聊天內容 -->
+<div id="chatBox" class="flex flex-col w-1/1 h-11/12 md:h-1/1 md:w-11/12 mt-10 md:mt-5 overflow-y-auto">
     <div v-for="(msgObj, msg_i) in messages" class="chat"
         :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
         <div class="chat-image avatar">
@@ -624,8 +626,8 @@
             </div>
 
             <div class="w-1/1 h-1/1 flex flex-col">
-                <textarea class="textarea w-1/1 h-1/1" placeholder="" v-model="userMessage" @keyup.shift.enter="send"></textarea>
-                <span class="w-1/1 text-xs text-gray-900/60 text-center hidden sm:block">( enter: 換行 / shift + enter: 直接傳送訊息 )</span>
+                <textarea class="textarea w-1/1 h-1/1" placeholder="" v-model="userMessage" @keyup.ctrl.enter="send"></textarea>
+                <span class="w-1/1 text-xs text-gray-900/60 text-center hidden sm:block">( enter: 換行 / ctrl + enter: 直接傳送訊息 )</span>
             </div>
         </div>
         <div class="divider divider-primary"></div>

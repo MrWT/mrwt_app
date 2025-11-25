@@ -364,7 +364,8 @@
 
 <template>
 
-<div class="flex flex-row md:flex-col absolute right-15 top:40 z-10">
+<!-- function button bar -->
+<div class="flex flex-row md:flex-col absolute right-1/3 md:right-5 top:40 z-10 shadow-2xl">
     <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="說點什麼">
         <button class="btn btn-circle bg-green-300 text-gray-900 hover:bg-blue-300" @click="openChatModal">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -381,21 +382,22 @@
     </div>
     <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="調整 AI 角色">
         <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" @click="openSettingModal">
-            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 19h4a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-2m-2.236-4a3 3 0 1 0 0-4M3 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
             </svg>
         </button>
     </div>
     <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="聊天提詞機">
         <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openPromptModal">
-            <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 9h5m3 0h2M7 12h2m3 0h5M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.616a1 1 0 0 0-.67.257l-2.88 2.592A.5.5 0 0 1 8 18.477V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
             </svg>
         </button>
     </div>
 </div>
 
-<div id="chatBox" class="flex flex-col w-1/1 h-11/12 md:h-1/1 md:w-11/12 mt-10 md:mt-5 ">
+<!-- 聊天內容 -->
+<div id="chatBox" class="flex flex-col w-1/1 h-11/12 md:h-1/1 md:w-11/12 mt-10 md:mt-5 overflow-y-auto">
     <div v-for="(msgObj, msg_i) in messages" class="chat"
         :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
         <div class="chat-image avatar">
