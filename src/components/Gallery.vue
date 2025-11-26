@@ -280,7 +280,12 @@
                 }"                
                 style="position: sticky; top:0;">
                 <div class="flex-1 flex flex-row items-end">
-                    <div class="font-black text-xl mr-5">{{ selTopicObj.desc }}</div> 
+                    <div class="font-black text-xl mr-5">
+                        {{ selTopicObj.desc }}
+                        <span class="text-sm">
+                            ( 共 {{ newsList[selTopicObj.key].length }} 則 )
+                        </span>
+                    </div> 
                 </div>
                 <div class="flex-none">
                     <button class="btn btn-ghost hover:bg-transparent" title="主題清單" @click="backToBlock">
@@ -297,7 +302,8 @@
             </li>
             <li v-if="newsList[selTopicObj.key].length === 0" class="list-row">
                 <div class="list-col-grow">
-                    <div class="text-black text-lg text-center">{{ "AI: 很抱歉 ! 百忙之中, 漏了資料 !" }}</div>
+                    <div class="text-black text-lg text-center">{{ "很抱歉 ! 不明原因, 漏了資料 !" }}</div>
+                    <div class="text-black text-lg text-center">{{ "可手動按主題旁(右上角)的'重新整理'喔 !" }}</div>
                 </div>
             </li>
             <li v-for="(newsObj, news_i) in newsList[selTopicObj.key]" class="list-row">
@@ -323,13 +329,17 @@
             </li>
             <li v-if="newsList[selTopicObj.key].length > 0" class="list-row">
                 <div class="list-col-grow">
-                    <div class="bg-gray-200 text-black text-lg text-center">                        
-                        {{ "最後一則, 可點下方'方塊'回到主題清單" }}
-                        <button class="btn btn-ghost hover:bg-transparent" title="主題清單" @click="backToBlock">
-                            <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"/>
-                            </svg>
-                        </button>
+                    <div class="bg-gray-200 text-black text-lg flex flex-row items-center">                        
+                        <div class="flex-1 text-center ">
+                            <div>{{ "點擊'方塊', 返回'主題清單'" }}</div>
+                        </div>
+                        <div class="flex-none">
+                            <button class="btn btn-ghost hover:bg-transparent" title="主題清單" @click="backToBlock">
+                                <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </li>
