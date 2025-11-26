@@ -32,7 +32,12 @@
     let topicBgColorCount = ref(10);
     let newsList = reactive({});
 
-    let selTopicObj = reactive({});
+    let selTopicObj = reactive({
+        key: "",
+        desc: "",
+        tags: "",
+        seq: "",
+    });
     let selTopicIndex = ref(-1);
 
     // 初始化 component
@@ -198,7 +203,7 @@
     }
     // 回到清單
     function backToBlock(){
-         selTopicIndex.value = -1;
+        selTopicIndex.value = -1;
 
         selTopicObj["key"] = "";
         selTopicObj["desc"] = "";
@@ -258,19 +263,20 @@
             </div>
         </div>
 
-        <ul v-if="selTopicIndex > -1" class="list bg-base-100 rounded-box shadow-2xl">
+        <ul v-if="selTopicIndex > -1" 
+            class="list bg-base-100 rounded-box shadow-2xl">
             <li class="p-4 pb-2 tracking-wide flex flex-row items-end text-gray-900 rounded-xl shadow-2xl z-10" 
                 :class="{
                     'bg-lime-200/80': selTopicIndex % topicBgColorCount === 0, 
                     'bg-amber-200/80': selTopicIndex % topicBgColorCount === 1, 
                     'bg-indigo-200/80': selTopicIndex % topicBgColorCount === 2, 
-                    'bg-fuchsia-200/80': topic_i % topicBgColorCount === 3, 
-                    'bg-red-200/80': topic_i % topicBgColorCount === 4, 
-                    'bg-orange-200/80': topic_i % topicBgColorCount === 5, 
-                    'bg-emerald-200/80': topic_i % topicBgColorCount === 6, 
-                    'bg-teal-200/80': topic_i % topicBgColorCount === 7, 
-                    'bg-cyan-200/80': topic_i % topicBgColorCount === 8, 
-                    'bg-rose-200/80': topic_i % topicBgColorCount === 9, 
+                    'bg-fuchsia-200/80': selTopicIndex % topicBgColorCount === 3, 
+                    'bg-red-200/80': selTopicIndex % topicBgColorCount === 4, 
+                    'bg-orange-200/80': selTopicIndex % topicBgColorCount === 5, 
+                    'bg-emerald-200/80': selTopicIndex % topicBgColorCount === 6, 
+                    'bg-teal-200/80': selTopicIndex % topicBgColorCount === 7, 
+                    'bg-cyan-200/80': selTopicIndex % topicBgColorCount === 8, 
+                    'bg-rose-200/80': selTopicIndex % topicBgColorCount === 9, 
                 }"                
                 style="position: sticky; top:0;">
                 <div class="flex-1 flex flex-row items-end">
