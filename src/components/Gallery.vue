@@ -29,8 +29,11 @@
     let appState = ref("");
     let yesterday = ref("");
     let topicList = reactive([]);
-    let topicBgColorCount = ref(4);
+    let topicBgColorCount = ref(10);
     let newsList = reactive({});
+
+    let selTopicObj = reactive({});
+    let selTopicIndex = ref(-1);
 
     // 初始化 component
     function init(){
@@ -182,8 +185,28 @@
             //console.log("newsList=", newsList);
         });
     }
+    // 選擇關注的 Topic
+    function selectTopic(theTopic, theIndex){
+        console.log("selectTopic.theTopic=", theTopic, theIndex);
+
+        selTopicIndex.value = theIndex;
+
+        selTopicObj["key"] = theTopic["key"];
+        selTopicObj["desc"] = theTopic["desc"];
+        selTopicObj["tags"] = theTopic["tags"];
+        selTopicObj["seq"] = theTopic["seq"];
+    }
+    // 回到清單
+    function backToBlock(){
+         selTopicIndex.value = -1;
+
+        selTopicObj["key"] = "";
+        selTopicObj["desc"] = "";
+        selTopicObj["tags"] = "";
+        selTopicObj["seq"] = "";
+    }
     // 請 AI 重新取得指定 topic 的新聞資料
-    function refetchSpecifyTopic(selTopicObj){
+    function refetchSpecifyTopic(){
         console.log("refetchSpecifyTopic.selTopicObj=", selTopicObj);
 
         // 請 AI 重新取得指定 topic 的新聞資料
@@ -211,37 +234,67 @@
 
 <template>
     <!-- 一般使用者 -->
-    <div v-if="appState === 'normal' && topicList.length > 0" class="text-center text-3xl w-1/1 bg-violet-200 rounded-2xl mb-2">
+    <div v-if="appState === 'normal' && topicList.length > 0" class="text-center text-3xl w-1/1 bg-zinc-500/50 rounded-2xl mb-2">
         {{ yesterday }} 關注新聞整理
     </div>
     <div v-if="appState === 'normal'" class="w-1/1 h-11/12 overflow-y-auto">
-        <ul v-for="(topicObj, topic_i) in topicList" class="list bg-base-100 rounded-box shadow-2xl">
-            <li class="p-4 pb-2 tracking-wide flex flex-row items-end text-gray-900 rounded-xl shadow-2xl z-10" 
+        <div v-if="selTopicIndex === -1" class="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <div v-for="(topicObj, topic_i) in topicList" 
+                class="h-50 rounded-4xl md:rounded-none md:hover:rounded-tl-4xl text-2xl text-center content-center" 
                 :class="{
                     'bg-lime-200/80': topic_i % topicBgColorCount === 0, 
                     'bg-amber-200/80': topic_i % topicBgColorCount === 1, 
                     'bg-indigo-200/80': topic_i % topicBgColorCount === 2, 
                     'bg-fuchsia-200/80': topic_i % topicBgColorCount === 3, 
+                    'bg-red-200/80': topic_i % topicBgColorCount === 4, 
+                    'bg-orange-200/80': topic_i % topicBgColorCount === 5, 
+                    'bg-emerald-200/80': topic_i % topicBgColorCount === 6, 
+                    'bg-teal-200/80': topic_i % topicBgColorCount === 7, 
+                    'bg-cyan-200/80': topic_i % topicBgColorCount === 8, 
+                    'bg-rose-200/80': topic_i % topicBgColorCount === 9, 
+                }"                
+                @click="selectTopic(topicObj, topic_i)" >
+                {{ topicObj.desc }}
+            </div>
+        </div>
+
+        <ul v-if="selTopicIndex > -1" class="list bg-base-100 rounded-box shadow-2xl">
+            <li class="p-4 pb-2 tracking-wide flex flex-row items-end text-gray-900 rounded-xl shadow-2xl z-10" 
+                :class="{
+                    'bg-lime-200/80': selTopicIndex % topicBgColorCount === 0, 
+                    'bg-amber-200/80': selTopicIndex % topicBgColorCount === 1, 
+                    'bg-indigo-200/80': selTopicIndex % topicBgColorCount === 2, 
+                    'bg-fuchsia-200/80': topic_i % topicBgColorCount === 3, 
+                    'bg-red-200/80': topic_i % topicBgColorCount === 4, 
+                    'bg-orange-200/80': topic_i % topicBgColorCount === 5, 
+                    'bg-emerald-200/80': topic_i % topicBgColorCount === 6, 
+                    'bg-teal-200/80': topic_i % topicBgColorCount === 7, 
+                    'bg-cyan-200/80': topic_i % topicBgColorCount === 8, 
+                    'bg-rose-200/80': topic_i % topicBgColorCount === 9, 
                 }"                
                 style="position: sticky; top:0;">
                 <div class="flex-1 flex flex-row items-end">
-                    <div class="font-black text-xl mr-5">{{ topicObj.desc }}</div> 
-                    <div v-for="(tag, tag_i) in topicObj.tags" class="mr-2 text-blue-900">{{ "#" + tag }}</div>
+                    <div class="font-black text-xl mr-5">{{ selTopicObj.desc }}</div> 
                 </div>
                 <div class="flex-none">
-                    <button class="btn btn-ghost hover:bg-transparent" title="重新下載" @click="refetchSpecifyTopic(topicObj)">
-                        <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 15v2a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-2m-8 1V4m0 12-4-4m4 4 4-4"/>
+                    <button class="btn btn-ghost hover:bg-transparent" title="主題清單" @click="backToBlock">
+                        <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-ghost hover:bg-transparent" title="重新整理" @click="refetchSpecifyTopic(selTopicObj)">
+                        <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"/>
                         </svg>
                     </button>
                 </div>
             </li>
-            <li v-if="newsList[topicObj.key].length === 0" class="list-row">
+            <li v-if="newsList[selTopicObj.key].length === 0" class="list-row">
                 <div class="list-col-grow">
                     <div class="text-black text-lg text-center">{{ "AI: 很抱歉 ! 百忙之中, 漏了資料 !" }}</div>
                 </div>
             </li>
-            <li v-for="(newsObj, news_i) in newsList[topicObj.key]" class="list-row">
+            <li v-for="(newsObj, news_i) in newsList[selTopicObj.key]" class="list-row">
                 <div class="text-4xl font-thin opacity-30 tabular-nums">
                     {{ ((news_i+1) < 10 ? "0" : "") + (news_i+1) }}
                 </div>
@@ -260,6 +313,18 @@
                         </a>
                     </div>
                     <div class="text-md mt-2">{{ newsObj["content"] }}</div>
+                </div>
+            </li>
+            <li v-if="newsList[selTopicObj.key].length > 0" class="list-row">
+                <div class="list-col-grow">
+                    <div class="bg-gray-200 text-black text-lg text-center">                        
+                        {{ "最後一則, 可點下方'方塊'回到主題清單" }}
+                        <button class="btn btn-ghost hover:bg-transparent" title="主題清單" @click="backToBlock">
+                            <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </li>
         </ul>
