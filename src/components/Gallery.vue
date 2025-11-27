@@ -567,13 +567,13 @@
         <div class="modal-box h-4/5 w-1/1 md:w-1/2 md:h-1/1 flex flex-col bg-neutral-100">
             <div class="flex flex-col justify-center">
                 <span class="text-xl text-gray-900 text-center">{{ setTopicDesc }}</span>
+                <div class="divider divider-primary"></div>
             </div>
             <div class="h-1/1 w-1/1 flex flex-col overflow-y-auto gap-4 md:gap-1">
-                <div class="divider divider-primary"></div>
                 <div class="w-1/1 h-1/1 flex flex-col gap-3">
                     <div class="w-1/1 flex flex-col">
                         <span class="w-1/1 bg-rose-200/50 p-2">
-                            主題名稱:
+                            主題:
                         </span>
                         <input type="text" class="w-1/1 border" v-model="setTopicObj.desc" @keyup="combineSetting" />
                     </div>
@@ -609,11 +609,9 @@
                         </div>
                     </div>
                     <div class="w-1/1 flex flex-col">
-                        <div class="w-1/1 flex flex-row">
-                            <span class="bg-rose-200/50 p-2">
-                                預覽要給予 AI 的指令:
-                            </span>
-                        </div>
+                        <span class="w-1/1 bg-rose-200/50 p-2">
+                            預覽要給予 AI 的指令:
+                        </span>
                         <textarea class="w-1/1 h-1/1 border" disabled>{{ setTopicObj.prompt }}</textarea>
                     </div>
                 </div>
