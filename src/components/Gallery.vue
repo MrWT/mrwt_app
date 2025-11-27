@@ -59,6 +59,7 @@
 
     let setSubscribe = ref(false);
 
+    let reDlTopicKey = ref("");
     let setTopicDesc = ref("");
     let setTopicObj = reactive({
         id: "",
@@ -188,102 +189,111 @@
                 if(x["seq"] < y["seq"]) return -1;
                 return 0;
             });
+
+            // 回到清單
+            reDlTopicKey.value = "";
+            backToBlock();
         });
     }
     // 選擇關注的 Topic
     function selectTopic(theTopic, theIndex){
         console.log("selectTopic.theTopic=", theTopic, theIndex);
-        if(setSubscribe.value){
-            // 訂閱/取消訂閱主題
-            let new_userFocusTopic = "";
-            topicList.forEach((topicObj, topic_i) => {
-                if(topicObj["key"] === theTopic["key"]){
-                    topicObj["sel"] = !topicObj["sel"];
-                }
 
-                if(topicObj["sel"] === true){
-                    new_userFocusTopic += (new_userFocusTopic.length > 0 ? "," : "") + topicObj["key"];
-                }
-            });
-
-            //console.log("new_userFocusTopic=" + new_userFocusTopic);
-            let fetchPromise_setUserTopic = fetchData({
-                api: "set_user_topic",
-                data: {
-                    account: props.account,
-                    focus_topic: new_userFocusTopic,
-                }
-            });
-            Promise.all([fetchPromise_setUserTopic]).then((values) => {
-                //console.log("fetchPromise_setUserTopic.values=", values);
-                toggleSubscribe();
-            });
+        if(reDlTopicKey.value === theTopic.key){
+            // 正在重新下載中... 不做反應
         }else{
-            // 查看指定主題的新聞清單
-            selTopicIndex.value = theIndex;
+            if(setSubscribe.value){
+                // 訂閱/取消訂閱主題
+                let new_userFocusTopic = "";
+                topicList.forEach((topicObj, topic_i) => {
+                    if(topicObj["key"] === theTopic["key"]){
+                        topicObj["sel"] = !topicObj["sel"];
+                    }
 
-            selTopicObj["id"] = theTopic["id"];
-            selTopicObj["key"] = theTopic["key"];
-            selTopicObj["desc"] = theTopic["desc"];
-            selTopicObj["seq"] = theTopic["seq"];
-            selTopicObj["prompt"] = theTopic["prompt"];
-            selTopicObj["data_source"] = theTopic["data_source"];
-            selTopicObj["dataSourceList"] = theTopic["data_source"].split(",");
-            selTopicObj["max_news_count"] = theTopic["max_news_count"];
+                    if(topicObj["sel"] === true){
+                        new_userFocusTopic += (new_userFocusTopic.length > 0 ? "," : "") + topicObj["key"];
+                    }
+                });
 
-            setTopicDesc.value = theTopic["desc"];
-            setTopicObj["id"] = theTopic["id"];
-            setTopicObj["key"] = theTopic["key"];
-            setTopicObj["desc"] = theTopic["desc"];
-            setTopicObj["seq"] = theTopic["seq"];
-            setTopicObj["prompt"] = theTopic["prompt"];
-            setTopicObj["data_source"] = theTopic["data_source"];
-            setTopicObj["dataSourceList"] = theTopic["data_source"].split(",");
-            setTopicObj["max_news_count"] = theTopic["max_news_count"];
+                //console.log("new_userFocusTopic=" + new_userFocusTopic);
+                let fetchPromise_setUserTopic = fetchData({
+                    api: "set_user_topic",
+                    data: {
+                        account: props.account,
+                        focus_topic: new_userFocusTopic,
+                    }
+                });
+                Promise.all([fetchPromise_setUserTopic]).then((values) => {
+                    //console.log("fetchPromise_setUserTopic.values=", values);
+                    toggleSubscribe();
+                });
+            }else{
+                // 查看指定主題的新聞清單
+                selTopicIndex.value = theIndex;
 
-            // 取得新聞清單
-            // 清空資料
-            {
-                Object.keys( newsList ).forEach((key, key_i) => {
-                    newsList[key].splice(0, newsList[key].length);
+                selTopicObj["id"] = theTopic["id"];
+                selTopicObj["key"] = theTopic["key"];
+                selTopicObj["desc"] = theTopic["desc"];
+                selTopicObj["seq"] = theTopic["seq"];
+                selTopicObj["prompt"] = theTopic["prompt"];
+                selTopicObj["data_source"] = theTopic["data_source"];
+                selTopicObj["dataSourceList"] = theTopic["data_source"].split(",");
+                selTopicObj["max_news_count"] = theTopic["max_news_count"];
+
+                setTopicDesc.value = theTopic["desc"];
+                setTopicObj["id"] = theTopic["id"];
+                setTopicObj["key"] = theTopic["key"];
+                setTopicObj["desc"] = theTopic["desc"];
+                setTopicObj["seq"] = theTopic["seq"];
+                setTopicObj["prompt"] = theTopic["prompt"];
+                setTopicObj["data_source"] = theTopic["data_source"];
+                setTopicObj["dataSourceList"] = theTopic["data_source"].split(",");
+                setTopicObj["max_news_count"] = theTopic["max_news_count"];
+
+                // 取得新聞清單
+                // 清空資料
+                {
+                    Object.keys( newsList ).forEach((key, key_i) => {
+                        newsList[key].splice(0, newsList[key].length);
+                    });
+                }
+                let fetchNewsPromise = fetchData({
+                    api: "get_news",
+                    data: {
+                        focus_topic: theTopic["key"],
+                    }
+                });
+                Promise.all([fetchNewsPromise]).then((values) => {
+                    console.log("fetchNewsPromise.values=", values);
+
+                    values[0].forEach((newsObj, news_i) => {
+                        let contentList = [];
+                        try{
+                            let second_start_index = newsObj["content"].indexOf("```json", 5);
+                            let content = "";
+                            if(second_start_index === -1){
+                                content = newsObj["content"].replace(/```json/g, "").replace(/```/g, "");
+                            }else{
+                                content = newsObj["content"].substr(0, second_start_index);
+                                content = content.replace(/```json/g, "").replace(/```/g, "");
+                            }
+
+                            //console.log("before parse.content=", content);
+                            contentList = JSON.parse(content);
+                            contentList.forEach((contentObj, content_i) => {
+                                if(!contentObj.hasOwnProperty("keyword")){
+                                    contentObj["keyword"] = "";
+                                }
+                            });
+                        }catch(ex){
+                            console.log("newsObj.key=", newsObj.key);
+                            console.log("newsObj.content=", newsObj.content);
+                            console.error("JSON.parse(content).ex=", ex);
+                        }
+                        newsList[newsObj["key"]] = contentList;
+                    });
                 });
             }
-            let fetchNewsPromise = fetchData({
-                api: "get_news",
-                data: {
-                    focus_topic: theTopic["key"],
-                }
-            });
-            Promise.all([fetchNewsPromise]).then((values) => {
-                console.log("fetchNewsPromise.values=", values);
-
-                values[0].forEach((newsObj, news_i) => {
-                    let contentList = [];
-                    try{
-                        let second_start_index = newsObj["content"].indexOf("```json", 5);
-                        let content = "";
-                        if(second_start_index === -1){
-                            content = newsObj["content"].replace(/```json/g, "").replace(/```/g, "");
-                        }else{
-                            content = newsObj["content"].substr(0, second_start_index);
-                            content = content.replace(/```json/g, "").replace(/```/g, "");
-                        }
-
-                        //console.log("before parse.content=", content);
-                        contentList = JSON.parse(content);
-                        contentList.forEach((contentObj, content_i) => {
-                            if(!contentObj.hasOwnProperty("keyword")){
-                                contentObj["keyword"] = "";
-                            }
-                        });
-                    }catch(ex){
-                        console.log("newsObj.key=", newsObj.key);
-                        console.log("newsObj.content=", newsObj.content);
-                        console.error("JSON.parse(content).ex=", ex);
-                    }
-                    newsList[newsObj["key"]] = contentList;
-                });
-            });
         }
     }
     // 回到清單
@@ -295,18 +305,19 @@
         selTopicObj["seq"] = "";
     }
     // 請 AI 重新取得指定 topic 的新聞資料
-    function refetchSpecifyTopic(){
-        //console.log("refetchSpecifyTopic.selTopicObj=", selTopicObj);
+    function reDownloadSpecifyTopic(topic_key){
+        console.log("reDownloadSpecifyTopic.topic_key=", topic_key);
+        reDlTopicKey.value = topic_key;
 
         // 請 AI 重新取得指定 topic 的新聞資料
-        let refetchPromise = fetchData({
+        let reDownloadPromise = fetchData({
             api: "fetch_daily_news",
             data: {
-                specify_topic: selTopicObj["key"],
+                specify_topic: topic_key,
             }
         }, "AI");
-        Promise.all([refetchPromise]).then((values) => {
-            console.log("refetchPromise.values=", values);
+        Promise.all([reDownloadPromise]).then((values) => {
+            console.log("reDownloadPromise.values=", values);
 
             fetchInitData();
         });
@@ -377,9 +388,9 @@
             });
             Promise.all([fetchPromise_updPrompt]).then((values) => {
                 console.log("fetchPromise_updPrompt.values=", values);
-                // 請 AI 重新取得指定 topic 的新聞資料
-                refetchSpecifyTopic();
                 closeModal_setting();
+                // 請 AI 重新取得指定 topic 的新聞資料
+                reDownloadSpecifyTopic(setTopicObj.key);
             });
         }else{
             // 將 message 傳給 App.vue 
@@ -424,10 +435,13 @@
                     'bg-cyan-200/80': topicObj.sel && topic_i % topicBgColorCount === 8, 
                     'bg-rose-200/80': topicObj.sel && topic_i % topicBgColorCount === 9, 
                     'hidden': !setSubscribe && !topicObj.sel,
-                    'bg-gray-400': setSubscribe && !topicObj.sel,
+                    'bg-gray-200/70 text-gray-500': setSubscribe && !topicObj.sel || reDlTopicKey === topicObj.key,
                 }"                
                 @click="selectTopic(topicObj, topic_i)" >
                 {{ topicObj.desc }}
+                <span v-if="reDlTopicKey === topicObj.key">
+                    <br /><span class="loading loading-infinity loading-xl"></span>
+                </span>
                 <!-- 設定訂閱時, 才會出現 -->
                 <span v-if="setSubscribe && !topicObj.sel" class="text-base">
                     <br />{{ "( 按一下完成訂閱 )" }}
@@ -473,7 +487,7 @@
             <li v-if="newsList[selTopicObj.key].length === 0" class="list-row">
                 <div class="list-col-grow">
                     <div class="text-black text-lg text-center">{{ "很抱歉 ! 不明原因, 漏了資料 !" }}</div>
-                    <div class="text-black text-lg text-center">{{ "可手動按主題旁(右上角)的'重新整理'喔 !" }}</div>
+                    <div class="text-black text-lg text-center">{{ "可手動按最下方的'下載'喔 !" }}</div>
                 </div>
             </li>
             <li v-for="(newsObj, news_i) in newsList[selTopicObj.key]" class="list-row">
@@ -536,9 +550,9 @@
                             <div>{{ "點擊'下載', 重新下載'新聞清單'" }}</div>
                         </div>
                         <div class="flex-none">
-                            <button class="btn btn-ghost hover:bg-transparent" title="重新下載" @click="refetchSpecifyTopic(selTopicObj)">
+                            <button class="btn btn-ghost hover:bg-transparent" title="重新下載" @click="reDownloadSpecifyTopic(selTopicObj.key)">
                                 <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"/>
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
                                 </svg>
                             </button>
                         </div>
