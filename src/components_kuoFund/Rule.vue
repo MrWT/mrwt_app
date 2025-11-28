@@ -45,7 +45,9 @@
 <div class="w-1/1 h-1/1 flex flex-col gap-2 overflow-y-auto">
     <div class="w-1/1">
         <ul class="list bg-base-100 rounded-box shadow-md">
-            <li class="p-4 pb-2 text-base opacity-80 tracking-wide bg-green-200 z-10" style="position: sticky; top: 0px;">基金資訊</li>
+            <li class="p-4 pb-2 text-base opacity-80 tracking-wide bg-green-200 z-10 font-black" style="position: sticky; top: 0px;">
+                基金資訊
+            </li>
 
             <li class="list-row">
                 <div>
@@ -170,7 +172,9 @@
 
     <div class="w-1/1">
         <ul class="list bg-base-100 rounded-box shadow-md">
-            <li class="p-4 pb-2 text-base opacity-80 tracking-wide bg-yellow-200 z-10" style="position: sticky; top: 0px;">月費儲值方式</li>
+            <li class="p-4 pb-2 text-base opacity-80 tracking-wide bg-yellow-200 font-black z-10" style="position: sticky; top: 0px;">
+                月費儲值方式
+            </li>
   
             <li class="list-row">
                 <div class="text-4xl font-thin opacity-30 tabular-nums">01</div>
@@ -304,7 +308,9 @@
 
     <div class="w-1/1">
         <ul class="list bg-base-100 rounded-box shadow-md">
-            <li class="p-4 pb-2 text-base opacity-80 tracking-wide bg-green-400 z-10 text-gray-999" style="position: sticky; top: 0px;">iPass Money 如何轉換至 Line Pay Money</li>
+            <li class="p-4 pb-2 text-base opacity-80 tracking-wide bg-green-400 z-10 text-gray-900 font-black" style="position: sticky; top: 0px;">
+                iPass Money 與 Line Pay Money 
+            </li>
   
             <li class="list-row">
                 <div>
