@@ -165,66 +165,58 @@
 
 <div class="h-1/1 w-1/1 flex flex-col md:flex-row gap-2 overflow-y-auto">
     <!-- 待解鎖清單 -->
-    <div class="h-1/2 w-1/1 md:h-1/1 md:w-1/2 flex flex-col">
-        <div class="w-1/1 p-4 font-semibold bg-gray-300/50 text-2xl flex flex-row justify-center items-center rounded-xl shadow-2xl">
-            <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                <path fill-rule="evenodd" d="M8 10V7a4 4 0 1 1 8 0v3h1a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h1Zm2-3a2 2 0 1 1 4 0v3h-4V7Zm2 6a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0v-3a1 1 0 0 1 1-1Z" clip-rule="evenodd"/>
-            </svg>
-            <span>
-                待解鎖清單
-            </span>
-        </div>
-        <div class="w-1/1 h-11/12 flex flex-wrap overflow-y-auto justify-center">
-            <div v-for="(naObj, na_i) in nonAchieveEvents" class="w-1/1 flex flex-row border border-black rounded-xl p-1 m-1 items-center">
-                <button class="w-1/6 btn btn-ghost text-red-900 border-0 border-red-900 hover:border-2" @click="openDeleteModal(naObj)">
-                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
-                    </svg>
-                </button>
+    <ul class="list bg-base-100 rounded-box shadow-2xl">
+        <li class="p-4 pb-2 tracking-wide text-gray-900 bg-yellow-300/50 text-3xl rounded-xl shadow-2xl z-10" 
+            style="position: sticky; top:0;">
+            待解鎖清單
+        </li>
 
-                <div class="w-4/6 flex flex-col text-center">
-                    <div class="text-xl font-black">{{ naObj.description }}</div>
-                </div>
-
-                <button class="w-1/6 btn btn-ghost text-gray-900 border-0 border-gray-900 hover:border-2" @click="openEditModal(naObj)">
-                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
-                    </svg>
-                </button>
+        <li v-for="(naObj, na_i) in nonAchieveEvents" class="list-row">
+            <div class="text-4xl font-thin opacity-30 tabular-nums">
+                {{ ((na_i+1) < 10 ? "0" : "") + (na_i+1) }}
             </div>
-        </div>
-    </div>
+            <div class="list-col-grow text-xl">
+                <div>{{ naObj.description }}</div>
+            </div>
+            <button class="btn btn-square btn-ghost text-red-900 bg-white hover:text-white hover:bg-red-900" @click="openDeleteModal(naObj)">
+                <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                </svg>
+            </button>
+            <button class="btn btn-square btn-ghost text-black bg-white hover:text-white hover:bg-black" @click="openEditModal(naObj)">
+                <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
+                </svg>
+            </button>
+        </li>
+    </ul>
     <!-- 已解鎖清單 -->
-    <div class="h-1/2 w-1/1 md:h-1/1 md:w-1/2 flex flex-col">
-        <div class="w-1/1 p-4 font-semibold bg-yellow-300/50 text-2xl flex flex-row justify-center items-center rounded-xl shadow-2xl">
-            <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14v3m4-6V7a3 3 0 1 1 6 0v4M5 11h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
-            </svg>
-            <span>
-                已解鎖清單
-            </span>
-        </div>
-        <div class="w-1/1 h-11/12 flex flex-wrap overflow-y-auto justify-center">
-            <div v-for="(aeObj, ae_i) in achieveEvents" class="w-1/1 flex flex-row border border-black rounded-xl p-1 m-1 items-center">
-                <button class="w-1/6 btn btn-ghost text-red-900 border-0 border-red-900 hover:border-2" @click="openDeleteModal(aeObj)">
-                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
-                    </svg>
-                </button>
+    <ul class="list bg-base-100 rounded-box shadow-2xl">
+        <li class="p-4 pb-2 tracking-wide text-gray-900 bg-green-300/50 text-3xl rounded-xl shadow-2xl z-10" 
+            style="position: sticky; top:0;">
+            已解鎖清單
+        </li>
 
-                <div class="w-4/6 flex flex-col text-center">
-                    <div class="text-xl font-black">{{ aeObj.description }}</div>
-                    <div class="text-base">{{ aeObj.achieve_time }}</div>
-                </div>
-
-                <button class="w-1/6 btn btn-ghost text-gray-900 border-0 border-black hover:border-2" @click="openEditModal(aeObj)">
-                    <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
-                    </svg>
-                </button>
+        <li v-for="(aeObj, ae_i) in achieveEvents" class="list-row">
+            <div class="text-4xl font-thin opacity-30 tabular-nums">
+                {{ ((ae_i+1) < 10 ? "0" : "") + (ae_i+1) }}
             </div>
-        </div>
-    </div>
+            <div class="list-col-grow text-xl">
+                <div>{{ aeObj.description }}</div>
+                <div class="text-base">{{ aeObj.achieve_time }}</div>
+            </div>
+            <button class="btn btn-square btn-ghost text-red-900 bg-white hover:text-white hover:bg-red-900" @click="openDeleteModal(aeObj)">
+                <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                </svg>
+            </button>
+            <button class="btn btn-square btn-ghost text-black bg-white hover:text-white hover:bg-black" @click="openEditModal(aeObj)">
+                <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
+                </svg>
+            </button>
+        </li>
+    </ul>
 </div>
 
 <!-- 新增功能 -->
