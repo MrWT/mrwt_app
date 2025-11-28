@@ -43,6 +43,7 @@
     let dataSourceOptions = reactive([
         "康健雜誌", 
         "heho健康", 
+        "經濟日報",
         "自由時報", 
         "聯合報", 
         "三立新聞網", 
@@ -285,16 +286,18 @@
                     values[0].forEach((newsObj, news_i) => {
                         let contentList = [];
                         try{
-                            let second_start_index = newsObj["content"].indexOf("```json", 5);
                             let content = "";
-                            if(second_start_index === -1){
-                                content = newsObj["content"].replace(/```json/g, "").replace(/```/g, "");
-                            }else{
-                                content = newsObj["content"].substr(0, second_start_index);
-                                content = content.replace(/```json/g, "").replace(/```/g, "");
-                            }
 
-                            //console.log("before parse.content=", content);
+                            // 去投去尾
+                            {
+                                let start_index = newsObj["content"].indexOf("```json");
+                                start_index = start_index === -1 ? 0 : start_index;
+                                let end_index = newsObj["content"].indexOf("```", start_index + 6);
+                                end_index = end_index === -1 ? newsObj["content"].length : (end_index + 2);
+                                content = newsObj["content"].substr(start_index, end_index - start_index + 1);
+                            }
+                            content = content.replace(/```json/g, "").replace(/```/g, "");
+
                             contentList = JSON.parse(content);
                             contentList.forEach((contentObj, content_i) => {
                                 if(!contentObj.hasOwnProperty("keyword")){
