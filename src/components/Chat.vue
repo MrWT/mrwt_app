@@ -19,15 +19,6 @@
     onUpdated(() => {
         console.log("Chat updated.");
 
-        let imgSkeleton = document.getElementById('imgSkeleton');
-        if(imgSkeleton){
-            // 讓 skeleton 閃爍
-            let tl = gsap.timeline({ yoyo: true, repeat: -1 });
-            tl.to("#imgSkeleton", {
-                duration: 1,
-                opacity: 0,
-            });
-        }
     });
 
     let appState = ref("");
@@ -359,6 +350,10 @@
     // 開啟 prompt to image modal
     function openPromptImgModal(){
         document.getElementById("promptImgModal").showModal();
+
+        promptImg.prompt = "";
+        promptImg.state = "INIT";
+        promptImg.src = "";
     }
     // 開始生成圖片
     function makePromptImg(){
@@ -372,7 +367,7 @@
         let promptImgPromise = fetchData({
             api: "ai_gen_image",
             data: {
-                prompt: promptImg.prompt + "(以繁體中文寫圖中文字)",
+                prompt: "幫我生成一張" + promptImg.prompt,
             }
         }, "AI");
         Promise.all([promptImgPromise]).then((values) => {
@@ -665,36 +660,33 @@
 
 <!-- prompt to image modal -->
 <dialog id="promptImgModal" class="modal">
-    <div class="modal-box h-5/6 w-1/1 flex flex-col bg-neutral-100">
+    <div class="modal-box h-1/1 w-1/1 max-w-xl flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
-            <span class="text-lg text-gray-900 text-center">文生圖</span>
+            <span class="text-lg text-gray-900 text-center">文森佐</span>
             <div class="divider divider-primary"></div>
         </div>
-        <div class="h-1/1 w-1/1">
-            <div class="w-1/1 flex flex-row">
-                <input type="text" class="flex-1 border rounded-xl" :disabled="promptImg.state === 'MAKING'" v-model="promptImg.prompt" />                
-                <button v-if="promptImg.state !== 'MAKING'" class="btn btn-square bg-black text-white flex-none" @click="makePromptImg">
-                    go
-                </button>
+        <div class="h-1/1 w-1/1 flex flex-col overflow-y-auto gap-2">
+            <div class="w-1/1 h-1/3 flex flex-col">
+                預覽:
+                <textarea class="border rounded-xl textarea w-1/1" :disabled="promptImg.state === 'MAKING'" v-model="promptImg.prompt"></textarea>                
             </div>            
 
-            <div v-if="promptImg.state === 'INIT'" class="w-1/1 h-1/2 justify-items-center">
-                <div class="skeleton h-1/1 w-1/1"></div>
-            </div>
+            <div class="w-1/1 h-1/2 justify-items-center mt-2 border rounded-xl">
+                <div v-if="promptImg.state === 'INIT'" class="h-1/1 w-1/1 bg-gray-200"></div>
 
-            <div v-if="promptImg.state === 'MAKING'" id="imgSkeleton" class="w-1/1 h-1/2 mt-2 justify-items-center">
-                <div class="skeleton h-1/1 w-1/1"></div>
-            </div>
+                <div v-if="promptImg.state === 'MAKING'" class="skeleton h-1/1 w-1/1"></div>
 
-            <div v-if="promptImg.state === 'DONE'" class="w-1/1 h-1/2 mt-2 justify-items-center">
-                <img :src="promptImg.src" />
+                <img v-if="promptImg.state === 'DONE'" :src="promptImg.src" />
             </div>
         </div>
 
         <div class="divider divider-primary"></div>
         <div class="modal-action">
-            <button v-if="promptImg.state !== 'MAKING'" class="btn btn-ghost w-5/10 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click.stop="closePromptImgModal">
+            <button v-if="promptImg.state !== 'MAKING'" class="btn btn-ghost w-1/2 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click.stop="closePromptImgModal">
                 關閉
+            </button>
+            <button v-if="promptImg.state !== 'MAKING'" class="btn btn-square bg-black text-white w-1/2" @click="makePromptImg">
+                生成
             </button>
         </div>
     </div>
