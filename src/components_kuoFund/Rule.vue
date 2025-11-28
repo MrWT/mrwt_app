@@ -195,7 +195,7 @@
                     </div>
                 </div>
             </li>
-            
+
             <li class="list-row">
                 <div class="text-4xl font-thin opacity-30 tabular-nums">02</div>
                 <div>
@@ -204,11 +204,11 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div class="text-base">使用"Line 中的 iPass Money"進行"跨機構轉帳"</div>
+                    <div class="text-base">使用"Line App 中的 Line Pay Money"進行"跨機構轉帳"</div>
                     <div class="list-col-wrap text-xs">
-                        使用 iPass Money 將月費直接轉進管理帳戶, 可能需自行負擔轉帳手續費。<br>
+                        使用 Line Pay Money 將月費直接轉進管理帳戶, 可能需自行負擔轉帳手續費。<br>
 
-                        <div class="mt-5">
+                        <div class="mt-5 hidden">
                             * 參考資料: 
                             <a class="link" target="_blank" href="https://www.i-pass.com.tw/News/Detail/103011">相關手續費參考</a>
                         </div>
@@ -224,15 +224,50 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div class="text-base">使用"Line 中的 iPass Money"進行"轉帳"</div>
+                    <div class="text-base">使用"Line App 中的 Line Pay Money"進行"轉帳"</div>
                     <div class="list-col-wrap text-xs">
-                        使用 iPass Money 將月費轉進輪值代管人的 iPass Money 中, 再由輪值代管人轉進管理帳戶。
+                        使用 Line Pay Money 將月費轉進輪值代管人的 Line Pay Money 中, 再由輪值代管人轉進管理帳戶。
+                    </div>
+                </div>
+            </li>
+            
+            <li class="list-row">
+                <div class="text-4xl font-thin opacity-30 tabular-nums">04</div>
+                <div>
+                    <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M3 5.983C3 4.888 3.895 4 5 4h14c1.105 0 2 .888 2 1.983v8.923a1.992 1.992 0 0 1-2 1.983h-6.6l-2.867 2.7c-.955.899-2.533.228-2.533-1.08v-1.62H5c-1.105 0-2-.888-2-1.983V5.983Zm5.706 3.809a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Zm2.585.002a1 1 0 1 1 .003 1.414 1 1 0 0 1-.003-1.414Zm5.415-.002a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="list-col-grow">
+                    <div class="text-base">使用"iPass Money App"進行"跨機構轉帳"</div>
+                    <div class="list-col-wrap text-xs">
+                        使用 iPass Money 將月費直接轉進管理帳戶, 可能需自行負擔轉帳手續費。<br>
+
+                        <div class="mt-5">
+                            * 參考資料: 
+                            <a class="link" target="_blank" href="https://www.i-pass.com.tw/News/Detail/103011">相關手續費參考</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="list-row">
+                <div class="text-4xl font-thin opacity-30 tabular-nums">05</div>
+                <div>
+                    <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-6.616l-2.88 2.592C8.537 20.461 7 19.776 7 18.477V17H5a2 2 0 0 1-2-2V6Zm4 2a1 1 0 0 0 0 2h5a1 1 0 1 0 0-2H7Zm8 0a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2Zm-8 3a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H7Zm5 0a1 1 0 1 0 0 2h5a1 1 0 1 0 0-2h-5Z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="list-col-grow">
+                    <div class="text-base">使用"iPass Money App"進行"轉帳"</div>
+                    <div class="list-col-wrap text-xs">
+                        使用 iPass Money 將月費轉進輪值代管人的 Line Pay Money 中, 再由輪值代管人轉進管理帳戶。
                     </div>
                 </div>
             </li>
   
             <li class="list-row">
-                <div class="text-4xl font-thin opacity-30 tabular-nums">04</div>
+                <div class="text-4xl font-thin opacity-30 tabular-nums">06</div>
                 <div>
                     <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                         <path fill-rule="evenodd" d="M10.915 2.345a2 2 0 0 1 2.17 0l7 4.52A2 2 0 0 1 21 8.544V9.5a1.5 1.5 0 0 1-1.5 1.5H19v6h1a1 1 0 1 1 0 2H4a1 1 0 1 1 0-2h1v-6h-.5A1.5 1.5 0 0 1 3 9.5v-.955a2 2 0 0 1 .915-1.68l7-4.52ZM17 17v-6h-2v6h2Zm-6-6h2v6h-2v-6Zm-2 6v-6H7v6h2Z" clip-rule="evenodd"/>
@@ -248,7 +283,7 @@
             </li>
 
             <li class="list-row">
-                <div class="text-4xl font-thin opacity-30 tabular-nums">05</div>
+                <div class="text-4xl font-thin opacity-30 tabular-nums">07</div>
                 <div>
                     <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                         <path fill-rule="evenodd" d="M7 6a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-2v-4a3 3 0 0 0-3-3H7V6Z" clip-rule="evenodd"/>
@@ -260,6 +295,61 @@
                     <div class="text-base">直接給予現金代為轉入</div>
                     <div class="list-col-wrap text-xs">
                         <span class="text-red-900 font-black">* 最不推薦的方式</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+    </div>
+
+    <div class="w-1/1">
+        <ul class="list bg-base-100 rounded-box shadow-md">
+            <li class="p-4 pb-2 text-base opacity-80 tracking-wide bg-green-400 z-10 text-gray-999" style="position: sticky; top: 0px;">iPass Money 如何轉換至 Line Pay Money</li>
+  
+            <li class="list-row">
+                <div>
+                    <svg class="size-10 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 10 3-3m0 0-3-3m3 3H5v3m3 4-3 3m0 0 3 3m-3-3h14v-3"/>
+                    </svg>
+                </div>
+                <div class="list-col-grow">
+                    <div class="text-base">
+                        Line Pay Money 於 2025-12-03 15:00 正式上線 
+
+                        <div class="divider"></div>
+
+                        <span class="font-black">* 若是想使用新版的LINE Pay Money ：</span><br />
+                        <span>
+                            <span class="underline"> 2025年12月3日至12月31日 </span>
+                            的帳戶轉換期間，仍可透過LINE Pay登入iPASS MONEY帳戶，
+                            使用者可以先將iPASS MONEY中的餘額以提領或是轉帳提領回銀行帳戶，
+                            待LINE Pay Money上線後再進行儲值。
+                        </span>
+
+                        <div class="divider"></div>
+                        
+                        <span class="font-black">* 若是想繼續使用iPASS Money服務的用戶：</span><br />
+                        <span>
+                            據一卡通公司公告，<br />
+                            <span class="underline"> 2026 年1 月1 日起 </span> LINE Pay 錢包中iPASS MONEY 功能將全面轉移至「一卡通iPASS MONEY」APP <br />
+                            用戶只需下載並登入新的iPASS MONEY App，
+                            即可繼續享有儲值、轉帳、生活繳費、提領等服務，移轉後帳戶餘額、交易紀錄均不受影響。
+                        </span>
+
+                        <div class="divider"></div>
+                    </div>
+                    <div class="list-col-wrap text-xs">
+                        <div class="mt-5">
+                            * 參考資料: <br />
+                            <ol>
+                                <li>
+                                    1. <a class="link" target="_blank" href="https://www.gvm.com.tw/article/126166">遠見雜誌</a>
+                                </li>
+                                <li>
+                                    2. <a class="link" target="_blank" href="https://www.i-pass.com.tw">iPass 一卡通</a>
+                                </li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
             </li>
