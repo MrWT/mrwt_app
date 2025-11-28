@@ -33,6 +33,13 @@
     let topicBgColorCount = ref(10);
     let newsList = reactive({});
 
+    let countryOptions = reactive([
+        "台灣",
+        "韓國",
+        "日本",
+        "中國",
+        "國際",
+    ]);
     let dataSourceOptions = reactive([
         "康健雜誌", 
         "heho健康", 
@@ -43,7 +50,8 @@
         "CARNEWS車訊網", 
         "U-CAR", 
         "國王車訊", 
-        "小老婆汽機車資訊網"
+        "小老婆汽機車資訊網",
+        "交通部中央氣象署",
     ]);
     let selTopicObj = reactive({
         id: "",
@@ -65,10 +73,12 @@
         id: "",
         key: "",
         desc: "",
+        kind: "",
         seq: "",
         prompt: "",
         data_source: "",
         dataSourceList: [],
+        country: "台灣",
         max_news_count: "",
     });
 
@@ -165,6 +175,9 @@
         // 取得全部主題
         let fetchPromise_allTopic = fetchData({
             api: "get_all_topic",
+            data: {
+                account: props.account,
+            }
         });
         Promise.all([fetchPromise_allTopic]).then((values) => {
             console.log("getUserSubscription.values=", values);
@@ -174,6 +187,7 @@
                     id: topicObj["id"],
                     key: topicObj["key"],
                     desc: topicObj["desc"],
+                    kind: topicObj["kind"],
                     prompt: topicObj["prompt"],
                     data_source: topicObj["data_source"],
                     max_news_count: topicObj["max_news_count"],
@@ -244,6 +258,7 @@
                 setTopicObj["id"] = theTopic["id"];
                 setTopicObj["key"] = theTopic["key"];
                 setTopicObj["desc"] = theTopic["desc"];
+                setTopicObj["kind"] = theTopic["kind"];
                 setTopicObj["seq"] = theTopic["seq"];
                 setTopicObj["prompt"] = theTopic["prompt"];
                 setTopicObj["data_source"] = theTopic["data_source"];
@@ -260,6 +275,7 @@
                 let fetchNewsPromise = fetchData({
                     api: "get_news",
                     data: {
+                        account: props.account,
                         focus_topic: theTopic["key"],
                     }
                 });
@@ -313,6 +329,7 @@
         let reDownloadPromise = fetchData({
             api: "fetch_daily_news",
             data: {
+                account: props.account,
                 specify_topic: topic_key,
             }
         }, "AI");
@@ -348,7 +365,8 @@
 
         let prompt = "";
         prompt += "'" + setTopicObj.dataSourceList.join(" / ") + "'的"
-        prompt += setTopicObj.desc + "資訊";
+        prompt += setTopicObj.country;
+        prompt += setTopicObj.kind + "資訊";
         prompt += "( 最多" + setTopicObj.max_news_count + "則摘要 )";
         setTopicObj.prompt = prompt;
     }
@@ -366,7 +384,12 @@
         }
         if(!setTopicObj.desc){
             exeRst.result = false;
-            exeRst.message = "請輸入主題名稱 !";
+            exeRst.message = "請輸入方塊名稱 !";
+            return exeRst;
+        }
+        if(!setTopicObj.kind){
+            exeRst.result = false;
+            exeRst.message = "請輸入新聞分類 !";
             return exeRst;
         }
 
@@ -424,6 +447,8 @@
             <div v-for="(topicObj, topic_i) in topicList" 
                 class="h-50 cursor-pointer rounded-2xl text-2xl text-center content-center" 
                 :class="{
+                    'bg-gray-200/70 text-gray-500': setSubscribe && !topicObj.sel || reDlTopicKey === topicObj.key,
+                    'hidden': !setSubscribe && !topicObj.sel,
                     'bg-lime-200/80': topicObj.sel && topic_i % topicBgColorCount === 0, 
                     'bg-amber-200/80': topicObj.sel && topic_i % topicBgColorCount === 1, 
                     'bg-indigo-200/80': topicObj.sel && topic_i % topicBgColorCount === 2, 
@@ -434,8 +459,6 @@
                     'bg-teal-200/80': topicObj.sel && topic_i % topicBgColorCount === 7, 
                     'bg-cyan-200/80': topicObj.sel && topic_i % topicBgColorCount === 8, 
                     'bg-rose-200/80': topicObj.sel && topic_i % topicBgColorCount === 9, 
-                    'hidden': !setSubscribe && !topicObj.sel,
-                    'bg-gray-200/70 text-gray-500': setSubscribe && !topicObj.sel || reDlTopicKey === topicObj.key,
                 }"                
                 @click="selectTopic(topicObj, topic_i)" >
                 {{ topicObj.desc }}
@@ -564,7 +587,7 @@
 
     <!-- setting modal -->
     <dialog id="settingModal" class="modal modal-top">
-        <div class="modal-box h-4/5 w-1/1 md:w-1/2 md:h-1/1 flex flex-col bg-neutral-100">
+        <div class="modal-box h-5/6 w-1/1 md:w-1/2 md:h-1/1 flex flex-col bg-neutral-100">
             <div class="flex flex-col justify-center">
                 <span class="text-xl text-gray-900 text-center">{{ setTopicDesc }}</span>
                 <div class="divider divider-primary"></div>
@@ -572,10 +595,27 @@
             <div class="h-1/1 w-1/1 flex flex-col overflow-y-auto gap-4 md:gap-1">
                 <div class="w-1/1 h-1/1 flex flex-col gap-3">
                     <div class="w-1/1 flex flex-col">
-                        <span class="w-1/1 bg-rose-200/50 p-2">
-                            主題:
+                        <span class="w-1/1 bg-zinc-200/50 p-2">
+                            方塊名稱(呈現在方塊的名稱):
                         </span>
                         <input type="text" class="w-1/1 border" v-model="setTopicObj.desc" @keyup="combineSetting" />
+                    </div>
+                    <div class="w-1/1 flex flex-col">
+                        <span class="w-1/1 bg-rose-200/50 p-2">
+                            新聞區域:
+                        </span>
+                        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1">
+                            <label v-for="(option, option_i) in countryOptions">
+                                <input type="radio" :value="option" v-model="setTopicObj.country" @change="combineSetting" />
+                                {{ option }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="w-1/1 flex flex-col">
+                        <span class="w-1/1 bg-rose-200/50 p-2">
+                            新聞分類:
+                        </span>
+                        <input type="text" class="w-1/1 border" v-model="setTopicObj.kind" @keyup="combineSetting" />
                     </div>
                     <div class="w-1/1 flex flex-col">
                         <span class="w-1/1 bg-rose-200/50 p-2">
