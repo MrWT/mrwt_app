@@ -28,12 +28,12 @@
 
     let annoucement = reactive({
         thoughts: [
-            "一起發揮大愛",
-            "一起學習交通安全",
-            "一起保護環境",
-            "一起歡聚",
-            "一起...",
-            "一緒に...같이...",
+            "莫忘世上苦人多, 一起發揮大愛",
+            "馬路如虎口, 一起學習交通安全",
+            "詞窮, 就是一起保護環境就對了",
+            "又過了一年, 一起歡聚吧",
+            "一緒に...",
+            "같이...",
         ],
         newTypes: [
             { 
@@ -255,7 +255,7 @@
                             <br />
 
                             思考了好一陣子後, 心想或許我們還可以這麼做 <br />
-                            <span class="text-rotate text-xl duration-8000 mb-1 w-1/1">
+                            <span class="text-rotate text-xl duration-10000 mb-1 w-1/1">
                                 <span class="w-1/1 justify-items-center ">
                                     <span v-for="(thought, th_i) in annoucement.thoughts" 
                                         class="bg-gray-200 text-gray-900">
