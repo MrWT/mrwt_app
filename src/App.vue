@@ -10,6 +10,7 @@
     import Readme from './components/Readme.vue'
     import Setting from './components/Setting.vue'
     import Chat from './components/Chat.vue'
+    import Imagen from './components/Imagen.vue'
     import PlanTrip from './components/PlanTrip.vue'
     import TripSchedule from './components/TripSchedule.vue'
     import Author from './components/Author.vue'
@@ -256,7 +257,7 @@
                 {
                     appSetting.funButtons.splice(0, appSetting.funButtons.length);
 
-                    let allFunctionKeys = ["finance", "chat", "plan_trip", "trip_schedule", "footmark", "recollection", "achievement", "recall", "finance_kf", "rule_kf", "activity_kf"];
+                    let allFunctionKeys = ["finance", "chat", "imagen", "plan_trip", "trip_schedule", "footmark", "recollection", "achievement", "recall", "finance_kf", "rule_kf", "activity_kf"];
                     let buildingFunctionKeys = [];
                     let buildingFunctionKeys_kf = ["recall"];
                     allFunctionKeys.forEach((funKey, fk_i) => {
@@ -424,6 +425,7 @@
         <Finance v-else-if="appSetting.contentComponent === 'finance'" :title="appSetting.title" :account="userInfo.account" />
         <Setting v-else-if="appSetting.contentComponent === 'setting'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Chat v-else-if="appSetting.contentComponent === 'chat'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
+        <Imagen v-else-if="appSetting.contentComponent === 'imagen'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <PlanTrip v-else-if="appSetting.contentComponent === 'plan_trip'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <TripSchedule v-else-if="appSetting.contentComponent === 'trip_schedule'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />

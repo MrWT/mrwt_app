@@ -74,12 +74,6 @@
     // 提詞機 - 結果
     let prompt = ref("");
 
-    let promptImg = reactive({
-        state: "INIT",
-        prompt: "",
-        src: "",
-    });
-
     // 初始化 component
     function init(){
         console.log("chat.init");
@@ -347,47 +341,12 @@
         chatModalStatus.value = "CLOSE";
         document.getElementById("chatModal").close();
     }
-    // 開啟 prompt to image modal
-    function openPromptImgModal(){
-        document.getElementById("promptImgModal").showModal();
-
-        promptImg.prompt = "";
-        promptImg.state = "INIT";
-        promptImg.src = "";
-    }
-    // 開始生成圖片
-    function makePromptImg(){
-        console.log("makePromptImg.prompt=" + promptImg.prompt);
-
-        // 開啟 making 狀態
-        {
-            promptImg.state = "MAKING";
-        }
-
-        let promptImgPromise = fetchData({
-            api: "ai_gen_image",
-            data: {
-                prompt: "幫我生成一張" + promptImg.prompt,
-            }
-        }, "AI");
-        Promise.all([promptImgPromise]).then((values) => {
-            console.log("promptImgPromise.values=", values);
-            promptImg.src = values[0];
-            // 關閉 making 狀態
-            promptImg.state = "DONE";
-        });
-    }
-    // 關閉 prompt to image modal
-    function closePromptImgModal(){
-        document.getElementById("promptImgModal").close();
-    }
     // 關閉全部 modal
     function closeAllModal(){
         closeChatModal();
         closeNewChatConfirmModal();
         closePromptModal();
         closeSettingModal();
-        closePromptImgModal();
     }
 
     // 監聽
@@ -438,13 +397,6 @@
         <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openPromptModal">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 9h5m3 0h2M7 12h2m3 0h5M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.616a1 1 0 0 0-.67.257l-2.88 2.592A.5.5 0 0 1 8 18.477V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
-            </svg>
-        </button>
-    </div>
-    <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="聊天生圖">
-        <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openPromptImgModal">
-            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 16 5-7 6 6.5m6.5 2.5L16 13l-4.286 6M14 10h.01M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"/>
             </svg>
         </button>
     </div>
@@ -650,43 +602,6 @@
 
             <button class="btn btn-ghost w-1/2 text-gray-900 bg-gray-100 hover:bg-gray-500 hover:text-gray-100 hover:underline" @click="newChat">
                 新話題
-            </button>
-        </div>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-        <button>close</button>
-    </form>
-</dialog>
-
-<!-- prompt to image modal -->
-<dialog id="promptImgModal" class="modal">
-    <div class="modal-box h-1/1 w-1/1 max-w-xl flex flex-col bg-neutral-100">
-        <div class="flex flex-col justify-center">
-            <span class="text-lg text-gray-900 text-center">文森佐</span>
-            <div class="divider divider-primary"></div>
-        </div>
-        <div class="h-1/1 w-1/1 flex flex-col overflow-y-auto gap-2">
-            <div class="w-1/1 h-1/3 flex flex-col">
-                預覽:
-                <textarea class="border rounded-xl textarea w-1/1" :disabled="promptImg.state === 'MAKING'" v-model="promptImg.prompt"></textarea>                
-            </div>            
-
-            <div class="w-1/1 h-1/2 justify-items-center mt-2 border rounded-xl">
-                <div v-if="promptImg.state === 'INIT'" class="h-1/1 w-1/1 bg-gray-200"></div>
-
-                <div v-if="promptImg.state === 'MAKING'" class="skeleton h-1/1 w-1/1"></div>
-
-                <img v-if="promptImg.state === 'DONE'" :src="promptImg.src" />
-            </div>
-        </div>
-
-        <div class="divider divider-primary"></div>
-        <div class="modal-action">
-            <button v-if="promptImg.state !== 'MAKING'" class="btn btn-ghost w-1/2 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click.stop="closePromptImgModal">
-                關閉
-            </button>
-            <button v-if="promptImg.state !== 'MAKING'" class="btn btn-square bg-black text-white w-1/2" @click="makePromptImg">
-                生成
             </button>
         </div>
     </div>
