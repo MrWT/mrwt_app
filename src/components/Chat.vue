@@ -1,6 +1,7 @@
 <script setup>
-    import { ref, reactive, onMounted, watch, nextTick } from 'vue'
+    import { ref, reactive, onMounted, onUpdated, watch, nextTick } from 'vue'
     import moment from 'moment'
+    import { gsap } from "gsap"
     import { fetchData } from "@/composables/fetchData"
 
     const emit = defineEmits(['popupMessage']);
@@ -13,6 +14,20 @@
     onMounted(() => {
         console.log("Chat mounted.");
         init();
+    });
+
+    onUpdated(() => {
+        console.log("Chat updated.");
+
+        let imgSkeleton = document.getElementById('imgSkeleton');
+        if(imgSkeleton){
+            // 讓 skeleton 閃爍
+            let tl = gsap.timeline({ yoyo: true, repeat: -1 });
+            tl.to("#imgSkeleton", {
+                duration: 1,
+                opacity: 0,
+            });
+        }
     });
 
     let appState = ref("");
@@ -348,18 +363,22 @@
     // 開始生成圖片
     function makePromptImg(){
         console.log("makePromptImg.prompt=" + promptImg.prompt);
-        promptImg.state = "MAKING";
-        promptImg.prompt = promptImg.prompt + "(以繁體中文寫圖中文字)";
+
+        // 開啟 making 狀態
+        {
+            promptImg.state = "MAKING";
+        }
 
         let promptImgPromise = fetchData({
             api: "ai_gen_image",
             data: {
-                prompt: promptImg.prompt,
+                prompt: promptImg.prompt + "(以繁體中文寫圖中文字)",
             }
         }, "AI");
         Promise.all([promptImgPromise]).then((values) => {
             console.log("promptImgPromise.values=", values);
             promptImg.src = values[0];
+            // 關閉 making 狀態
             promptImg.state = "DONE";
         });
     }
@@ -646,26 +665,30 @@
 
 <!-- prompt to image modal -->
 <dialog id="promptImgModal" class="modal">
-    <div class="modal-box h-1/1 w-1/1 flex flex-col bg-neutral-100">
+    <div class="modal-box h-5/6 w-1/1 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
-            <span class="text-lg text-gray-900 text-center">聊天生圖</span>
+            <span class="text-lg text-gray-900 text-center">文生圖</span>
             <div class="divider divider-primary"></div>
         </div>
         <div class="h-1/1 w-1/1">
             <div class="w-1/1 flex flex-row">
-                <input type="text" class="flex-1" :disabled="promptImg.state === 'MAKING'" v-model="promptImg.prompt" />                
-                <button v-if="promptImg.state !== 'MAKING'" class="btn btn-square flex-none" @click="makePromptImg">
+                <input type="text" class="flex-1 border rounded-xl" :disabled="promptImg.state === 'MAKING'" v-model="promptImg.prompt" />                
+                <button v-if="promptImg.state !== 'MAKING'" class="btn btn-square bg-black text-white flex-none" @click="makePromptImg">
                     go
                 </button>
             </div>            
 
             <div v-if="promptImg.state === 'INIT'" class="w-1/1 h-1/2 justify-items-center">
-                <svg class="size-full text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15v3c0 .5523.44772 1 1 1h4v-4m-5 0v-4m0 4h5m-5-4V6c0-.55228.44772-1 1-1h16c.5523 0 1 .44772 1 1v1.98935M3 11h5v4m9.4708 4.1718-.8696-1.4388-2.8164-.235-2.573-4.2573 1.4873-2.8362 1.4441 2.3893c.3865.6396 1.2183.8447 1.8579.4582.6396-.3866.8447-1.2184.4582-1.858l-1.444-2.38925h3.1353l2.6101 4.27715-1.0713 2.5847.8695 1.4388"/>
-                </svg>
+                <div class="skeleton h-1/1 w-1/1"></div>
             </div>
-            <span v-if="promptImg.state === 'MAKING'" class="loading loading-infinity loading-xl"></span>
-            <img v-if="promptImg.state === 'DONE'" :src="promptImg.src"/>
+
+            <div v-if="promptImg.state === 'MAKING'" id="imgSkeleton" class="w-1/1 h-1/2 mt-2 justify-items-center">
+                <div class="skeleton h-1/1 w-1/1"></div>
+            </div>
+
+            <div v-if="promptImg.state === 'DONE'" class="w-1/1 h-1/2 mt-2 justify-items-center">
+                <img :src="promptImg.src" />
+            </div>
         </div>
 
         <div class="divider divider-primary"></div>
