@@ -22,8 +22,18 @@
     });
 
     let appState = ref("");
-    let userMessage = ref("");
- 
+    
+    let promptOptions = reactive({
+        scene: ["日常早安", "日常午安", "日常晚安", "元旦", "農曆過年", "元宵節", "清明節", "中元節", "中秋節", "雙十國慶", "九三軍人節", "母親節", "父親節", "祖父母節"],
+        specifyImage: ["無", "山水畫", "金閣寺", "台北101", "玉山", "雪山", "台灣感性"],
+    });
+
+    let setPrompt = reactive({
+        text: "",
+        scene: "日常早安",
+        specifyImage: "無",
+    });
+
     let promptImg = reactive({
         state: "INIT",
         prompt: "",
@@ -38,6 +48,7 @@
         console.log("imagen.props.user_role", props.user_role);
 
         fetchInitData();
+        combinePrompt();
     }
     // 取得初始資料
     function fetchInitData(){
@@ -63,34 +74,128 @@
             promptImg.src = values[0];
             // 關閉 making 狀態
             promptImg.state = "DONE";
+
+            openImageModal();
         });
     }
+    // 開啟 image modal
+    function openImageModal(){
+        document.getElementById("imageModal").showModal();
+    }
+    // 關閉 setting modal
+    function closeImageModal(){
+        document.getElementById("imageModal").close();
+    }
+    // 組合 prompt
+    function combinePrompt(){
+        let prompt = "";
 
+        prompt += "幫我生成一張";
+        prompt += "適用於'" + setPrompt.scene + "'情境的畫";
+        if(setPrompt.specifyImage !== "無"){
+            prompt += ", 畫中必須包含'" + setPrompt.specifyImage + "'";
+        }
+        if(setPrompt.text){
+            prompt += ", 並且另外在畫中題字'" + setPrompt.text + "' ";
+        }
+
+        promptImg.prompt = prompt;
+    }
+    // 下載圖片
+    function downloadImage(){
+        let a = document.createElement("a"); //Create <a>
+        a.href = promptImg.src; //Image Base64 Goes here
+        a.download = "長輩圖_" + moment().format("YYYYMMDD_HHmmss") + ".png"; //File name Here
+        a.click(); //Downloaded file
+    }
 
 
 </script>
 
 <template>
 
-<div class="w-1/1 h-1/1">
-    <div class="w-1/1 h-1/3 flex flex-col">
-        預覽:
-        <textarea class="border rounded-xl textarea w-1/1" :disabled="promptImg.state === 'MAKING'" v-model="promptImg.prompt"></textarea>                
-    </div>            
-
-    <div class="w-1/1 h-1/2 justify-items-center mt-2 border rounded-xl">
-        <div v-if="promptImg.state === 'INIT'" class="h-1/1 w-1/1 bg-gray-200"></div>
-
-        <div v-if="promptImg.state === 'MAKING'" class="skeleton h-1/1 w-1/1"></div>
-
-        <img v-if="promptImg.state === 'DONE'" :src="promptImg.src" />
+<div class="w-1/1 h-1/1 flex flex-col">
+    <div class="w-1/1 flex flex-col">
+        <span class="w-1/1 bg-rose-200/50 p-2">
+            適用場景:
+        </span>
+        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1">
+            <label v-for="(option, option_i) in promptOptions.scene" class="w-1/1">
+                <input type="radio" :value="option" v-model="setPrompt.scene" @change="combinePrompt" />
+                {{ option }}
+            </label>
+        </div>
+    </div>
+    <div class="w-1/1 flex flex-col">
+        <span class="w-1/1 bg-rose-200/50 p-2">
+            指定圖片:
+        </span>
+        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1">
+            <label v-for="(option, option_i) in promptOptions.specifyImage" class="w-1/1">
+                <input type="radio" :value="option" v-model="setPrompt.specifyImage" @change="combinePrompt" />
+                {{ option }}
+            </label>
+        </div>
+    </div>
+    <div class="w-1/1 flex flex-col">
+        <span class="w-1/1 bg-rose-200/50 p-2">
+            圖片中的文字:
+        </span>
+        <div class="w-1/1">
+            <input type="text" placeholder="e.g., 早安" class="input w-1/1" v-model="setPrompt.text" @keyup.stop="combinePrompt" />
+        </div>
     </div>
 
-    <button v-if="promptImg.state !== 'MAKING'" class="btn btn-square bg-black text-white w-1/2" @click="makePromptImg">
+    <div class="w-1/1 flex flex-col">
+        <span class="w-1/1 bg-rose-200/50 p-2">
+            預覽 Prompt:
+        </span>
+        <div class="w-1/1">
+            <textarea class="border rounded-xl textarea w-1/1" disabled v-model="promptImg.prompt"></textarea>                
+        </div>
+    </div>
+    
+    <div class="divider divider-primary"></div>
+    <button v-if="promptImg.state !== 'MAKING'" class="btn btn-square bg-black text-white w-1/1" @click="makePromptImg">
         生成
     </button>
-
 </div>
+
+<!-- image modal -->
+<dialog id="imageModal" class="modal">
+    <div class="modal-box h-7/10 w-8/10 flex flex-col bg-neutral-100">
+        <div class="flex flex-col justify-center">
+            <span class="text-xl text-gray-900 text-center">您的長輩圖</span>
+            <div class="divider divider-primary"></div>
+        </div>
+        <div class="h-1/1 w-1/1 flex flex-col overflow-y-auto">
+            <div v-if="promptImg.state === 'INIT'" class="h-1/1 w-1/1 bg-gray-200"></div>
+
+            <div v-if="promptImg.state === 'MAKING'" class="skeleton h-1/1 w-1/1"></div>
+
+            <img v-if="promptImg.state === 'DONE'" :src="promptImg.src" />
+        </div>
+        <div class="divider divider-primary"></div>
+        <div class="modal-action">
+            <button class="btn btn-ghost w-1/2 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click="closeImageModal">
+                <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                </svg>
+                關閉預覽
+            </button>
+
+            <button class="btn btn-ghost w-1/2 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click="downloadImage">
+                <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
+                </svg>
+                儲存設定
+            </button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
 
 
 </template>
