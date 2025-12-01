@@ -31,8 +31,11 @@
     let setPrompt = reactive({
         text: "",
         scene: "日常問候",
+        sceneOther: "",
         specifyView: "無",
+        specifyViewOther: "",
         paintStyle: "無",
+        paintStyleOther: "",
     });
 
     let promptImg = reactive({
@@ -103,17 +106,49 @@
         let prompt = "";
 
         prompt += "幫我生成一張";
-        prompt += "適用於'" + setPrompt.scene + "'情境的畫";
-        if(setPrompt.specifyView !== "無"){
-            prompt += ", 以'" + setPrompt.specifyView + "'為背景";
+        // scene
+        switch(setPrompt.scene){
+            case "其他":
+                if(setPrompt.sceneOther){
+                    prompt += "適用於'" + setPrompt.sceneOther + "'情境的畫";
+                }else{
+                    prompt += "適用於'日常問候'情境的畫";
+                }                
+                break;
+            default:
+                prompt += "適用於'" + setPrompt.scene + "'情境的畫";
+                break;
         }
+        // specify view
+        switch(setPrompt.specifyView){
+            case "無":
+                break;
+            case "其他":
+                if(setPrompt.specifyViewOther){
+                    prompt += ", 以'" + setPrompt.specifyViewOther + "'為背景";
+                }
+                break;
+            default:
+                prompt += ", 以'" + setPrompt.specifyView + "'為背景";
+                break;
+        }
+        // word
         if(setPrompt.text){
             prompt += ", 並且另外在畫中題字'" + setPrompt.text + "' ";
         }
-        if(setPrompt.paintStyle !== "無"){
-            prompt += ", 以'" + setPrompt.paintStyle + "'畫風呈現這張畫";
+        // paint style
+        switch(setPrompt.paintStyle){
+            case "無": 
+                break;
+            case "其他":
+                if(setPrompt.paintStyleOther){
+                    prompt += ", 以'" + setPrompt.paintStyleOther + "'畫風呈現這張畫";
+                }
+                break;
+            default:
+                prompt += ", 以'" + setPrompt.paintStyle + "'畫風呈現這張畫";
+                break;
         }
-
         promptImg.prompt = prompt;
     }
     // 下載圖片
@@ -137,6 +172,7 @@
         <select class="select flex-1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.scene" @change="combinePrompt">
             <option v-for="(option, option_i) in promptOptions.scene" :value="option">{{ option }}</option>
         </select>
+        <input v-if="setPrompt.scene === '其他'" type="text" placeholder="e.g., 情人節" class="input flex-1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.sceneOther" @keyup.stop="combinePrompt" />    
     </div>
     <div class="w-1/1 flex flex-row items-center">
         <span class="flex-none bg-stone-400/50 p-2 text-start rounded-ss-xl rounded-es-xl">
@@ -145,6 +181,7 @@
         <select class="select flex-1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.specifyView" @change="combinePrompt">
             <option v-for="(option, option_i) in promptOptions.specifyView" :value="option">{{ option }}</option>
         </select>
+        <input v-if="setPrompt.specifyView === '其他'" type="text" placeholder="e.g., 正統鹿耳門聖母廟" class="input flex-1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.specifyViewOther" @keyup.stop="combinePrompt" />    
     </div>
     <div class="w-1/1 flex flex-row items-center">
         <span class="flex-none bg-stone-400/50 p-2 text-start rounded-ss-xl rounded-es-xl">
@@ -153,6 +190,7 @@
         <select class="select flex-1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.paintStyle" @change="combinePrompt">
             <option v-for="(option, option_i) in promptOptions.paintStyle" :value="option">{{ option }}</option>
         </select>
+        <input v-if="setPrompt.paintStyle === '其他'" type="text" placeholder="e.g., 仿鬼滅之刃風格" class="input flex-1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.paintStyleOther" @keyup.stop="combinePrompt" />
     </div>
     <div class="w-1/1 flex flex-row">
         <span class="flex-none bg-stone-400/50 p-2 text-start rounded-ss-xl rounded-es-xl">
