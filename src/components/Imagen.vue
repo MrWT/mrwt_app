@@ -1,7 +1,6 @@
 <script setup>
     import { ref, reactive, onMounted, onUpdated, watch, nextTick } from 'vue'
     import moment from 'moment'
-    import { gsap } from "gsap"
     import { fetchData } from "@/composables/fetchData"
 
     const emit = defineEmits(['popupMessage']);
@@ -9,6 +8,7 @@
         title: String,
         account: String,
         user_role: String,
+        imagenOption: Object,
     })
 
     onMounted(() => {
@@ -24,20 +24,16 @@
     let appState = ref("");
     
     let promptOptions = reactive({
-        scene: ["日常早安", "日常午安", "日常晚安", "元旦", "農曆過年", "元宵節", "清明節", "中元節", "中秋節", "雙十國慶", "九三軍人節", "母親節", "父親節", "祖父母節"],
-        specifyImage: [
-            "無", "台灣感性", "台灣玉山", 
-            "基隆彩虹屋", "台北101", "新北淡水老街", "桃園國際機場", "新竹城隍廟", "苗栗銅鑼日落", 
-            "台中高美濕地", "彰化扇形車庫", "南投車埕車站",
-            "雲林古坑綠色墜道", "嘉義森林之歌", "台南漁光島",
-            "高雄流行音樂中心", "屏東恆春古城", 
-            "台東天空之鏡", "花蓮太魯閣", "宜蘭北海岸",],
+        scene: [],
+        specifyView: [],
+        paintStyle: [],
     });
 
     let setPrompt = reactive({
         text: "",
-        scene: "日常早安",
-        specifyImage: "無",
+        scene: "日常",
+        specifyView: "無",
+        paintStyle: "無",
     });
 
     let promptImg = reactive({
@@ -52,13 +48,16 @@
         console.log("imagen.props.title", props.title);
         console.log("imagen.props.account", props.account);
         console.log("imagen.props.user_role", props.user_role);
+        console.log("imagen.props.imagenOption", props.imagenOption);
 
         fetchInitData();
         combinePrompt();
     }
     // 取得初始資料
     function fetchInitData(){
-        
+        promptOptions.scene = props.imagenOption.scene.split(",");
+        promptOptions.specifyView = props.imagenOption.specify_view.split(",");
+        promptOptions.paintStyle = props.imagenOption.paint_style.split(",");
     }
     // 開始生成圖片
     function makePromptImg(){
@@ -98,11 +97,14 @@
 
         prompt += "幫我生成一張";
         prompt += "適用於'" + setPrompt.scene + "'情境的畫";
-        if(setPrompt.specifyImage !== "無"){
-            prompt += ", 畫中必須包含'" + setPrompt.specifyImage + "'";
+        if(setPrompt.specifyView !== "無"){
+            prompt += ", 以'" + setPrompt.specifyView + "'為背景";
         }
         if(setPrompt.text){
             prompt += ", 並且另外在畫中題字'" + setPrompt.text + "' ";
+        }
+        if(setPrompt.paintStyle !== "無"){
+            prompt += ", 以'" + setPrompt.paintStyle + "'畫風呈現這張畫";
         }
 
         promptImg.prompt = prompt;
@@ -134,18 +136,29 @@
     </div>
     <div class="w-1/1 flex flex-col">
         <span class="w-1/1 bg-rose-200/50 p-2">
-            指定圖片:
+            指定景色:
         </span>
         <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1">
-            <label v-for="(option, option_i) in promptOptions.specifyImage" class="w-1/1">
-                <input type="radio" :value="option" v-model="setPrompt.specifyImage" @change="combinePrompt" />
+            <label v-for="(option, option_i) in promptOptions.specifyView" class="w-1/1">
+                <input type="radio" :value="option" v-model="setPrompt.specifyView" @change="combinePrompt" />
                 {{ option }}
             </label>
         </div>
     </div>
     <div class="w-1/1 flex flex-col">
         <span class="w-1/1 bg-rose-200/50 p-2">
-            圖片中的文字:
+            指定畫風:
+        </span>
+        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1">
+            <label v-for="(option, option_i) in promptOptions.paintStyle" class="w-1/1">
+                <input type="radio" :value="option" v-model="setPrompt.paintStyle" @change="combinePrompt" />
+                {{ option }}
+            </label>
+        </div>
+    </div>
+    <div class="w-1/1 flex flex-col">
+        <span class="w-1/1 bg-rose-200/50 p-2">
+            呈現於圖片中的文字:
         </span>
         <div class="w-1/1">
             <input type="text" placeholder="e.g., 早安" class="input w-1/1" v-model="setPrompt.text" @keyup.stop="combinePrompt" />
@@ -156,8 +169,8 @@
         <span class="w-1/1 bg-rose-200/50 p-2">
             預覽 Prompt:
         </span>
-        <div class="w-1/1">
-            <textarea class="border rounded-xl textarea w-1/1" disabled v-model="promptImg.prompt"></textarea>                
+        <div class="w-1/1 h-fit">
+            <textarea class="border rounded-xl textarea w-1/1 h-1/1" disabled v-model="promptImg.prompt"></textarea>                
         </div>
     </div>
     
