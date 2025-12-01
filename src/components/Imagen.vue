@@ -31,7 +31,7 @@
 
     let setPrompt = reactive({
         text: "",
-        scene: "日常",
+        scene: "日常問候",
         specifyView: "無",
         paintStyle: "無",
     });
@@ -122,45 +122,36 @@
 
 <template>
 
-<div class="w-1/1 h-1/1 flex flex-col">
-    <div class="w-1/1 flex flex-col">
-        <span class="w-1/1 bg-rose-200/50 p-2">
-            適用場景:
+<div class="w-1/1 h-1/1 flex flex-col gap-2">
+    <div class="w-1/1 flex flex-row items-center">
+        <span class="flex-none bg-rose-200/50 text-start p-2">
+            適用情境:
         </span>
-        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1">
-            <label v-for="(option, option_i) in promptOptions.scene" class="w-1/1">
-                <input type="radio" :value="option" v-model="setPrompt.scene" @change="combinePrompt" />
-                {{ option }}
-            </label>
-        </div>
+        <select class="select flex-1" v-model="setPrompt.scene" @change="combinePrompt">
+            <option v-for="(option, option_i) in promptOptions.scene" :value="option">{{ option }}</option>
+        </select>
     </div>
-    <div class="w-1/1 flex flex-col">
-        <span class="w-1/1 bg-rose-200/50 p-2">
+    <div class="w-1/1 flex flex-row items-center">
+        <span class="flex-none bg-rose-200/50 p-2 text-start">
             指定景色:
         </span>
-        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1">
-            <label v-for="(option, option_i) in promptOptions.specifyView" class="w-1/1">
-                <input type="radio" :value="option" v-model="setPrompt.specifyView" @change="combinePrompt" />
-                {{ option }}
-            </label>
-        </div>
+        <select class="select flex-1" v-model="setPrompt.specifyView" @change="combinePrompt">
+            <option v-for="(option, option_i) in promptOptions.specifyView" :value="option">{{ option }}</option>
+        </select>
     </div>
-    <div class="w-1/1 flex flex-col">
-        <span class="w-1/1 bg-rose-200/50 p-2">
+    <div class="w-1/1 flex flex-row items-center">
+        <span class="flex-none bg-rose-200/50 p-2 text-start">
             指定畫風:
         </span>
-        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1">
-            <label v-for="(option, option_i) in promptOptions.paintStyle" class="w-1/1">
-                <input type="radio" :value="option" v-model="setPrompt.paintStyle" @change="combinePrompt" />
-                {{ option }}
-            </label>
-        </div>
+        <select class="select flex-1" v-model="setPrompt.paintStyle" @change="combinePrompt">
+            <option v-for="(option, option_i) in promptOptions.paintStyle" :value="option">{{ option }}</option>
+        </select>
     </div>
-    <div class="w-1/1 flex flex-col">
-        <span class="w-1/1 bg-rose-200/50 p-2">
-            呈現於圖片中的文字:
+    <div class="w-1/1 flex flex-row">
+        <span class="flex-none bg-rose-200/50 p-2 text-start">
+            畫中文字:
         </span>
-        <div class="w-1/1">
+        <div class="flex-1">
             <input type="text" placeholder="e.g., 早安" class="input w-1/1" v-model="setPrompt.text" @keyup.stop="combinePrompt" />
         </div>
     </div>
