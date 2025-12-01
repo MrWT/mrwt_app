@@ -131,44 +131,44 @@
 
 <div class="w-1/1 h-1/1 flex flex-col gap-2">
     <div class="w-1/1 flex flex-row items-center">
-        <span class="flex-none bg-rose-200/50 text-start p-2">
+        <span class="flex-none bg-stone-400/50 text-start p-2 rounded-ss-xl rounded-es-xl">
             適用情境:
         </span>
-        <select class="select flex-1" v-model="setPrompt.scene" @change="combinePrompt">
+        <select class="select flex-1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.scene" @change="combinePrompt">
             <option v-for="(option, option_i) in promptOptions.scene" :value="option">{{ option }}</option>
         </select>
     </div>
     <div class="w-1/1 flex flex-row items-center">
-        <span class="flex-none bg-rose-200/50 p-2 text-start">
+        <span class="flex-none bg-stone-400/50 p-2 text-start rounded-ss-xl rounded-es-xl">
             指定景色:
         </span>
-        <select class="select flex-1" v-model="setPrompt.specifyView" @change="combinePrompt">
+        <select class="select flex-1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.specifyView" @change="combinePrompt">
             <option v-for="(option, option_i) in promptOptions.specifyView" :value="option">{{ option }}</option>
         </select>
     </div>
     <div class="w-1/1 flex flex-row items-center">
-        <span class="flex-none bg-rose-200/50 p-2 text-start">
+        <span class="flex-none bg-stone-400/50 p-2 text-start rounded-ss-xl rounded-es-xl">
             指定畫風:
         </span>
-        <select class="select flex-1" v-model="setPrompt.paintStyle" @change="combinePrompt">
+        <select class="select flex-1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.paintStyle" @change="combinePrompt">
             <option v-for="(option, option_i) in promptOptions.paintStyle" :value="option">{{ option }}</option>
         </select>
     </div>
     <div class="w-1/1 flex flex-row">
-        <span class="flex-none bg-rose-200/50 p-2 text-start">
-            畫中文字:
+        <span class="flex-none bg-stone-400/50 p-2 text-start rounded-ss-xl rounded-es-xl">
+            畫中題字:
         </span>
         <div class="flex-1">
-            <input type="text" placeholder="e.g., 早安" class="input w-1/1" v-model="setPrompt.text" @keyup.stop="combinePrompt" />
+            <input type="text" placeholder="e.g., 早安" class="input w-1/1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.text" @keyup.stop="combinePrompt" />
         </div>
     </div>
 
     <div class="w-1/1 flex flex-col">
-        <span class="w-1/1 bg-rose-200/50 p-2">
-            預覽 Prompt:
+        <span class="w-1/1 bg-stone-900/50 text-gray-100 p-2 text-center rounded-ss-xl rounded-se-xl">
+            給予 AI 的話:
         </span>
         <div class="w-1/1 h-fit">
-            <textarea class="border rounded-xl textarea w-1/1 h-1/1" disabled v-model="promptImg.prompt"></textarea>                
+            <textarea class="border rounded-xl textarea w-1/1 h-1/1 cursor-default text-gray-900" disabled v-model="promptImg.prompt"></textarea>                
         </div>
     </div>
     
