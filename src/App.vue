@@ -44,17 +44,17 @@
 
     // 系統資訊
     let appState = ref("");
-    let screenSize = ref("md");
+    // 一般 - 功能設定
     let appSetting = reactive({
         state: "",
         contentComponent: "gallery",
         title: "",
         googleMapApiKey: "",
         reference: [],
-        quiz: {},
         funButtons: [],
         imagenOption: {},
     });
+    // 郭家基金 - 功能設定
     let kf_funSetting = reactive({
         bank_info: {},
         file_info: {},
@@ -78,6 +78,7 @@
         languages: {},
         focus_news_topic: null,
     });
+    // Popup Message
     let opObj = reactive({
         status: false,
         message: "",
@@ -85,18 +86,6 @@
 
     // 初始化 app
     function init(){
-        // w-sm 約等於 384px
-        // w-md 約等於 448px
-        if(window.innerWidth > 448){
-            screenSize.value = "md";
-        }else if(304 < window.innerWidth && window.innerWidth < 448 ){
-            screenSize.value = "sm";
-        }else{
-            screenSize.value = "xs";
-        }
-        console.log("window.innerWidth=" + window.innerWidth);
-        console.log("screenSize.value=" + screenSize.value);
-
         // 自動登入控制
         {
             const urlParams = new URLSearchParams(window.location.search);
@@ -196,9 +185,6 @@
                 // appSetting.googleMapApiKey
                 appSetting.googleMapApiKey = appSettingObj["google_map_api_key"];
 
-                // appSetting.imagenOption
-                appSetting.imagenOption = appSettingObj["imagen_option"];
-
                 // 郭家基金 - 功能設定值
                 kf_funSetting.bank_info = appSettingObj["kf_bank_info"];
                 kf_funSetting.file_info = appSettingObj["kf_file_info"];
@@ -222,12 +208,6 @@
                         });
                     });
                 }
-
-                // appSetting.quiz
-                appSetting.quiz = {
-                    count: appSettingObj["quiz_count"],
-                    max_number: appSettingObj["quiz_max_number"],
-                };
 
                 // user info
                 let userInfoObj = values[1];
@@ -429,7 +409,7 @@
         <Finance v-else-if="appSetting.contentComponent === 'finance'" :title="appSetting.title" :account="userInfo.account" />
         <Setting v-else-if="appSetting.contentComponent === 'setting'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Chat v-else-if="appSetting.contentComponent === 'chat'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
-        <Imagen v-else-if="appSetting.contentComponent === 'imagen'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" :imagenOption="appSetting.imagenOption" @popup-message="popupMessage" />
+        <Imagen v-else-if="appSetting.contentComponent === 'imagen'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <PlanTrip v-else-if="appSetting.contentComponent === 'plan_trip'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <TripSchedule v-else-if="appSetting.contentComponent === 'trip_schedule'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
         <Author v-else-if="appSetting.contentComponent === 'author'" :title="appSetting.title" />
