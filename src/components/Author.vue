@@ -68,9 +68,13 @@
     <div class="text-lg">作者簡介</div>
 </div>
 
-<div class="w-1/1">
+<div class="w-1/1 flex flex-col md:flex-row gap-2">
+    <div class="w-1/1 md:w-1/3 h-[300px] border border-gray-300 p-5 rounded-box">
+        <div class="w-1/1 h-1/1 skeleton">
 
-    <ul class="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
+        </div>
+    </div>
+    <ul class="w-1/1 md:w-2/3 timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
         <li v-for="(dataObj, data_i) in dataList">
             <hr />
             <div class="timeline-middle">
@@ -88,6 +92,7 @@
     </ul>
 
 </div>
+<div class="divider"></div>
 
 </template>
 
