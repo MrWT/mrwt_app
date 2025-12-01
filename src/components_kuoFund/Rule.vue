@@ -19,7 +19,7 @@
         bank_no: "",
         account: "",
     });
-    let excelInfo = reactive({
+    let fileInfo = reactive({
         file_name: "",
         link: "",
     })
@@ -34,8 +34,8 @@
         bankInfo.bank_no = props.funSetting.bank_info.value1;
         bankInfo.account = props.funSetting.bank_info.value2;
 
-        excelInfo.file_name = props.funSetting.excel_info.value1;
-        excelInfo.link = props.funSetting.excel_info.value2;
+        fileInfo.file_name = props.funSetting.file_info.value1;
+        fileInfo.link = props.funSetting.file_info.value2;
     }    
     
 </script>
@@ -123,8 +123,8 @@
                     <div>管理工具 1. 共享檔案(PDF)</div>
                     <div class="text-xs font-semibold opacity-60">詳細記載儲值細項、提領細項(包含日期、目的和收據照片)</div>
                     <div class="divider"></div>
-                    <div class="text-xs font-semibold opacity-60">檔案名稱: {{ excelInfo.file_name }}</div>
-                    <div class="text-xs font-semibold opacity-60">共享連結: <a class="link" target="_blank" :href="excelInfo.link">{{ excelInfo.link }}</a></div>
+                    <div class="text-xs font-semibold opacity-60">檔案名稱: {{ fileInfo.file_name }}</div>
+                    <div class="text-xs font-semibold opacity-60">共享連結: <a class="link" target="_blank" :href="fileInfo.link">{{ fileInfo.link }}</a></div>
                 </div>
             </li>
 
