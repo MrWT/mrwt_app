@@ -8,7 +8,6 @@
         title: String,
         account: String,
         user_role: String,
-        imagenOption: Object,
     })
 
     onMounted(() => {
@@ -48,16 +47,24 @@
         console.log("imagen.props.title", props.title);
         console.log("imagen.props.account", props.account);
         console.log("imagen.props.user_role", props.user_role);
-        console.log("imagen.props.imagenOption", props.imagenOption);
 
         fetchInitData();
         combinePrompt();
     }
     // 取得初始資料
     function fetchInitData(){
-        promptOptions.scene = props.imagenOption.scene.split(",");
-        promptOptions.specifyView = props.imagenOption.specify_view.split(",");
-        promptOptions.paintStyle = props.imagenOption.paint_style.split(",");
+        // get_imagen_option
+
+        let fetchPromise_imageOption = fetchData({
+            api: "get_imagen_option",
+        });
+        Promise.all([fetchPromise_imageOption]).then((values) => {
+            console.log("fetchPromise_imageOption.values=", values);
+
+            promptOptions.scene = values[0].scene.split(",");
+            promptOptions.specifyView = values[0].specify_view.split(",");
+            promptOptions.paintStyle = values[0].paint_style.split(",");
+        });
     }
     // 開始生成圖片
     function makePromptImg(){
