@@ -42,14 +42,19 @@
 
 <template>
 
-    <div class="divider">系統架構</div>
-    <div class="flex flex-col md:flex-row w-10/10 h-[600px] md:h-[600px]">
-        <div v-if="screenSize !== 'md'" class="divider">User Interfase</div>
+    <div class="w-1/1 h-fit p-2 text-2xl text-center text-black bg-yellow-300/50 rounded-ss-xl rounded-se-xl">
+        系統架構
+    </div>
 
-        <div class="flex md:flex-col flex-row gap-1">
-            <div class="card bg-base-300 rounded-box grid h-[300px] w-1/1 place-items-center">
-                <div class="w-10/10 h-10/10 p-2">
-                    <div class="text-2xl underline text-center mb-2">github.io</div>
+    <div class="flex flex-col w-1/1 h-fit justify-center">
+        <div class="divider">Frontend</div>
+
+        <div class="w-1/1 flex flex-wrap gap-1 justify-center">
+            <div class="card bg-base-300 rounded-box w-1/1 max-w-100 p-1">
+                <div class="w-1/1 h-1/1 p-1">
+                    <div class="text-2xl underline text-center mb-2 p-1 bg-gray-800 text-gray-200 rounded-ss-xl rounded-se-xl">
+                        github.io
+                    </div>
 
                     <div class="flex flex-wrap gap-1 justify-center">
                         <div class="p-2 justify-center content-center rounded-4xl w-fit text-base bg-green-200">DaisyUI</div>
@@ -62,44 +67,65 @@
                 </div>
             </div>
 
-            <div class="card bg-base-300 rounded-box grid h-[300px] w-1/1 place-items-center">
-                <div class="w-10/10 h-10/10 p-2">
-                    <div class="text-2xl underline text-center mb-2">Line App</div>
+            <div class="card bg-base-300 rounded-box w-1/1 max-w-100 p-1">
+                <div class="w-1/1 h-1/1 p-1">
+                    <div class="text-2xl underline text-center mb-2 p-1 bg-gray-800 text-gray-200 rounded-ss-xl rounded-se-xl">
+                        Line App
+                    </div>
 
                     <div class="flex flex-wrap gap-1 justify-center">
-                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-red-300">Messaging API</div>
-                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-blue-300">Rich Menu</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-gray-300">Messaging API</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-zinc-300">Rich Menu</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div v-if="screenSize === 'md'" class="divider md:divider-horizontal"><--></div>
-        <div v-if="screenSize !== 'md'" class="divider">Web API</div>
-        <div class="card bg-base-300 rounded-box grid h-[600px] w-10/10 md:w-3/10 place-items-center">
-            <div class="w-10/10 h-1/1 text-center content-center text-2xl underline">Cloud Run<br />( Python )</div>
-        </div>
+        <div class="divider">Backend</div>
+        <div class="w-1/1 flex flex-wrap gap-1 justify-center p-1">
+            <div class="card bg-base-300 p-1 max-w-50">
+                <div class="w-1/1 h-1/1 p-1">
+                    <div class="text-2xl underline text-center mb-2 p-1 bg-gray-800 text-gray-200 rounded-ss-xl rounded-se-xl">
+                        Web API
+                    </div>
 
-        <div v-if="screenSize === 'md'" class="divider md:divider-horizontal"><--></div>
-        <div v-if="screenSize !== 'md'" class="flex flex-row w-10/10 gap-2">
-            <div class="w-5/10">
-                <div class="divider">Database</div>
+                    <div class="flex flex-wrap gap-1 justify-center">
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-gray-300">Cloud Run( Python )</div>
+                    </div>
+                </div>
             </div>
-            <div class="w-5/10">
-                <div class="divider">AI Agent</div>
+
+            <div class="card bg-base-300 p-1 max-w-50">
+                <div class="w-1/1 h-1/1 p-1">
+                    <div class="text-2xl underline text-center mb-2 p-1 bg-gray-800 text-gray-200 rounded-ss-xl rounded-se-xl">
+                        Database
+                    </div>
+
+                    <div class="flex flex-wrap gap-1 justify-center">
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-gray-300">Firestore</div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="flex flex-row md:flex-col h-[600px] w-10/10 md:w-3/10 gap-2">
-            <div class="card bg-base-300 rounded-box grid h-1/1 w-5/10 md:h-5/10 md:w-10/10 place-items-center">
-                <div class="w-10/10 text-center text-2xl underline">Firestore <br />( NoSQL )</div>
-            </div>
-            <div class="card bg-base-300 rounded-box grid h-1/1 w-5/10 md:h-5/10 md:w-10/10 place-items-center">
-                <div class="w-10/10 text-center text-2xl underline">Vertex AI <br />( gemini-2.5-flash-lite )</div>
+
+            <div class="card bg-base-300 flex flex-col p-1 max-w-50">
+                <div class="w-1/1 h-1/1 p-1">
+                    <div class="text-2xl underline text-center mb-2 p-1 bg-gray-800 text-gray-200 rounded-ss-xl rounded-se-xl">
+                        Vertex AI
+                    </div>
+
+                    <div class="flex flex-wrap gap-1 justify-center">
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-indigo-300">gemini-2.5-flash</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-fuchsia-300">gemini-3-pro-image</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="divider">實作技術參考</div>
+    <div class="divider"></div>
+    <div class="w-1/1 h-fit p-2 text-2xl text-center text-black bg-yellow-300/50 rounded-ss-xl rounded-se-xl">
+        實作技術參考
+    </div>
     <ul class="list bg-base-100 rounded-box h-fit w-10/10 overflow-y-auto shadow-2xl">
         <li v-for="resObj in props.reference" class="list-row hover:bg-yellow-300/10" 
                 :class="{'bg-gray-200': resObj.arch === 'frontend', 'bg-gray-300': resObj.arch === 'backend'}">
