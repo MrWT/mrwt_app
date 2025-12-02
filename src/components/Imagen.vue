@@ -73,26 +73,57 @@
     function makePromptImg(){
         console.log("makePromptImg.prompt=" + promptImg.prompt);
 
-        // 開啟 making 狀態
-        {
-            promptImg.state = "MAKING";
-        }
-
         let promptImgPromise = fetchData({
             api: "ai_gen_image",
             data: {
-                prompt: "幫我生成一張" + promptImg.prompt,
+                prompt: promptImg.prompt,
             }
         }, "AI");
         Promise.all([promptImgPromise]).then((values) => {
             console.log("promptImgPromise.values=", values);
             promptImg.src = values[0];
-            // 關閉 making 狀態
-            promptImg.state = "DONE";
 
             openImageModal();
+
+            /*
+            {
+                let image = new Image(60, 45); 
+                image.onload = drawImageActualSize; 
+                image.src = promptImg.src;
+            }
+            */
+
+            // 紀錄 log
+            newLog("N");
         });
     }
+    /*
+    // 在 canvas 畫出 image / 文字
+    function drawImageActualSize() {
+        let canvas = document.getElementById("canvas");
+        let ctx = canvas.getContext("2d");
+
+        canvas.width = this.naturalWidth;
+        canvas.height = this.naturalHeight;
+
+        ctx.drawImage(this, 0, 0);
+
+        // 畫上文字
+        if(setPrompt.text)
+        {
+            let centerX = canvas.width / 2;
+            let centerY = canvas.height / 2;
+
+            ctx.font = '100px Arial';
+            ctx.fillStyle = 'white';
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            ctx.strokeText("setPrompt.text", centerX, centerY);
+        }
+    }
+    */
     // 開啟 image modal
     function openImageModal(){
         document.getElementById("imageModal").showModal();
@@ -105,18 +136,18 @@
     function combinePrompt(){
         let prompt = "";
 
-        prompt += "幫我生成一張";
+        prompt += "幫我生成一張圖片";
         // scene
         switch(setPrompt.scene){
             case "其他":
                 if(setPrompt.sceneOther){
-                    prompt += "適用於'" + setPrompt.sceneOther + "'情境的畫";
+                    prompt += ", 這張圖片要使用在'" + setPrompt.sceneOther + "' ";
                 }else{
-                    prompt += "適用於'日常問候'情境的畫";
+                    prompt += ", 這張圖片要使用在'日常問候' ";
                 }                
                 break;
             default:
-                prompt += "適用於'" + setPrompt.scene + "'情境的畫";
+                prompt += ", 這張圖片要使用在'" + setPrompt.scene + "' ";
                 break;
         }
         // specify view
@@ -125,16 +156,16 @@
                 break;
             case "其他":
                 if(setPrompt.specifyViewOther){
-                    prompt += ", 以'" + setPrompt.specifyViewOther + "'為背景";
+                    prompt += ", 圖片背景為'" + setPrompt.specifyViewOther + "' ";
                 }
                 break;
             default:
-                prompt += ", 以'" + setPrompt.specifyView + "'為背景";
+                prompt += ", 圖片背景為'" + setPrompt.specifyView + "' ";
                 break;
         }
         // word
         if(setPrompt.text){
-            prompt += ", 並且另外在畫中題字'" + setPrompt.text + "' ";
+            prompt += ", 並且在圖片中題字'" + setPrompt.text + "' ";
         }
         // paint style
         switch(setPrompt.paintStyle){
@@ -142,11 +173,11 @@
                 break;
             case "其他":
                 if(setPrompt.paintStyleOther){
-                    prompt += ", 以'" + setPrompt.paintStyleOther + "'畫風呈現這張畫";
+                    prompt += ", 以'" + setPrompt.paintStyleOther + "'方式呈現出圖片";
                 }
                 break;
             default:
-                prompt += ", 以'" + setPrompt.paintStyle + "'畫風呈現這張畫";
+                prompt += ", 以'" + setPrompt.paintStyle + "'方式呈現出圖片";
                 break;
         }
         promptImg.prompt = prompt;
@@ -157,8 +188,25 @@
         a.href = promptImg.src; //Image Base64 Goes here
         a.download = "長輩圖_" + moment().format("YYYYMMDD_HHmmss") + ".png"; //File name Here
         a.click(); //Downloaded file
-    }
 
+        newLog("Y");
+    }
+    // 新增 log
+    function newLog(is_download){
+        let fetchPromise_newLog = fetchData({
+            api: "new_log",
+            data:{
+                function: "imagen",
+                account: props.account,
+                prompt: promptImg.prompt,
+                image: promptImg.src,
+                is_download: is_download
+            }
+        });
+        Promise.all([fetchPromise_newLog]).then((values) => {
+            console.log("fetchPromise_newLog.values=", values);
+        });
+    }
 
 </script>
 
@@ -211,7 +259,7 @@
     </div>
     
     <div class="divider divider-primary"></div>
-    <button v-if="promptImg.state !== 'MAKING'" class="btn btn-square bg-black text-white w-1/1" @click="makePromptImg">
+    <button class="btn btn-square bg-black text-white w-1/1" @click="makePromptImg">
         生成
     </button>
 </div>
@@ -220,15 +268,16 @@
 <dialog id="imageModal" class="modal">
     <div class="modal-box h-7/10 w-8/10 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
-            <span class="text-xl text-gray-900 text-center">您的長輩圖</span>
+            <span class="text-xl text-gray-900 text-center"></span>
             <div class="divider divider-primary"></div>
         </div>
-        <div class="h-1/1 w-1/1 flex flex-col overflow-y-auto">
-            <div v-if="promptImg.state === 'INIT'" class="h-1/1 w-1/1 bg-gray-200"></div>
-
-            <div v-if="promptImg.state === 'MAKING'" class="skeleton h-1/1 w-1/1"></div>
-
-            <img v-if="promptImg.state === 'DONE'" :src="promptImg.src" />
+        <div class="h-1/1 w-1/1 flex flex-col overflow-auto">
+            <!---->
+            <img :src="promptImg.src" />
+            <!---->
+            <!--
+            <canvas id="canvas"></canvas>
+            -->
         </div>
         <div class="divider divider-primary"></div>
         <div class="modal-action">
