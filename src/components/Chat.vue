@@ -156,7 +156,7 @@
                 userMessage.value = "";
 
                 // 讓 app scroll 到底
-                let chatBoxElement = document.getElementById("app");
+                let chatBoxElement = document.getElementById("chatBox");
                 chatBoxElement.scrollTop = chatBoxElement.scrollHeight;
             });
         });
