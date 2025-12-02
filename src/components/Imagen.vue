@@ -206,7 +206,7 @@
             給予 AI 的話:
         </span>
         <div class="w-1/1 h-fit">
-            <textarea class="border rounded-xl textarea w-1/1 h-1/1 cursor-default text-gray-900" disabled v-model="promptImg.prompt"></textarea>                
+            <textarea class="border rounded-xl textarea w-1/1 h-1/1 cursor-default text-gray-900" v-model="promptImg.prompt"></textarea>                
         </div>
     </div>
     
