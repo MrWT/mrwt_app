@@ -26,6 +26,8 @@
         scene: [],
         specifyView: [],
         paintStyle: [],
+        gen_limit: 0,
+        gen_image_count: 0,
     });
 
     let setPrompt = reactive({
@@ -61,22 +63,36 @@
         let fetchPromise_imageOption = fetchData({
             api: "get_imagen_option",
         });
-        Promise.all([fetchPromise_imageOption]).then((values) => {
-            console.log("fetchPromise_imageOption.values=", values);
+        let fetchPromise_genImageCount = fetchData({
+            api: "get_imagen_count",
+            data: {
+                account: props.account,
+            }
+        });
+        Promise.all([fetchPromise_imageOption, fetchPromise_genImageCount]).then((values) => {
+            console.log("fetchInitData.values=", values);
 
             promptOptions.scene = values[0].scene.split(",");
             promptOptions.specifyView = values[0].specify_view.split(",");
             promptOptions.paintStyle = values[0].paint_style.split(",");
+            promptOptions.gen_limit = parseInt( values[0].gen_limit );
+
+            promptOptions.gen_image_count = parseInt( values[1] );
         });
     }
     // 開始生成圖片
     function makePromptImg(){
         console.log("makePromptImg.prompt=" + promptImg.prompt);
 
+        // 增加 gen_image_count
+        promptOptions.gen_image_count += 1;
+
         let promptImgPromise = fetchData({
             api: "ai_gen_image",
             data: {
                 prompt: promptImg.prompt,
+                account: props.account,
+                gen_image_count: promptOptions.gen_image_count,
             }
         }, "AI");
         Promise.all([promptImgPromise]).then((values) => {
@@ -259,9 +275,12 @@
     </div>
     
     <div class="divider divider-primary"></div>
-    <button class="btn btn-square bg-black text-white w-1/1" @click="makePromptImg">
+    <button v-if="promptOptions.gen_image_count < promptOptions.gen_limit" class="btn btn-square bg-black text-white w-1/1" @click.stop="makePromptImg">
         生成
     </button>
+    <div v-if="promptOptions.gen_image_count === promptOptions.gen_limit" class="w-1/1 text-center bg-red-500 text-white rdounded-xl">
+        已達每日生成次數上限
+    </div>
 </div>
 
 <!-- image modal -->
