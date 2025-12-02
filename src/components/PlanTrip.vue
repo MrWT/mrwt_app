@@ -569,7 +569,7 @@
 </div>
 
 <!-- 聊天內容 -->
-<div id="chatBox" class="flex flex-col w-1/1 h-11/12 md:h-1/1 md:w-11/12 mt-10 md:mt-5 overflow-y-auto">
+<div id="chatBox" class="flex flex-col w-1/1 h-11/12 md:h-1/1 md:w-11/12 mt-15 md:mt-5 overflow-y-auto">
     <div v-for="(msgObj, msg_i) in messages" class="chat"
         :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
         <div class="chat-image avatar">
