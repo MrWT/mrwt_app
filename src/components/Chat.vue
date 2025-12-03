@@ -370,76 +370,79 @@
 
 <template>
 
-<!-- function button bar -->
-<div class="w-1/1 flex flex-row justify-center shadow-2xl">
-    <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="說點什麼">
-        <button class="btn btn-circle bg-green-300 text-gray-900 hover:bg-blue-300" @click="openChatModal">
-            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
-            </svg>
-        </button>
-    </div>
-    <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="開啟新話題">
-        <button class="btn btn-circle bg-red-300 text-gray-900 hover:bg-blue-300" @click="openNewChatConfirmModal">
-            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-            </svg>
-        </button>
-    </div>
-    <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="調整 AI 角色">
-        <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" @click="openSettingModal">
-            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 19h4a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-2m-2.236-4a3 3 0 1 0 0-4M3 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-            </svg>
-        </button>
-    </div>
-    <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="聊天提詞機">
-        <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openPromptModal">
-            <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 9h5m3 0h2M7 12h2m3 0h5M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.616a1 1 0 0 0-.67.257l-2.88 2.592A.5.5 0 0 1 8 18.477V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
-            </svg>
-        </button>
-    </div>
-</div>
+<div class="w-1/1 h-1/1 flex flex-col md:flex-row-reverse">
 
-<!-- 聊天內容 -->
-<div id="chatBox" class="flex flex-col w-1/1 h-11/12 md:h-1/1 md:w-11/12 mt-15 md:mt-5 overflow-y-auto">
-    <div v-for="(msgObj, msg_i) in messages" class="chat"
-        :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
-        <div class="chat-image avatar">
-            <div class="avatar avatar-placeholder">
-                <div class="w-8 rounded-full border-5 bg-white text-gray-900"
-                    :class="{'border-zinc-500': msgObj.role === 'AI', 'border-stone-500': msgObj.role === 'user'}">
-                    <span class="text-xs">{{ msgObj.short_name }}</span>
-                </div>
-            </div>
+        <!-- function button bar -->
+    <div class="w-1/1 md:w-1/12 md:h-1/1 flex flex-row md:flex-col justify-center items-end shadow-2xl">
+        <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="說點什麼">
+            <button class="btn btn-circle bg-green-300 text-gray-900 hover:bg-blue-300" @click="openChatModal">
+                <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
+                </svg>
+            </button>
         </div>
-        <div class="chat-header">
-            {{ msgObj.speaker }}
-            <time class="text-xs opacity-50">{{ msgObj.time }}</time>
+        <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="開啟新話題">
+            <button class="btn btn-circle bg-red-300 text-gray-900 hover:bg-blue-300" @click="openNewChatConfirmModal">
+                <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                </svg>
+            </button>
         </div>
-        <div class="chat-bubble">
-            <p style="white-space:pre-wrap;">
-                {{ msgObj.message }}
-            </p>
+        <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="調整 AI 角色">
+            <button class="btn btn-circle bg-gray-300 hover:bg-blue-300" @click="openSettingModal">
+                <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 19h4a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-2m-2.236-4a3 3 0 1 0 0-4M3 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                </svg>
+            </button>
+        </div>
+        <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="聊天提詞機">
+            <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openPromptModal">
+                <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 9h5m3 0h2M7 12h2m3 0h5M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.616a1 1 0 0 0-.67.257l-2.88 2.592A.5.5 0 0 1 8 18.477V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+                </svg>
+            </button>
         </div>
     </div>
-    <div v-if="chatState === 'TALKING'" class="chat chat-start">
-        <div class="chat-image avatar">
-            <div class="avatar avatar-placeholder">
-                <div class="size-8 rounded-full bg-neutral text-gray-100">
-                    <span class="text-xs">
-                        {{ " " }}
-                    </span>
+
+    <!-- 聊天內容 -->
+    <div id="chatBox" class="flex flex-col w-1/1 h-11/12 md:h-1/1 md:w-11/12 mt-15 md:mt-5 overflow-y-auto">
+        <div v-for="(msgObj, msg_i) in messages" class="chat"
+            :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
+            <div class="chat-image avatar">
+                <div class="avatar avatar-placeholder">
+                    <div class="w-8 rounded-full border-5 bg-white text-gray-900"
+                        :class="{'border-zinc-500': msgObj.role === 'AI', 'border-stone-500': msgObj.role === 'user'}">
+                        <span class="text-xs">{{ msgObj.short_name }}</span>
+                    </div>
                 </div>
             </div>
+            <div class="chat-header">
+                {{ msgObj.speaker }}
+                <time class="text-xs opacity-50">{{ msgObj.time }}</time>
+            </div>
+            <div class="chat-bubble">
+                <p style="white-space:pre-wrap;">
+                    {{ msgObj.message }}
+                </p>
+            </div>
         </div>
-        <div class="chat-header">
-            {{ "AI" }}
-        </div>
-        <div class="chat-bubble">
-            好喔~ 稍等
-            <span class="loading loading-dots loading-xs"></span>
+        <div v-if="chatState === 'TALKING'" class="chat chat-start">
+            <div class="chat-image avatar">
+                <div class="avatar avatar-placeholder">
+                    <div class="size-8 rounded-full bg-neutral text-gray-100">
+                        <span class="text-xs">
+                            {{ " " }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-header">
+                {{ "AI" }}
+            </div>
+            <div class="chat-bubble">
+                好喔~ 稍等
+                <span class="loading loading-dots loading-xs"></span>
+            </div>
         </div>
     </div>
 </div>
