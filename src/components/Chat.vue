@@ -371,7 +371,7 @@
 <template>
 
 <!-- function button bar -->
-<div class="flex flex-row md:flex-col absolute right-1/3 md:right-5 top:40 z-10 shadow-2xl">
+<div class="w-1/1 flex flex-row justify-center shadow-2xl">
     <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="說點什麼">
         <button class="btn btn-circle bg-green-300 text-gray-900 hover:bg-blue-300" @click="openChatModal">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
