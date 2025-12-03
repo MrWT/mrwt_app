@@ -116,6 +116,8 @@
     // 複製, 到 Gemini 等工具貼上
     function copyPrompt(){
         copyTextToClipboard(promptImg.prompt);
+        // 紀錄 log
+        newLog("N");
     }
     // 實際複製到 clipboard
     async function copyTextToClipboard(textToCopy) {
