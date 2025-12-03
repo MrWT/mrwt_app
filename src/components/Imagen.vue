@@ -215,7 +215,7 @@
                 function: "imagen",
                 account: props.account,
                 prompt: promptImg.prompt,
-                image: promptImg.src,
+                image: "", //promptImg.src,
                 is_download: is_download
             }
         });
@@ -275,7 +275,7 @@
     </div>
     
     <div class="divider divider-primary"></div>
-    <button v-if="promptOptions.gen_image_count < promptOptions.gen_limit" class="btn btn-square bg-black text-white w-1/1" @click.stop="makePromptImg">
+    <button v-if="promptOptions.gen_image_count < promptOptions.gen_limit" class="btn btn-square bg-black text-white w-1/1" @click.prevent="makePromptImg">
         生成
     </button>
     <div v-if="promptOptions.gen_image_count === promptOptions.gen_limit" class="w-1/1 text-center bg-red-500 text-white rdounded-xl">
