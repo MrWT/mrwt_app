@@ -113,6 +113,19 @@
             newLog("N");
         });
     }
+    // 複製, 到 Gemini 等工具貼上
+    function copyPrompt(){
+        copyTextToClipboard(promptImg.prompt);
+    }
+    // 實際複製到 clipboard
+    async function copyTextToClipboard(textToCopy) {
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            console.log('已成功複製到剪貼簿, textToCopy=', textToCopy);
+        } catch (err) {
+            console.error('無法複製文字：', err);
+        }
+    }
     /*
     // 在 canvas 畫出 image / 文字
     function drawImageActualSize() {
@@ -275,11 +288,17 @@
     </div>
     
     <div class="divider divider-primary"></div>
-    <button v-if="promptOptions.gen_image_count < promptOptions.gen_limit" class="btn btn-square bg-black text-white w-1/1" @click.prevent="makePromptImg">
-        生成
-    </button>
-    <div v-if="promptOptions.gen_image_count === promptOptions.gen_limit" class="w-1/1 text-center bg-red-500 text-white rdounded-xl">
-        已達每日生成次數上限
+    <div class="w-1/1 flex justify-center">
+        <div v-if="promptOptions.gen_image_count < promptOptions.gen_limit" class="w-1/2">
+            <button class="btn btn-square bg-black text-white w-1/1" @click.prevent="makePromptImg">
+                生成
+            </button>
+        </div>
+        <div v-if="promptOptions.gen_image_count >= promptOptions.gen_limit" class="w-1/2">
+            <button class="btn btn-square bg-black text-white w-1/1" @click.prevent="copyPrompt">
+                複製, 到 AI 等工具貼上
+            </button>
+        </div>
     </div>
 </div>
 
