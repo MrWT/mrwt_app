@@ -22,6 +22,7 @@
     let selActivityMonth = ref("");
     let activityMonthList = reactive([]);
     let activity_location = ref("");
+    let activity_memo = ref("");
     let activity_date = ref("");
     let activity_address = ref("");
     let manualPages = reactive([]);
@@ -68,10 +69,8 @@
         console.log("Activity.props.annouce_period_start=", props.annouce_period_start);
         console.log("Activity.props.annouce_period_end=", props.annouce_period_end);
 
-        isBuilding.value = props.user_role === "admin_kf" ? false : true;
-
         get_activity_months();
-
+        
         // 發出 annoucement
         if(props.user_role !== "admin_kf"){
             let now_date = moment().format("YYYY-MM-DD");
@@ -79,8 +78,13 @@
               && props.annouce_period_end && now_date <= props.annouce_period_end ){
                 openAnnouceModal();
             }
+
+            if(props.annouce_period_start && props.annouce_period_start <= now_date){
+                isBuilding.value = false;
+            }
         }else{
             openAnnouceModal();
+            isBuilding.value = false;
         }
     }   
     // 取得活動月份
@@ -137,10 +141,12 @@
 
             if(values[0].length > 0){
                 activity_location.value = values[0][0]["location_name"];
+                activity_memo.value = values[0][0]["memo"];
                 activity_address.value = values[0][0]["address"];
                 activity_date.value = values[0][0]["date"];
 
                 console.log("get_activity.activity_location=", activity_location.value);
+                console.log("get_activity.activity_memo=", activity_memo.value);
                 console.log("get_activity.activity_address=", activity_address.value);
                 console.log("get_activity.activity_date=", activity_date.value);
 
@@ -182,9 +188,18 @@
     </button>
 </div>
 
-<div v-if="isBuilding === false" class="w-10/10 h-9/10 flex flex-col gap-2 mt-2 overflow-y-auto">
-    <div class="w-10/10 h-2/10 p-1">
-        <div class="w-10/10 bg-emerald-200 text-gray-900 text-2xl text-center font-black">{{ activity_location }}</div>
+<div v-if="isBuilding === false" class="w-1/1 h-9/10 flex flex-col gap-2 mt-2 overflow-y-auto">
+    <div class="w-1/1 h-3/10 p-1">
+        <div class="w-1/1 flex flex-col font-black rounded-2xl sticky top-0"
+            :class="{
+                'bg-yellow-600 text-gray-900 ': selActivityMonth === '2026-02',
+                'bg-emerald-500 text-gray-900 ': selActivityMonth === '2026-04',
+                'bg-orange-400 text-gray-900 ': selActivityMonth === '2026-07',
+                'bg-slate-400 text-gray-900 ': selActivityMonth === '2026-09',
+            }">
+            <div class="w-1/1 text-3xl text-center">{{ activity_location }}</div>
+            <div class="w-1/1 text-xl text-center">{{ activity_memo }}</div>
+        </div>
         <div class="w-10/10 mt-2 text-gray-900 text-xl flex justify-center">
             <svg class="size-6 text-gray-800 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
@@ -202,7 +217,7 @@
         </div>
     </div>
 
-    <div class="w-10/10 h-8/10 p-1">
+    <div class="w-10/10 h-7/10 p-1">
         <div class="divider">活動說明</div>
         <div class="flex w-10/10 justify-center gap-2 py-2">
             <a v-for="(pageObj, page_i) in manualPages" :href="'#page_' + page_i" class="btn btn-xs">{{ page_i + 1 }}</a>
@@ -247,11 +262,12 @@
                             一直在思考這份匯聚大家的愛而成的基金,<br />
                             除了吃喝玩樂外, 是否還有另一種可能性呢 ?<br />
                             <br />
-                            基金經費目前處於重建階段, <br />
-                            想為基金建立一定的基礎, 
-                            試著壯大基金,<br />
-                            也方便繼任代管人好應用,<br />
-                            那麼這一年還有什麼方式呢 ?<br />
+                            <span class="font-black text-blue-900">
+                                基金經費目前處於重建階段, <br />
+                                想為基金建立一定的基礎, 試著壯大基金,<br />
+                                也方便後續繼任代管人好應用.
+                            </span><br />
+                            那在這樣的思維下, 這一年我們還可以有什麼方式呢 ?<br />
                             <br />
 
                             思考了好一陣子後, 心想或許我們還可以這麼做 <br />
