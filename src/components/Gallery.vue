@@ -517,7 +517,7 @@
             <li v-if="newsList[selTopicObj.key].length === 0" class="list-row">
                 <div class="list-col-grow">
                     <div class="text-black text-lg text-center">{{ "很抱歉 ! 不明原因, 漏了資料 !" }}</div>
-                    <div class="text-black text-lg text-center">{{ "可手動按最下方的'下載'喔 !" }}</div>
+                    <div class="text-black text-lg text-center">{{ "可再手動按最下方的'下載'喔 !" }}</div>
                 </div>
             </li>
             <li v-for="(newsObj, news_i) in newsList[selTopicObj.key]" class="list-row">
