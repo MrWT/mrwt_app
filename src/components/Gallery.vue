@@ -38,6 +38,7 @@
         "韓國",
         "日本",
         "中國",
+        "美國",
         "國際",
     ]);
     let dataSourceOptions = reactive([
@@ -347,6 +348,9 @@
         console.log("browseNewsKeyword.selNewsObj=", selNewsObj);
 
         let q = selNewsObj["keyword"].trim().replace(/,/g, "+");
+        if(selNewsObj["source"]){
+            q += "+" + selNewsObj["source"];
+        }
         window.open("https://www.google.com/search?q=" + q, "_blank");
     }
     // 訂閱設定關閉
@@ -533,8 +537,15 @@
                                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
                             </svg>
                         </a>
+
+                        <div v-if="newsObj['source']" class="text-sm mt-1">
+                            {{ newsObj["source"] }}
+                        </div>
                     </div>
                     <div class="text-md mt-2">{{ newsObj["content"] }}</div>
+                    <div v-if="newsObj['keyword']" class="text-md mt-4">
+                        # {{ newsObj["keyword"] }}
+                    </div>
                 </div>
             </li>
             <li class="list-row">
