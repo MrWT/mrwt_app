@@ -340,7 +340,7 @@
                 geoPromiseAry.push(fetchData({
                     api: "get_geocoded_from_google_map",
                     data: {
-                        location_name: trip_schedule_obj.nation + ( tddObj["subway_station"] ? tddObj["subway_station"] : tddObj["location"] ),
+                        location_name: trip_schedule_obj.nation + ( tddObj["subway_station"] && tddObj["subway_station"] !== "N/A" ? tddObj["subway_station"] : tddObj["location"] ),
                     }
                 }));
             });

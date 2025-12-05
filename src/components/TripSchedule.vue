@@ -127,7 +127,7 @@
                 geoPromiseAry.push(fetchData({
                     api: "get_geocoded_from_google_map",
                     data: {
-                        location_name: tripNation + ( tddObj["subway_station"] ? tddObj["subway_station"] : tddObj["location"] ),
+                        location_name: tripNation + ( tddObj["subway_station"] && tddObj["subway_station"] !== "N/A" ? tddObj["subway_station"] : tddObj["location"] ),
                     }
                 }));
             });
