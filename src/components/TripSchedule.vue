@@ -302,7 +302,7 @@
                         <div class="list-col-grow">
                             <div class="text-lg">
                                 {{ tddObj.location }}
-                                <span v-if="tddObj.subway_station">{{ " - 地鐵: " + tddObj.subway_station }}</span>
+                                <span v-if="tddObj.subway_station && tddObj.subway_station !== 'N/A'">{{ " - 地鐵: " + tddObj.subway_station }}</span>
                             </div>
                             <div class="text-md uppercase font-semibold">{{ tddObj.memo }}</div>
                         </div>
