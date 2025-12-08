@@ -49,6 +49,7 @@
         "聯合報", 
         "三立新聞網", 
         "TVBS新聞網", 
+        "Yahoo 奇摩運動",
         "CARNEWS車訊網", 
         "U-CAR", 
         "國王車訊", 
@@ -351,6 +352,7 @@
         if(selNewsObj["source"]){
             q += "+" + selNewsObj["source"];
         }
+        q += "+" + moment().add(-1, "d").format("YYYY-MM-DD");
         window.open("https://www.google.com/search?q=" + q, "_blank");
     }
     // 訂閱設定關閉
