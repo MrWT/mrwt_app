@@ -98,6 +98,12 @@
 
             // 成員們
             {
+                values[3].sort((x, y) => {
+                    if(x["code_name"] < y["code_name"]) return -1;
+                    if(x["code_name"] > y["code_name"]) return 1;
+                    return 0;
+                });
+
                 promptOptions.member.push({ value: "All", text: "All", });
                 values[3].forEach((memObj, mem_i) => {
                     promptOptions.member.push(
