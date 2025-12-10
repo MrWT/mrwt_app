@@ -33,19 +33,13 @@
     let currentAiRole = reactive({});
     // 提詞機 - 選項
     let promptOptions = reactive({
-        time: [
-            { value: "0month", text: "這個月", },
-            { value: "3month", text: "近三個月", },
-            { value: "6month", text: "近半年", },
-            { value: "1year", text: "近一年", },
-            { value: "3year", text: "近三年", },
-        ],
+        time: [],
         member: [],
     });
     // 提詞機 - 選擇
     let promptAction = ref("check");
-    let promptTime = ref("0month");
-    let promptMember = ref("全部帳務");
+    let promptTime = ref("All");
+    let promptMember = ref("All");
     // 提詞機 - 結果
     let prompt = ref("");
 
@@ -79,21 +73,38 @@
             }
         });
         // 取得基金成員資訊
+        let fetchPromise_finMN = fetchData({
+            api: "get_finance_month",
+        }, "KUO-FUNDS");
+        // 取得基金成員資訊
         let fetchPromise_members = fetchData({
             api: "get_members",
         }, "KUO-FUNDS");
-        Promise.all([fetchPromise_aiRoles, fetchPromise_userInfo, fetchPromise_members]).then((values) => {
+        Promise.all([fetchPromise_aiRoles, fetchPromise_userInfo, fetchPromise_finMN, fetchPromise_members]).then((values) => {
             console.log("fetchInitData.values=", values);
             aiRoles = values[0];
             userInfo = values[1];
 
-            promptOptions.member.push({ value: "全部帳務", text: "全部帳務", });
-            
-            values[2].forEach((memObj, mem_i) => {
-                promptOptions.member.push(
-                    { value: memObj["name"] + "帳務", text: memObj["name"] + "帳務", }
-                );
-            });
+            // 帳務月份
+            {
+                promptOptions.time.push({ value: "All", text: "All", });
+                values[2].forEach((fmn, fmn_i) => {
+                    let f_fmn = fmn.split("-")[0] + " 年 " + fmn.split("-")[1] +  " 月 ";
+                    promptOptions.time.push(
+                        { value: f_fmn, text: f_fmn, }
+                    );
+                });
+            }
+
+            // 成員們
+            {
+                promptOptions.member.push({ value: "All", text: "All", });
+                values[3].forEach((memObj, mem_i) => {
+                    promptOptions.member.push(
+                        { value: memObj["name"], text: memObj["name"], }
+                    );
+                });
+            }
         });
     }
     // chat with ai
@@ -111,7 +122,7 @@
                 message: userMessage.value,
                 time: moment().format("YYYY-MM-DD HH:mm:ss"),
             }
-        }, "AI");
+        }, "KUO-FUNDS");
         Promise.all([chatPromise]).then((values) => {
             console.log("chatPromise.values=", values);
 
@@ -185,55 +196,19 @@
             closeAllModal();
         });
     }
-    // 開啟 prompt modal
-    function openPromptModal(){
-        document.getElementById("promptModal").showModal();
+    // 開啟 finance modal
+    function openFinanceModal(){
+        promptTime.value = "All";
+        promptMember.value = "All";
+        document.getElementById("financeModal").showModal();
     }
     // 組合提詞
     function combinePrompt(){
-        let c_prompt = "整理出";
 
-        if(promptTime.value){
-            promptOptions.time.forEach((timeObj, act_i) => {
-                if(promptTime.value === timeObj.value){
-                    let today = moment().format("YYYY-MM-DD");
-                    let stDate = "";
+        let selTime = promptTime.value === "All" ? "全部時間" : promptTime.value;
+        let selMember = promptMember.value === "All" ? "全部成員" : promptMember.value;
 
-                    switch(promptTime.value){
-                        case "0month": stDate = moment().format("YYYY-MM"); break;
-                        case "3month": stDate = moment().add(-3, "M").format("YYYY-MM"); break;
-                        case "6month": stDate = moment().add(-6, "M").format("YYYY-MM"); break;
-                        case "1year": stDate = moment().add(-12, "M").format("YYYY-MM"); break;
-                        case "3year": stDate = moment().add(-36, "M").format("YYYY-MM"); break;
-                    }
-                    c_prompt += " " + stDate + "-01" + "~" + today + " ";
-                }
-            });
-        }
-
-        /*
-        if(promptScope.value){
-            promptOptions.scope.forEach((scopeObj, act_i) => {
-                if(promptScope.value === scopeObj.value){
-                    c_prompt += scopeObj.text;
-                }
-            });
-        }
-        */
-
-        if(promptMember.value){
-            if(promptOptions.member.length === 0){
-                c_prompt += "全部帳務";
-            }else{
-                promptOptions.member.forEach((memObj, mem_i) => {
-                    if(promptMember.value === memObj.value){
-                        c_prompt += memObj.text;
-                    }
-                });
-            }
-        }
-        
-        prompt.value = c_prompt;
+        prompt.value = "幫我列出 " + selTime + " " + selMember + " 的帳務紀錄(依時間倒序)";
     }
     // 傳送提詞
     function sendPrompt(){
@@ -245,11 +220,11 @@
             let error_msg = "你必須提供點內容, 不然提詞機要怎麼幫你轉送~~";
             emit('popupMessage', false, error_msg); // Emitting the event with data
         }
-        closePromptModal();
+        closeFinanceModal();
     }
     // 關閉 prompt modal
-    function closePromptModal(){
-        document.getElementById("promptModal").close();
+    function closeFinanceModal(){
+        document.getElementById("financeModal").close();
     }
     // 開啟 NewChat 再確認 modal
     function openNewChatConfirmModal(){
@@ -264,7 +239,7 @@
         messages.splice(0, messages.length);
         chat_room_uuid.value = "INIT";
         // 開啟新對話
-        userMessage.value = "Hi";
+        userMessage.value = "你好(以下對話都以台灣繁體中文回覆)";
         chat();
     }
     // 關閉 NewChat 再確認 modal
@@ -285,7 +260,7 @@
     function closeAllModal(){
         closeChatModal();
         closeNewChatConfirmModal();
-        closePromptModal();
+        closeFinanceModal();
     }
 
     // 監聽
@@ -305,7 +280,7 @@
 
 <div class="w-1/1 h-1/1 flex flex-col md:flex-row-reverse">
 
-        <!-- function button bar -->
+    <!-- function button bar -->
     <div class="w-1/1 md:w-1/12 md:h-1/1 flex flex-row md:flex-col justify-center items-end shadow-2xl">
         <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="說點什麼">
             <button class="btn btn-circle bg-green-300 text-gray-900 hover:bg-blue-300" @click="openChatModal">
@@ -314,17 +289,10 @@
                 </svg>
             </button>
         </div>
-        <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="開啟新話題">
-            <button class="btn btn-circle bg-red-300 text-gray-900 hover:bg-blue-300" @click="openNewChatConfirmModal">
+        <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="帳務查詢">
+            <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openFinanceModal">
                 <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                </svg>
-            </button>
-        </div>
-        <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="聊天提詞機">
-            <button class="btn btn-circle bg-stone-500/70 hover:bg-blue-300" @click="openPromptModal">
-                <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 9h5m3 0h2M7 12h2m3 0h5M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.616a1 1 0 0 0-.67.257l-2.88 2.592A.5.5 0 0 1 8 18.477V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 18h14M5 18v3h14v-3M5 18l1-9h12l1 9M16 6v3m-4-3v3m-2-6h8v3h-8V3Zm-1 9h.01v.01H9V12Zm3 0h.01v.01H12V12Zm3 0h.01v.01H15V12Zm-6 3h.01v.01H9V15Zm3 0h.01v.01H12V15Zm3 0h.01v.01H15V15Z"/>
                 </svg>
             </button>
         </div>
@@ -401,32 +369,41 @@
     </div>
 </dialog>
 
-<!-- prompt modal -->
-<dialog id="promptModal" class="modal modal-end">
-    <div class="modal-box h-10/10 max-w-10/10 flex flex-col bg-neutral-100">
+<!-- finance modal -->
+<dialog id="financeModal" class="modal">
+    <div class="modal-box h-2/3 w-2/3 flex flex-col bg-neutral-100">
         <div class="flex flex-col justify-center">
-            <span class="text-lg text-gray-900 text-center">聊天提詞機</span>
+            <span class="text-lg text-gray-900 text-center">帳務查詢</span>
             <div class="divider divider-primary"></div>
         </div>
         <div class="h-3/4 md:h-4/5 w-1/1 flex flex-col overflow-y-auto gap-2 border rounded-2xl">
-            <div class="h-1/3 w-1/1 flex flex-row rounded-lg bg-state-200 px-2 gap-1 overflow-x-auto">
-                <label v-for="(tObj, t_i) in promptOptions.time" class="label text-gray-900">
-                    <input type="radio" class="radio" :value="tObj.value" v-model="promptTime" />
-                    {{ tObj.text }}
-                </label>
+            <div class="w-1/1 flex flex-row rounded-lg bg-state-200 p-2">
+                <div class="flex-none pr-2">
+                    時間:
+                </div>
+                <div class="flex-1">
+                    <select v-model="promptTime" class="w-1/1 border">
+                        <option v-for="(tObj, t_i) in promptOptions.time" :value="tObj.value">{{ tObj.text }}</option>
+                    </select>
+                </div>
             </div>
-            <div class="h-1/3 w-1/1 flex flex-row rounded-lg bg-state-200 px-2 gap-1 overflow-x-auto">
-                <select v-model="promptMember" class="w-1/1">
-                    <option v-for="(mObj, m_i) in promptOptions.member" :value="mObj.value">{{ mObj.text }}</option>
-                </select>
+            <div class="w-1/1 flex flex-row rounded-lg bg-state-200 p-2">
+                <div class="flex-none pr-2">
+                    成員:
+                </div>
+                <div class="flex-1">
+                    <select v-model="promptMember" class="w-1/1 border">
+                        <option v-for="(mObj, m_i) in promptOptions.member" :value="mObj.value">{{ mObj.text }}</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <textarea class="textarea h-1/4 md:h-1/5 w-1/1 mt-1 bg-gray-900 text-gray-100" placeholder="想說點什麼嗎??" v-model="prompt"></textarea>
+        <textarea class="textarea h-1/4 md:h-1/5 w-1/1 mt-1 bg-gray-900 text-gray-100" placeholder="想說點什麼嗎??" v-model="prompt" disabled></textarea>
 
         <div class="divider divider-primary"></div>
         <div class="modal-action">
-            <button class="btn btn-ghost w-5/10 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click.stop="closePromptModal">
+            <button class="btn btn-ghost w-5/10 bg-gray-900 text-gray-100 hover:bg-yellow-100 hover:text-gray-900" @click.stop="closeFinanceModal">
                 關閉
             </button>
 
