@@ -106,9 +106,9 @@
                     </svg>
                 </div>
                 <div class="list-col-grow">
-                    <div>儲值資料彙整: <span class="text-blue-900 font-black text-base">每月 20 號</span></div>
+                    <div>儲值資料彙整: <span class="text-blue-900 font-black text-base">每月 12 號</span></div>
                     <div class="text-xs uppercase font-semibold opacity-60">
-                        輪值代管人於每月 20 號前進行當月份儲值資料彙整，並公告於共享檔案(PDF)、公佈欄網站和 Line 群組"跟著家族去旅行"。
+                        輪值代管人於每月 12 號前進行當月份儲值資料彙整，並公告於共享檔案(PDF)、公佈欄網站和 Line 群組"跟著家族去旅行"。
                     </div>
                 </div>
             </li>
