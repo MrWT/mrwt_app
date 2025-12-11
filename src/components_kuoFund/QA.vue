@@ -173,6 +173,24 @@
 
     <!-- 聊天內容 -->
     <div id="chatBox" class="flex flex-col w-1/1 h-11/12 md:h-1/1 md:w-11/12 mt-5 overflow-y-auto">
+        <div v-if="chatState === 'TALKING'" class="chat chat-start">
+            <div class="chat-image avatar">
+                <div class="avatar avatar-placeholder">
+                    <div class="size-8 rounded-full bg-neutral text-gray-100">
+                        <span class="text-xs">
+                            {{ " " }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-header">
+                {{ "AI" }}
+            </div>
+            <div class="chat-bubble">
+                好喔~ 稍等
+                <span class="loading loading-dots loading-xs"></span>
+            </div>
+        </div>
         <div v-for="(msgObj, msg_i) in messages" class="chat"
             :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
             <div class="chat-image avatar">
@@ -193,24 +211,7 @@
                 </p>
             </div>
         </div>
-        <div v-if="chatState === 'TALKING'" class="chat chat-start">
-            <div class="chat-image avatar">
-                <div class="avatar avatar-placeholder">
-                    <div class="size-8 rounded-full bg-neutral text-gray-100">
-                        <span class="text-xs">
-                            {{ " " }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-header">
-                {{ "AI" }}
-            </div>
-            <div class="chat-bubble">
-                好喔~ 稍等
-                <span class="loading loading-dots loading-xs"></span>
-            </div>
-        </div>
+        
     </div>
 </div>
 
