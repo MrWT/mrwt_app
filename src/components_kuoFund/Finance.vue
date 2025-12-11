@@ -251,7 +251,7 @@
         prompt.value = "幫我列出 " + selTime + " " + selMember + " 的帳務紀錄(依時間排序)";
 
         let chatPromise = fetchData({
-            api: "chat",
+            api: "check_accounts",
             data: {
                 account: props.account,
                 chat_room_uuid: "INIT",
