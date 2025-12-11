@@ -27,6 +27,24 @@
 
     let delRecordObj = reactive({});
 
+    /* ********************
+     * *** Search Modal ***
+     * ******************** */
+    // 查詢 - 狀態
+    let searchStatus = ref("INIT");
+    // 查詢 - 選項
+    let promptOptions = reactive({
+        time: [],
+        member: [],
+    });
+    // 查詢 - 選擇結果
+    let promptTime = ref("All");
+    let promptMember = ref("All");
+    // 給 AI 的 search prompt
+    let prompt = ref("");
+    // 查詢結果
+    let searchResult = ref("");
+
     // 初始化 component
     function init(){
         console.log("Finance.init");
@@ -57,34 +75,72 @@
         }, "KUO-FUNDS");
         Promise.all([fetchFundsTotalPromise, fetchFundsMonthPromise, fetchMembersPromise]).then((values) => {
             console.log("fetchFundsPromise.values=", values);
-
+            // 帳務結餘
             funds_total.value = values[0];
 
-            // clear month list
-            funds_months.splice(0, funds_months.length);
-            values[1].forEach((fmn, fmn_i) => {
-                funds_months.push(fmn);
-            });
+            // 帳務月份
+            {
+                // clear month list
+                funds_months.splice(0, funds_months.length);
+                values[1].forEach((fmn, fmn_i) => {
+                    funds_months.push(fmn);
+                });
 
-            if(!funds_months.includes(moment().format("YYYY-MM"))){
-                funds_months.push(moment().format("YYYY-MM"));
+                if(!funds_months.includes(moment().format("YYYY-MM"))){
+                    funds_months.push(moment().format("YYYY-MM"));
+                }
+
+                funds_months.sort((x, y) => {
+                    if( x < y ){
+                        return 1;
+                    }
+                    if( x > y ){
+                        return -1;
+                    }
+                    return 0;
+                });
+
+                // 查詢帳務 - 帳務月份
+                {
+                    // clear month list
+                    promptOptions.time.splice(0, promptOptions.time.length);
+                    promptOptions.time.push({ value: "All", text: "All", });
+                    funds_months.forEach((fmn, fmn_i) => {
+                        let f_fmn = fmn.split("-")[0] + " 年 " + fmn.split("-")[1] +  " 月 ";
+                        promptOptions.time.push(
+                            { value: f_fmn, text: f_fmn, }
+                        );
+                    });
+                }
             }
 
-            funds_months.sort((x, y) => {
-                if( x < y ){
-                    return 1;
-                }
-                if( x > y ){
-                    return -1;
-                }
-                return 0;
-            });
+            // 成員
+            {
+                values[2].sort((x, y) => {
+                    if(x["code_name"] < y["code_name"]) return -1;
+                    if(x["code_name"] > y["code_name"]) return 1;
+                    return 0;
+                });
 
-            // clear member list
-            funds_members.splice(0, funds_members.length);
-            values[2].forEach((fmn, fmn_i) => {
-                funds_members.push(fmn);
-            });
+                // clear member list
+                funds_members.splice(0, funds_members.length);
+                values[2].forEach((memObj, mem_i) => {
+                    funds_members.push(memObj);
+                });
+
+                 // 查詢帳務 - 成員們
+                {
+                    // clear member list
+                    promptOptions.member.splice(0, promptOptions.member.length);
+                    promptOptions.member.push({ value: "All", text: "All", });
+                    values[2].forEach((memObj, mem_i) => {
+                        promptOptions.member.push(
+                            { value: memObj["name"], text: memObj["name"], }
+                        );
+                    });
+                }
+            }
+           
         }).then(() => {
             sel_dataMN.value = moment().format("YYYY-MM");
         });
@@ -177,6 +233,40 @@
             emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
         });
     }
+    // 開啟 search modal
+    function openSearchModal(){
+        searchStatus.value = "INIT";
+        searchResult.value = "";
+        promptTime.value = "All";
+        promptMember.value = "All";
+        document.getElementById("searchModal").showModal();
+    }
+    // 查詢帳務
+    function doSearch(){
+        searchStatus.value = "SEARCHING";
+        searchResult.value = "";
+
+        let selTime = promptTime.value === "All" ? "全部時間" : promptTime.value;
+        let selMember = promptMember.value === "All" ? "全部成員" : promptMember.value;
+        prompt.value = "幫我列出 " + selTime + " " + selMember + " 的帳務紀錄(依時間排序)";
+
+        let chatPromise = fetchData({
+            api: "chat",
+            data: {
+                account: props.account,
+                chat_room_uuid: "INIT",
+                message: prompt.value,
+                time: moment().format("YYYY-MM-DD HH:mm:ss"),
+            }
+        }, "KUO-FUNDS");
+        Promise.all([chatPromise]).then((values) => {
+            console.log("chatPromise.values=", values);
+
+            searchResult.value = values[0].message;
+
+            searchStatus.value = "DONE";
+        });
+    }
 
     // 監聽 sel_dataMN
     watch(sel_dataMN, (newDataMN, oldDataMN) => {
@@ -187,6 +277,12 @@
 </script>
 
 <template>
+
+<button class="absolute top-35 right-5 cursor-pointer text-gray-400 hover:text-gray-900" @click="openSearchModal">
+    <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+    </svg>
+</button>
 
 <div class="w-1/1 overflow-x-auto overflow-y-hidden shadow-2xl">
     <button v-for="(f_mn, f_mn_i) in funds_months" @click="clickDataMN(f_mn)"
@@ -247,6 +343,59 @@
     <form method="dialog" class="modal-backdrop">
         <button>close</button>
     </form>
+</dialog>
+
+<!-- 帳務查詢 -->
+<dialog id="searchModal" class="modal">
+    <div class="modal-box bg-gray-200 rounded-box p-2 w-1/1 max-h-1/1">
+        <form v-if="searchStatus !== 'SEARCHING'" method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
+        <div class="w-1/1 flex flex-col justify-center">
+            <span class="text-xl text-gray-900 text-center">帳務查詢</span>
+            <div class="divider divider-primary"></div>
+        </div>
+        <div class="w-1/1 flex flex-col overflow-y-auto">
+            <div class="w-1/1 grid grid-cols-6">
+                <div>&nbsp;</div>
+                <div class="col-span-4 col-start-2 flex flex-row">
+                    <div class="flex-1">
+                        <div class="w-1/1 flex flex-row p-2">
+                            <div class="flex-none pr-2">
+                                時間:
+                            </div>
+                            <div class="flex-1">
+                                <select v-model="promptTime" class="w-1/1 border" :disabled="searchStatus === 'SEARCHING'">
+                                    <option v-for="(tObj, t_i) in promptOptions.time" :value="tObj.value">{{ tObj.text }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="w-1/1 flex flex-row p-2">
+                            <div class="flex-none pr-2">
+                                成員:
+                            </div>
+                            <div class="flex-1">
+                                <select v-model="promptMember" class="w-1/1 border" :disabled="searchStatus === 'SEARCHING'">
+                                    <option v-for="(mObj, m_i) in promptOptions.member" :value="mObj.value">{{ mObj.text }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-none">
+                        <button class="btn w-20 rounded-lg h-1/1 bg-gray-800 text-gray-100 hover:bg-yellow-100 hover:text-gray-800" :disabled="searchStatus === 'SEARCHING'" @click.stop="doSearch">
+                            <span v-if="searchStatus !== 'SEARCHING'" >查詢</span>  
+                            <span v-if="searchStatus === 'SEARCHING'" class="loading loading-spinner loading-xs"></span>
+                        </button>
+                    </div>
+                </div>
+                <div>&nbsp;</div>
+            </div>
+            <div class="w-1/1 h-80 p-5">
+                <textarea class="textarea w-1/1 h-1/1" readonly>{{ searchResult }}</textarea>
+            </div>
+        </div>
+        <div class="divider divider-primary"></div>
+    </div>
 </dialog>
 
 </template>
