@@ -63,6 +63,12 @@
             start: "",
             end: "",
         },
+        agent: {
+            name: "",
+            phone: "",
+            lineID: "",
+            term:"",
+        },
     });
     // 使用者資訊
     let isAutoSignin = ref(false);
@@ -191,6 +197,10 @@
                 kf_funSetting.member = appSettingObj["kf_member"];
                 kf_funSetting.activity_annouce_period.start = appSettingObj["kf_activity_annouce_period"]["value1"];
                 kf_funSetting.activity_annouce_period.end = appSettingObj["kf_activity_annouce_period"]["value2"];
+                kf_funSetting.agent.name = appSettingObj["agent_name"];
+                kf_funSetting.agent.phone = appSettingObj["agent_phone"];
+                kf_funSetting.agent.lineID = appSettingObj["agent_line_id"];
+                kf_funSetting.agent.term = appSettingObj["agent_term"];
 
                 // appSetting.reference
                 {
