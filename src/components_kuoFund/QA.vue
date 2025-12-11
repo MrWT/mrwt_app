@@ -23,7 +23,6 @@
 
     let appState = ref("");
     let userMessage = ref("");
-    let chatModalStatus = ref("CLOSE");
     let chatState = ref("TALKING");
     // 聊天室 UUID
     let chat_room_uuid = ref("INIT");
@@ -65,12 +64,10 @@
     // chat with ai
     function chat(){
         console.log("chat.message=" + userMessage.value);
-        // 關閉全部 modal
-        closeAllModal();
         
         chatState.value = "TALKING";
         let chatPromise = fetchData({
-            api: "chat",
+            api: "qa",
             data: {
                 account: props.account,
                 chat_room_uuid: chat_room_uuid.value,
@@ -97,7 +94,7 @@
                 }
             });
 
-            messages.push({
+            messages.unshift({
                 role: "AI",
                 speaker: speaker,
                 short_name: short_name,
@@ -112,19 +109,21 @@
 
                 // 讓 app scroll 到底
                 let chatBoxElement = document.getElementById("chatBox");
-                chatBoxElement.scrollTop = chatBoxElement.scrollHeight;
+                chatBoxElement.scrollTop = 0;// chatBoxElement.scrollHeight;
             });
         });
 
     }
     // 送出 message
     function send(){
+        console.log("send.userMessage.value=" + userMessage.value);
+
         // 當沒有 keyin message 時, 不送出訊息
         if(!userMessage.value) return;
 
         let user_name = userInfo.language === "EN" ? userInfo.name : userInfo.cname;
 
-        messages.push({
+        messages.unshift({
             role: "user",
             speaker: user_name,
             short_name: props.account.substr(0, 1),
@@ -147,23 +146,7 @@
             console.log("linePromise.values=", values);
             userMessage.value = "";
 
-            // 關閉全部 modal
-            closeAllModal();
         });
-    }
-    // 開啟 chat modal
-    function openChatModal(){
-        chatModalStatus.value = "OPEN";
-        document.getElementById("chatModal").showModal();
-    }
-    // 關閉 chat modal
-    function closeChatModal(){
-        chatModalStatus.value = "CLOSE";
-        document.getElementById("chatModal").close();
-    }
-    // 關閉全部 modal
-    function closeAllModal(){
-        closeChatModal();
     }
 
 </script>
@@ -173,18 +156,23 @@
 <div class="w-1/1 h-1/1 flex flex-col md:flex-row-reverse">
 
     <!-- function button bar -->
-    <div class="w-1/1 md:w-1/12 md:h-1/1 flex flex-row md:flex-col justify-center items-end shadow-2xl">
-        <div class="tooltip tooltip-bottom md:tooltip-left" data-tip="說點什麼">
-            <button class="btn btn-circle bg-green-300 text-gray-900 hover:bg-blue-300" @click="openChatModal">
-                <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
+    <div class="w-1/1 shadow-2xl flex flex-row">
+        <div class="flex-1">
+            <textarea class="textarea w-1/1 h-1/1 md:h-100" v-model="userMessage" placeholder="想說點什麼呢?" :disabled="chatState === 'TALKING'"></textarea>
+        </div>
+        <div class="flex-none">
+            <button class="btn bg-gray-300 hover:bg-blue-300 rounded-xl w-1/1 h-1/1" @click="send">
+                <svg v-if="chatState !== 'TALKING'" class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
                 </svg>
+                <span v-if="chatState !== 'TALKING'">傳送</span>
+                <span v-if="chatState === 'TALKING'" class="loading loading-spinner loading-md"></span>
             </button>
         </div>
     </div>
 
     <!-- 聊天內容 -->
-    <div id="chatBox" class="flex flex-col w-1/1 h-11/12 md:h-1/1 md:w-11/12 mt-15 md:mt-5 overflow-y-auto">
+    <div id="chatBox" class="flex flex-col w-1/1 h-11/12 md:h-1/1 md:w-11/12 mt-5 overflow-y-auto">
         <div v-for="(msgObj, msg_i) in messages" class="chat"
             :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
             <div class="chat-image avatar">
@@ -225,34 +213,6 @@
         </div>
     </div>
 </div>
-
-<!-- chat modal -->
-<dialog id="chatModal" class="modal modal-end">
-    <div class="modal-box h-8/10 w-1/1 md:w-8/10 flex flex-col bg-neutral-100">
-        <div class="flex flex-col justify-center">
-            <span class="text-xl text-gray-900 text-center">想說點什麼呢?</span>
-        </div>
-        <div class="h-8/10 w-10/10 flex flex-col overflow-y-auto gap-2">
-            <div class="divider divider-primary"></div>
-            <div class="w-1/1 h-1/1 flex flex-col">
-                <textarea class="textarea w-1/1 h-1/1" v-model="userMessage" @keyup.ctrl.enter="send"></textarea>
-                <span class="w-1/1 text-xs text-gray-900/60 text-center hidden sm:block">( enter: 換行 / ctrl + enter: 直接傳送訊息 )</span>
-            </div>
-        </div>
-        <div class="divider divider-primary"></div>
-        <div class="modal-action">
-            <button class="btn btn-ghost bg-gray-900 text-gray-100 hover:bg-gray-100 hover:text-gray-900 w-1/2" @click="closeChatModal">
-                關閉
-            </button>
-            <button class="btn bg-gray-300 hover:bg-blue-300 w-1/2" @click="send">
-                <svg class="size-4 text-gray-700 rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                    <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z" clip-rule="evenodd"/>
-                </svg>
-                傳給 AI
-            </button>
-        </div>
-    </div>
-</dialog>
 
 </template>
 
