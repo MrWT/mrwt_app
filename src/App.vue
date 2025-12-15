@@ -366,9 +366,9 @@
         <span class="loading loading-bars loading-xl"></span>
     </div>
     <!-- 功能 component -->
-    <div class="navbar bg-yellow-800/50 h-[10px] fixed top-0 left-0 z-50">
+    <div class="navbar bg-yellow-800/50 h-[10px] fixed top-0 left-0 z-[51]">
         <div class="flex-1">
-            <a class="btn btn-ghost text-xl" @click="gotoPage('gallery')">
+            <a class="btn rounded-xl bg-transparent border-transparent hover:border-yellow-900 hover:shadow-3xl text-xl" @click="gotoPage('gallery')">
                 <span>{{ appSetting.title }}</span>
             </a>
         </div>
