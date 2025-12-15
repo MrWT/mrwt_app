@@ -29,10 +29,10 @@
 
     let annoucement = reactive({
         thoughts: [
-            "莫忘世上苦人多, 一起發揮大愛",
-            "馬路如虎口, 一起學習交通安全",
-            "詞窮, 就是一起保護環境就對了",
-            "又過了一年, 一起歡聚吧",
+            "莫忘世上苦人多, 一起愛大眾",
+            "馬路如虎口, 一起愛自己",
+            "又過了一年, 一起愛家人",
+            "詞窮, 就是一起愛地球",
             "一緒に...",
             "같이...",
         ],
@@ -43,22 +43,22 @@
                 time: "即日起", 
             }, 
             { 
-                title: "一起發揮大愛(公益捐贈)", 
+                title: "一起愛大眾(公益捐贈)", 
                 memo: "(預計)透過「臺南市政府公益平台」或是其他公益團體", 
-                time: "(預計)2026/01 或 2026/02( 農曆年前 )", 
+                time: "(預計)2026/02( 農曆年前 )", 
             }, 
             { 
-                title: "一起保護環境(淨灘)", 
+                title: "一起愛地球(淨灘)", 
                 memo: "(預計)參與南部淨灘團體活動", 
-                time: "(預計)2026/03 或 2026/04", 
+                time: "(預計)2026/04( 世界地球日422 )", 
             },
             { 
-                title: "一起學習交通安全", 
+                title: "一起愛自己", 
                 memo: "(預計)與「YAMAHA 親子機車教室」合作", 
                 time: "(預計)2026/06 或 2026/07", 
             }, 
             { 
-                title: "一起歡聚(中秋烤肉活動)", 
+                title: "一起愛家人(中秋烤肉活動)", 
                 memo: "土城烤肉歡聚", 
                 time: "(預計)2026/09/26( 晚 )", 
             }, 
@@ -185,7 +185,7 @@
 
 <template>
 
-<div v-if="isBuilding === false" class="w-1/1 overflow-x-auto overflow-y-hidden flex flex-row gap-2 shadow-3xl">
+<div v-if="isBuilding === false" class="w-1/1 overflow-x-auto overflow-y-hidden flex flex-row gap-2 shadow-3xl mb-5">
     <button v-for="(am, am_i) in activityMonthList" @click="sel_activity_month(am)"
         class="btn btn-ghost rounded-none border-0 border-b-2 hover:border-rose-500"
         :class="{'border-amber-600': am === selActivityMonth, 'border-gray-500': am !== selActivityMonth}">
@@ -193,7 +193,7 @@
     </button>
 </div>
 
-<div v-if="isBuilding === false" class="w-1/1 h-9/10 flex flex-col gap-2 mt-2 overflow-y-auto">
+<div v-if="isBuilding === false" class="w-1/1 h-9/10 flex flex-col gap-2 overflow-y-auto">
     <div class="w-1/1 h-3/10 p-1">
         <div class="w-1/1 flex flex-col font-black rounded-2xl sticky top-0"
             :class="{
@@ -275,8 +275,8 @@
                             在這樣的思維下, 這一年我們還可以有什麼方式呢 ?<br />
                             <br />
 
-                            思考了好一陣子後, 心想或許我們還可以這麼做 <br />
-                            <span class="text-rotate text-xl duration-10000 mb-1 w-1/1">
+                            思考了好一陣子後, 心想或許我們還可以這麼做 <br /><br />
+                            <span class="text-rotate text-xl duration-10000 w-1/1">
                                 <span class="w-1/1 justify-items-center ">
                                     <span v-for="(thought, th_i) in annoucement.thoughts" 
                                         class="bg-gray-200 text-gray-900">
@@ -284,7 +284,7 @@
                                     </span>
                                 </span>
                             </span>
-                            <br />
+                            <br /><br />
                             也期待透過這些活動, <br />
                             試著留給郭家孩子一生受用的好觀念, <br />
                             讓郭家的孩子們, 健康成長, 快樂茁壯. <br />
