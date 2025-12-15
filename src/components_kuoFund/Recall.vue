@@ -150,7 +150,7 @@
 <template>
 
 <div class="w-1/1 h-1/10 flex justify-end items-center bg-gray-500/50 rounded-xl">
-    <button class="btn text-gray-900 bg-gray-200 hover:bg-yellow-300/50 mr-2" title="新增回憶" @click="openDetailModal">
+    <button class="btn text-gray-900 bg-gray-200 rounded-xl hover:bg-yellow-200 mr-2" title="新增回憶" @click="openDetailModal">
         新增回憶
     </button>
 </div>
@@ -164,10 +164,10 @@
                     {{ rObj.abstract }}
                 </div>
             </div>
-            <button class="btn btn-square btn-ghost text-red-900" title="刪除回憶" @click="openRemoveConfirmModal(rObj)">
+            <button class="btn rounded-xl text-red-900 hover:text-white hover:bg-red-900" title="刪除回憶" @click="openRemoveConfirmModal(rObj)">
                 刪除
             </button>
-            <button class="btn btn-square btn-ghost" title="查閱回憶" @click="openDetailModal(rObj)">
+            <button class="btn rounded-xl hover:bg-yellow-200" title="查閱回憶" @click="openDetailModal(rObj)">
                 查閱
             </button>
         </li>
