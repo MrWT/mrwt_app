@@ -115,6 +115,7 @@
 
                     <div class="flex flex-wrap gap-1 justify-center">
                         <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-indigo-300">gemini-2.5-flash</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-cyan-300">gemini-3-pro</div>
                         <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-fuchsia-300">gemini-3-pro-image</div>
                     </div>
                 </div>
