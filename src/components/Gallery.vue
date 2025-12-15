@@ -220,6 +220,8 @@
             // 正在重新下載中... 不做反應
         }else{
             if(setSubscribe.value){
+                let promiseList = [];
+
                 // 訂閱/取消訂閱主題
                 let new_userFocusTopic = "";
                 topicList.forEach((topicObj, topic_i) => {
@@ -229,6 +231,14 @@
 
                     if(topicObj["sel"] === true){
                         new_userFocusTopic += (new_userFocusTopic.length > 0 ? "," : "") + topicObj["key"];
+                    }else{
+                        topicObj["prompt"] = "";
+                        // 更新主題新聞取得資料條件
+                        let fetchPromise_updPrompt = fetchData({
+                            api: "update_topic_prompt",
+                            data: topicObj
+                        });
+                        promiseList.push(fetchPromise_updPrompt);
                     }
                 });
 
@@ -240,7 +250,8 @@
                         focus_topic: new_userFocusTopic,
                     }
                 });
-                Promise.all([fetchPromise_setUserTopic]).then((values) => {
+                promiseList.push(fetchPromise_setUserTopic);
+                Promise.all(promiseList).then((values) => {
                     //console.log("fetchPromise_setUserTopic.values=", values);
                     toggleSubscribe();
                 });
@@ -434,14 +445,14 @@
 <template>
     <!-- 一般使用者 -->
     <div v-if="appState === 'normal' && topicList.length > 0 && selTopicIndex === -1" 
-        class="text-3xl w-1/1 bg-zinc-500/50 rounded-lg mb-2 text-end">
-        <button v-if="!setSubscribe" class="btn btn-ghost hover:bg-transparent" @click="toggleSubscribe">
+        class="text-3xl w-1/1 bg-zinc-500/50 rounded-lg mb-2 text-end p-1">
+        <button v-if="!setSubscribe" class="btn rounded-xl hover:bg-yellow-200" @click="toggleSubscribe">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 4v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2m6-16v2m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v10m6-16v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2"/>
             </svg>
             訂閱調整
         </button>
-        <button v-if="setSubscribe" class="btn btn-ghost hover:bg-transparent" @click="toggleSubscribe">
+        <button v-if="setSubscribe" class="btn rounded-xl hover:bg-yellow-200" @click="toggleSubscribe">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-6 7 2 2 4-4m-5-9v4h4V3h-4Z"/>
             </svg>
