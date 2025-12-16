@@ -366,23 +366,22 @@
             <div class="flex-1 p-1">
                 <textarea class="textarea w-1/1 h-1/1 md:h-1/1" v-model="userMessage" placeholder="想說點什麼呢?" :disabled="chatState === 'TALKING'"></textarea>
             </div>
-            <div class="flex-none p-1 flex-col w-1/4">
-                <button class="btn bg-gray-300 text-gray-900 hover:bg-gray-900 hover:text-gray-100 rounded-xl w-1/1 h-1/2" @click="send">
+            <div class="flex-none p-1 flex-col w-1/4 min-w-10 h-1/1 gap-1">
+                <button class="btn bg-gray-300 text-gray-900 hover:bg-gray-900 hover:text-gray-100 rounded-xl w-1/1 h-1/1" @click="send">
                     <span v-if="chatState !== 'TALKING'">傳送</span>
-                    <span v-if="chatState === 'TALKING'" class="loading loading-spinner loading-md"></span>
-                </button>
-                <button class="btn bg-red-300 text-gray-900 hover:bg-blue-300 rounded-xl w-1/1 h-1/2" @click="openNewChatConfirmModal">
-                    <span v-if="chatState !== 'TALKING'">新對話</span>
                     <span v-if="chatState === 'TALKING'" class="loading loading-spinner loading-md"></span>
                 </button>
             </div>
         </div>
-        <div class="w-1/1 flex flex-row gap-1 p-1">
+        <div class="w-1/1 flex flex-row gap-1 p-1 overflow-y-auto">
             <button class="btn rounded-xl bg-gray-300 hover:bg-blue-300" @click="openSettingModal">
                 AI 角色
             </button>
             <button class="btn rounded-xl bg-stone-500/70 hover:bg-blue-300" @click="openPromptModal">
                 提詞機
+            </button>
+            <button class="btn rounded-xl bg-red-300 text-gray-900 hover:bg-blue-300" @click="openNewChatConfirmModal">
+                新對話
             </button>
         </div>
     </div>
