@@ -265,7 +265,7 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="text-lg">心中對土城的感情</div>
+                        <div class="text-lg">心裡的土城</div>
                         <div class="text-base opacity-80">描寫對於土城, 心中的任何情感</div>
                     </div>
                 </li>
@@ -276,8 +276,8 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="text-lg">腦中對土城的記憶</div>
-                        <div class="text-base opacity-80">描寫對於土城, 腦中還記得的點點滴滴</div>
+                        <div class="text-lg">印象中的土城</div>
+                        <div class="text-base opacity-80">描寫對於土城, 聖母廟, 腦中還記得的點點滴滴</div>
                     </div>
                 </li>
                 <li class="list-row bg-lime-200 hover:bg-yellow-100">
@@ -287,8 +287,8 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="text-lg">口中對土城的味道</div>
-                        <div class="text-base opacity-80">描寫對於土城, 口中曾經吃過的難忘美味</div>
+                        <div class="text-lg">舌尖上的土城</div>
+                        <div class="text-base opacity-80">描寫對於土城, 舌尖上曾嚐過的難忘美味</div>
                     </div>
                 </li>
 
