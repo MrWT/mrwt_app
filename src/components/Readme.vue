@@ -83,7 +83,7 @@
 
         <div class="divider">Backend</div>
         <div class="w-1/1 flex flex-wrap gap-1 justify-center p-1">
-            <div class="card bg-base-300 p-1 max-w-50">
+            <div class="card bg-base-300 p-1 max-w-100">
                 <div class="w-1/1 h-1/1 p-1">
                     <div class="text-2xl underline text-center mb-2 p-1 bg-gray-800 text-gray-200 rounded-ss-xl rounded-se-xl">
                         Web API
@@ -107,7 +107,7 @@
                 </div>
             </div>
 
-            <div class="card bg-base-300 flex flex-col p-1 max-w-50">
+            <div class="card bg-base-300 flex flex-col p-1 max-w-100">
                 <div class="w-1/1 h-1/1 p-1">
                     <div class="text-2xl underline text-center mb-2 p-1 bg-gray-800 text-gray-200 rounded-ss-xl rounded-se-xl">
                         Vertex AI
@@ -115,8 +115,8 @@
 
                     <div class="flex flex-wrap gap-1 justify-center">
                         <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-indigo-300">gemini-2.5-flash</div>
-                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-cyan-300">gemini-3-pro</div>
-                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-fuchsia-300">gemini-3-pro-image</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-cyan-300">gemini-3-pro-preview</div>
+                        <div class="p-2 justify-center content-center rounded-4xl w-fit text-2xl bg-fuchsia-300">gemini-3-pro-image-preview</div>
                     </div>
                 </div>
             </div>
