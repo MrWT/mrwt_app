@@ -196,6 +196,12 @@
         closeAllModal();
 
         chatState.value = "TALKING";
+        {
+            // 讓 app scroll 到底
+            let chatBoxElement = document.getElementById("chatBox");
+            chatBoxElement.scrollTop = chatBoxElement.scrollHeight;
+        }
+
         let chatPromise = fetchData({
             api: "plan_trip",
             data: {
@@ -225,7 +231,7 @@
                     }
                 });
 
-                messages.unshift({
+                messages.push({
                     role: "AI",
                     speaker: speaker,
                     short_name: short_name,
@@ -240,7 +246,7 @@
 
                     // 讓 app scroll 到底
                     let chatBoxElement = document.getElementById("chatBox");
-                    chatBoxElement.scrollTop = 0;
+                    chatBoxElement.scrollTop = chatBoxElement.scrollHeight;
                 });
             }catch(ex){
                 let opObj = {
@@ -262,7 +268,7 @@
 
         let user_name = userInfo.language === "EN" ? userInfo.name : userInfo.cname;
 
-        messages.unshift({
+        messages.push({
             role: "user",
             speaker: user_name,
             short_name: props.account.substr(0, 1),
@@ -515,28 +521,28 @@
 
 <template>
 
-<div class="w-1/1 h-1/1 flex flex-col">
+<div class="w-1/1 h-1/1 flex flex-col rounded-xl border p-2 bg-gray-900">
     <!-- function button bar -->
-    <div class="w-1/1 shadow-2xl flex flex-col bg-gray-500 rounded-xl">
+    <div class="w-1/1 shadow-2xl flex flex-col bg-white rounded-xl">
         <div class="w-1/1 flex flex-row">
             <div class="flex-1 p-1">
                 <textarea class="textarea w-1/1 h-1/1 md:h-1/1" v-model="userMessage" placeholder="想說點什麼呢?" :disabled="chatState === 'TALKING'"></textarea>
             </div>
             <div class="flex-none p-1 flex-col w-1/4 min-w-10 h-1/1 gap-1">
-                <button class="btn bg-gray-300 text-gray-900 hover:bg-gray-900 hover:text-gray-100 rounded-xl w-1/1 h-1/1" @click="send">
+                <button class="btn bg-blue-500/50 text-gray-900 hover:bg-gray-900 hover:text-gray-100 rounded-xl w-1/1 h-1/1" @click="send">
                     <span v-if="chatState !== 'TALKING'">傳送</span>
                     <span v-if="chatState === 'TALKING'" class="loading loading-spinner loading-md"></span>
                 </button>
             </div>
         </div>
-        <div class="w-1/1 flex flex-row gap-1 p-1 overflow-y-auto">
+        <div class="w-1/1 flex flex-row gap-1 p-1 overflow-x-auto">
             <button class="btn rounded-xl bg-gray-300 hover:bg-blue-300" @click="remindPlan">
                 回顧聊天
             </button>
-            <button class="btn rounded-xl bg-stone-500/70 text-white hover:bg-blue-300 hover:text-gray-900" @click="openSumupModal">
+            <button class="btn rounded-xl bg-stone-300/70 text-black hover:bg-blue-300 hover:text-gray-900" @click="openSumupModal">
                 統整行程
             </button>
-            <button class="btn rounded-xl bg-stone-700/70 text-white hover:bg-blue-300 hover:text-gray-900" @click="openAdjustScheduleModal">
+            <button class="btn rounded-xl bg-stone-400/70 text-black hover:bg-blue-300 hover:text-gray-900" @click="openAdjustScheduleModal">
                 已排定的旅行
             </button>
             <button class="btn rounded-xl bg-red-300 text-gray-900 hover:bg-blue-300" @click="openReplanConfirmModal">
@@ -546,43 +552,43 @@
     </div>
 
     <!-- 聊天內容 -->
-    <div id="chatBox" class="flex flex-col w-1/1 h-11/12 rounded-xl border overflow-y-auto">
-        <div v-if="chatState === 'TALKING'" class="chat chat-start">
-            <div class="chat-image avatar">
-                <div class="avatar avatar-placeholder">
-                    <div class="size-8 rounded-full bg-neutral text-gray-100">
-                        <span class="text-xs">
-                            {{ " " }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-header">
-                {{ "AI" }}
-            </div>
-            <div class="chat-bubble">
-                好喔~ 稍等
-                <span class="loading loading-dots loading-xs"></span>
-            </div>
-        </div>
+    <div id="chatBox" class="flex flex-col w-1/1 h-11/12 overflow-y-auto">
         <div v-for="(msgObj, msg_i) in messages" class="chat"
             :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
             <div class="chat-image avatar">
                 <div class="avatar avatar-placeholder">
                     <div class="w-8 rounded-full border-5 bg-white text-gray-900"
-                        :class="{'border-zinc-500': msgObj.role === 'AI', 'border-stone-500': msgObj.role === 'user'}">
+                        :class="{'border-rose-300': msgObj.role === 'AI', 'border-lime-300': msgObj.role === 'user'}">
                         <span class="text-xs">{{ msgObj.short_name }}</span>
                     </div>
                 </div>
             </div>
-            <div class="chat-header">
+            <div class="chat-header text-white">
                 {{ msgObj.speaker }}
-                <time class="text-xs opacity-50">{{ msgObj.time }}</time>
+                <time class="text-xs opacity-70">{{ msgObj.time }}</time>
             </div>
             <div class="chat-bubble">
                 <p style="white-space:pre-wrap;">
                     {{ msgObj.message }}
                 </p>
+            </div>
+        </div>
+        <div v-if="chatState === 'TALKING'" class="chat chat-start">
+            <div class="chat-image avatar">
+                <div class="avatar avatar-placeholder">
+                    <div class="size-8 rounded-full border-5 border-yellow-300 bg-white text-gray-900">
+                        <span class="text-xs">
+                            {{ "AI" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-header text-white">
+                {{ "AI" }}
+            </div>
+            <div class="chat-bubble">
+                好喔~ 稍等
+                <span class="loading loading-dots loading-xs"></span>
             </div>
         </div>
     </div>
