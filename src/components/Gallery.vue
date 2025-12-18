@@ -191,6 +191,7 @@
                     key: topicObj["key"],
                     desc: topicObj["desc"],
                     kind: topicObj["kind"],
+                    time: topicObj["time"],
                     prompt: topicObj["prompt"],
                     data_source: topicObj["data_source"],
                     max_news_count: topicObj["max_news_count"],
@@ -263,6 +264,7 @@
                 selTopicObj["key"] = theTopic["key"];
                 selTopicObj["desc"] = theTopic["desc"];
                 selTopicObj["seq"] = theTopic["seq"];
+                selTopicObj["time"] = theTopic["time"];
                 selTopicObj["prompt"] = theTopic["prompt"];
                 selTopicObj["data_source"] = theTopic["data_source"];
                 selTopicObj["dataSourceList"] = theTopic["data_source"].split(",");
@@ -482,6 +484,9 @@
                 }"                
                 @click="selectTopic(topicObj, topic_i)" >
                 {{ topicObj.desc }}
+                <span>
+                    <br /><span class="text-xs">( {{ topicObj.time }} )</span>
+                </span>
                 <span v-if="reDlTopicKey === topicObj.key">
                     <br /><span class="loading loading-infinity loading-xl"></span>
                 </span>
@@ -517,12 +522,25 @@
                         <span class="text-sm">
                             ( 共 {{ newsList[selTopicObj.key].length }} 則 )
                         </span>
+                        <span class="text-sm">
+                            ( 最近更新時間: {{ selTopicObj.time }} )
+                        </span>
                     </div> 
                 </div>
-                <div class="flex-none">
-                    <button class="btn btn-ghost hover:bg-transparent" title="主題清單" @click="backToBlock">
+                <div class="flex-none grid grid-cols-2 gap-1">
+                    <button class="btn btn-ghost hover:bg-transparent" title="返回清單" @click="backToBlock">
                         <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-ghost hover:bg-transparent" title="設定來源" @click="openModal_setting(selTopicObj)">
+                        <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-ghost hover:bg-transparent" title="重新下載" @click="reDownloadSpecifyTopic(selTopicObj.key)">
+                        <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
                         </svg>
                     </button>
                 </div>
@@ -565,7 +583,7 @@
                 <div class="list-col-grow">
                     <div class="bg-gray-200 text-black text-lg flex flex-row items-center">                        
                         <div class="flex-1 text-center ">
-                            <div>{{ "點擊'方塊', 返回'主題清單'" }}</div>
+                            <div>{{ "點擊'方塊', 返回'清單'" }}</div>
                         </div>
                         <div class="flex-none">
                             <button class="btn btn-ghost hover:bg-transparent" title="主題清單" @click="backToBlock">
