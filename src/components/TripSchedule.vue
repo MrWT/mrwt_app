@@ -124,10 +124,18 @@
         {
             let geoPromiseAry = [];
             sel_day_sequence_obj.trip_detail_of_day.forEach((tddObj, tdd_i) => {
+
+                let locationName = tripNation;
+                if( tddObj["subway_station"] && tddObj["subway_station"] !== "N/A" && tddObj["subway_station"].indexOf("無") < 0 ){
+                    locationName += tddObj["subway_station"];
+                }else{
+                    locationName += tddObj["location"];
+                }
+
                 geoPromiseAry.push(fetchData({
                     api: "get_geocoded_from_google_map",
                     data: {
-                        location_name: tripNation + ( tddObj["subway_station"] && tddObj["subway_station"] !== "N/A" ? tddObj["subway_station"] : tddObj["location"] ),
+                        location_name: locationName,
                     }
                 }));
             });
@@ -302,7 +310,7 @@
                         <div class="list-col-grow">
                             <div class="text-lg">
                                 {{ tddObj.location }}
-                                <span v-if="tddObj.subway_station && tddObj.subway_station !== 'N/A'">{{ " - 地鐵: " + tddObj.subway_station }}</span>
+                                <span v-if="tddObj.subway_station && tddObj.subway_station !== 'N/A' && tddObj.subway_station.indexOf('無') < 0">{{ " - 地鐵: " + tddObj.subway_station }}</span>
                             </div>
                             <div class="text-md uppercase font-semibold">{{ tddObj.memo }}</div>
                         </div>
