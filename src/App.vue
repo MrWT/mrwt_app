@@ -428,7 +428,7 @@
         <Achievement v-else-if="appSetting.contentComponent === 'achievement'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" />
 
         <QA v-else-if="appSetting.contentComponent === 'qa'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
-        <Recall v-else-if="appSetting.contentComponent === 'recall'" :title="appSetting.title" :account="userInfo.account" @popup-message="popupMessage" />
+        <Recall v-else-if="appSetting.contentComponent === 'recall'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Survey v-else-if="appSetting.contentComponent === 'survey'" :title="appSetting.title" :account="userInfo.account" />
         <Finance_KF v-else-if="appSetting.contentComponent === 'finance_kf'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Rule_KF v-else-if="appSetting.contentComponent === 'rule_kf'" :title="appSetting.title" :account="userInfo.account" :funSetting="kf_funSetting" />
