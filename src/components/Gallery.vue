@@ -355,6 +355,14 @@
             console.log("reDownloadPromise.values=", values);
 
             fetchInitData();
+
+            setTimeout(() => {
+                topicList.forEach((t, t_i) => {
+                    if(topic_key === t["key"]){
+                        selectTopic(t, t_i);
+                    }
+                });
+            }, 1000);
         });
     }
     // 另外搜尋新聞相關 keyword
