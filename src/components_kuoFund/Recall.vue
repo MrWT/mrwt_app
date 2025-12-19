@@ -6,6 +6,7 @@
     const props = defineProps({
         title: String,
         account: String,
+        user_role: String,
     })
 
     onMounted(() => {
@@ -21,16 +22,25 @@
     let selObj_id = ref(""); // firestore document id
     let selObj_abstract = ref(""); // 摘要
     let selObj_content = ref(""); // 內容
+    // 生成的故事
+    let write_story = reactive({
+        status: "DONE",
+        gen_time: "",
+        content: "",
+    });
     
     // 初始化 component
     function init(){
         console.log("Recall.init");
         console.log("Recall.props.title", props.title);
         console.log("Recall.props.account", props.account);
+        console.log("Recall.props.user_role", props.user_role);
 
         fetchInitData();
 
-        openAnnouceModal();
+        if(props.user_role !== "admin_kf"){
+            openAnnouceModal();
+        }
     }
     // 取得初始資料
     function fetchInitData(){
@@ -136,7 +146,7 @@
             emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
         });
     }
-      // 發出公告
+    // 發出公告
     function openAnnouceModal(){
         document.getElementById("annouceModal").showModal();
     }
@@ -144,14 +154,41 @@
     function closeAnnouceModal(){
         document.getElementById("annouceModal").close();
     }
+    // 開啟 story modal
+    function openStoryModal(){
+        document.getElementById("storyModal").showModal();
+
+        write_story.status = "WRITING";
+        write_story.content = "編寫故事中, 請稍等~~";
+
+        // 編寫回憶故事
+        let fetchPromise_writeStory = fetchData({
+            api: "write_story",
+        }, "KUO-FUNDS");
+        Promise.all([fetchPromise_writeStory]).then((values) => {
+            console.log("fetchPromise_writeStory.values=", values);
+
+            write_story.content = values[0]["message"];
+            write_story.gen_time = values[0]["gen_time"];
+            write_story.status = "DONE";
+        });
+    }
+    // 關閉 story modal
+    function closeStoryModal(){
+        document.getElementById("storyModal").close();
+    }
 
 </script>
 
 <template>
 
-<div class="w-1/1 h-1/10 flex justify-end items-center bg-gray-500/50 rounded-xl">
-    <button class="btn text-gray-900 bg-gray-200 rounded-xl hover:bg-yellow-200 mr-2" title="新增回憶" @click="openDetailModal">
-        新增回憶
+<div class="w-1/1 h-1/10 flex justify-end items-center bg-gray-500/50 rounded-xl gap-2">
+    <button v-if="props.user_role === 'admin_kf'" class="btn text-gray-900 bg-lime-200 rounded-xl hover:bg-yellow-200" title="生成故事" @click="openStoryModal">
+        生成故事
+    </button>
+
+    <button class="btn text-gray-900 bg-gray-200 rounded-xl hover:bg-yellow-200 mr-2" title="紀錄回憶" @click="openDetailModal">
+        紀錄回憶
     </button>
 </div>
 
@@ -176,6 +213,35 @@
         <span class="text-gray-900 font-black text-3xl underline" v-if="recallList.length === 0">查無資料</span>
     </div>
 </div>
+
+<!-- story modal -->
+<dialog id="storyModal" class="modal">
+    <div class="modal-box h-4/5 w-1/1 max-w-3xl flex flex-col bg-neutral-100">
+        <div class="h-1/1 w-1/1 text-gray-900 font-black p-2">
+            <span class="text-xl">
+                <span>{{ "故事內容" }}</span>
+            </span>
+            <div class="divider divider-primary"></div>
+
+            <div class="w-1/1 h-4/5 flex flex-col items-center justify-center">
+                <div class="text-gray-500 text-lg">{{ write_story.gen_time }}</div>
+                <textarea class="textarea h-1/1 w-1/1 flex-1 textarea-neutral textarea-lg"
+                    :class="{'text-2xl':write_story.status === 'WRITING', 'text-base':write_story.status === 'DONE'}"                     
+                    v-model="write_story.content" style="resize: none;" readonly></textarea>
+            </div>
+        </div>
+
+        <div class="modal-action">
+            <button class="btn btn-ghost w-1/1 bg-gray-900 text-gray-100 hover:underline hover:bg-gray-100 hover:text-black" @click="closeStoryModal" :disabled="write_story.status === 'WRITING'">
+                <svg v-if="write_story.status !== 'WRITING'" class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                </svg>
+                <span v-if="write_story.status !== 'WRITING'">關閉</span>
+                <span v-if="write_story.status === 'WRITING'" class="loading loading-infinity loading-xl"></span>
+            </button>
+        </div>
+    </div>
+</dialog>
 
 <!-- recall detail modal -->
 <dialog id="detailModal" class="modal">
