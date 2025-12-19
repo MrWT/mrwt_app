@@ -456,23 +456,27 @@
     <!-- 一般使用者 -->
     <div v-if="appState === 'normal' && topicList.length > 0 && selTopicIndex === -1" 
         class="text-3xl w-1/1 bg-zinc-500/50 rounded-lg mb-2 text-end p-1">
-        <button v-if="!setSubscribe" class="btn rounded-xl hover:bg-yellow-200" @click="toggleSubscribe">
+        <button v-if="!setSubscribe" class="btn btn-ghost rounded-xl hover:bg-yellow-200 group" @click="toggleSubscribe">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 4v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2m6-16v2m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v10m6-16v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2"/>
             </svg>
-            訂閱調整
+            <span class="md:hidden group-hover:md:block">
+                訂閱調整
+            </span>
         </button>
-        <button v-if="setSubscribe" class="btn rounded-xl hover:bg-yellow-200" @click="toggleSubscribe">
+        <button v-if="setSubscribe" class="btn btn-ghost rounded-xl hover:bg-yellow-200 group" @click="toggleSubscribe">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-6 7 2 2 4-4m-5-9v4h4V3h-4Z"/>
             </svg>
-            完成調整
+            <span class="md:hidden group-hover:md:block">
+                完成調整
+            </span>
         </button>
     </div>
 
     <div v-if="appState === 'normal'" class="w-1/1 h-11/12 overflow-y-auto">
         <!-- 主題方塊 -->
-        <div v-if="selTopicIndex === -1" class="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div v-if="selTopicIndex === -1" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
             <!-- 主題選單 -->
             <div v-for="(topicObj, topic_i) in topicList" 
                 class="h-50 cursor-pointer rounded-2xl text-2xl text-center content-center" 
