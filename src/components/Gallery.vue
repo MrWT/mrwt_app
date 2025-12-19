@@ -353,9 +353,9 @@
         }, "AI");
         Promise.all([reDownloadPromise]).then((values) => {
             console.log("reDownloadPromise.values=", values);
-
+            // 更新 UI 資料
             fetchInitData();
-
+            // 重新點入關注方塊
             setTimeout(() => {
                 topicList.forEach((t, t_i) => {
                     if(topic_key === t["key"]){
@@ -555,8 +555,8 @@
             </li>
             <li v-if="newsList[selTopicObj.key].length === 0" class="list-row">
                 <div class="list-col-grow">
-                    <div class="text-black text-lg text-center">{{ "很抱歉 ! 不明原因, 漏了資料 !" }}</div>
-                    <div class="text-black text-lg text-center">{{ "可再手動按最下方的'下載'喔 !" }}</div>
+                    <div class="text-black text-lg text-center">{{ "沒找到資料!" }}</div>
+                    <div class="text-black text-lg text-center">{{ "可點擊最下方的'下載', 重新下載'新聞清單'" }}</div>
                 </div>
             </li>
             <li v-for="(newsObj, news_i) in newsList[selTopicObj.key]" class="list-row">
