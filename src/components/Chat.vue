@@ -372,7 +372,7 @@
             <div class="flex-1 p-1">
                 <textarea class="textarea w-1/1 h-1/1 md:h-1/1" v-model="userMessage" placeholder="想說點什麼呢?" :disabled="chatState === 'TALKING'"></textarea>
             </div>
-            <div class="flex-none p-1 flex-col w-1/4 min-w-10 h-1/1 gap-1">
+            <div class="flex-none p-1 flex-col w-1/4 min-w-10 max-w-30 h-1/1 gap-1">
                 <button class="btn bg-blue-500/50 text-gray-900 hover:bg-gray-900 hover:text-gray-100 rounded-xl w-1/1 h-1/1" @click="send">
                     <span v-if="chatState !== 'TALKING'">傳送</span>
                     <span v-if="chatState === 'TALKING'" class="loading loading-spinner loading-md"></span>
