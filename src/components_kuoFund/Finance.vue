@@ -40,6 +40,7 @@
     // 查詢 - 選擇結果
     let promptTime = ref("All");
     let promptMember = ref("All");
+    let promptSort = ref("由晚到早");
     // 給 AI 的 search prompt
     let prompt = ref("");
     // 查詢結果
@@ -239,6 +240,7 @@
         searchResult.value = "";
         promptTime.value = "All";
         promptMember.value = "All";
+        promptSort.value = "由晚到早";
         document.getElementById("searchModal").showModal();
     }
     // 查詢帳務
@@ -248,7 +250,7 @@
 
         let selTime = promptTime.value === "All" ? "全部時間" : promptTime.value;
         let selMember = promptMember.value === "All" ? "全部成員" : promptMember.value;
-        prompt.value = "幫我列出 " + selTime + " " + selMember + " 的帳務紀錄(依時間排序)";
+        prompt.value = "幫我列出 " + selTime + " " + selMember + " 的帳務紀錄(依時間排序:" + promptSort.value + ")";
 
         let chatPromise = fetchData({
             api: "check_accounts",
@@ -378,6 +380,21 @@
                                 <select v-model="promptMember" class="w-1/1 border" :disabled="searchStatus === 'SEARCHING'">
                                     <option v-for="(mObj, m_i) in promptOptions.member" :value="mObj.value">{{ mObj.text }}</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="w-1/1 flex flex-row p-2">
+                            <div class="flex-none pr-2">
+                                排序:
+                            </div>
+                            <div class="flex-1">
+                                <label>
+                                    <input type="radio" v-model="promptSort" value="由晚到早" />
+                                    由晚到早
+                                </label>
+                                <label>
+                                    <input type="radio" v-model="promptSort" value="由早到晚" />
+                                    由早到晚
+                                </label>
                             </div>
                         </div>
                     </div>
