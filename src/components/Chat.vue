@@ -132,6 +132,7 @@
             console.log("chatPromise.values=", values);
 
             chat_room_uuid.value = values[0]["chat_room_uuid"];
+            let ai_role = "AI";
             let ai_msg = values[0]["message"];
             let speaker = "";
             let short_name = "";
@@ -147,8 +148,22 @@
                 }
             });
 
+            // AI 出錯了
+            if(ai_msg.indexOf("ERROR:") === 0){
+                if(ai_msg.indexOf("ERROR:429 RESOURCE_EXHAUSTED") === 0){
+                    emit('popupMessage', false, "AI 忙碌中... 請稍等再聊..."); // Emitting the event with data
+                    ai_msg = "AI 忙碌中... 請稍等再聊...";
+                }else{
+                    emit('popupMessage', false, ai_msg); // Emitting the event with data
+                }
+
+                ai_role = "AI_ERROR";
+                speaker = "ERROR";
+                short_name = "E";
+            }
+
             messages.push({
-                role: "AI",
+                role: ai_role,
                 speaker: speaker,
                 short_name: short_name,
                 message: ai_msg,
@@ -395,11 +410,11 @@
     <!-- 聊天內容 -->
     <div id="chatBox" class="flex flex-col w-1/1 h-11/12 overflow-y-auto">
         <div v-for="(msgObj, msg_i) in messages" class="chat"
-            :class="{ 'chat-start': msgObj.role === 'AI', 'chat-end': msgObj.role === 'user' }">
+            :class="{ 'chat-start': msgObj.role === 'AI' || msgObj.role === 'AI_ERROR', 'chat-end': msgObj.role === 'user' }">
             <div class="chat-image avatar">
                 <div class="avatar avatar-placeholder">
                     <div class="w-8 rounded-full border-5 bg-white text-gray-900"
-                        :class="{'border-rose-300': msgObj.role === 'AI', 'border-lime-300': msgObj.role === 'user'}">
+                        :class="{'border-rose-300': msgObj.role === 'AI', 'border-red-900': msgObj.role === 'AI_ERROR', 'border-lime-300': msgObj.role === 'user'}">
                         <span class="text-xs">{{ msgObj.short_name }}</span>
                     </div>
                 </div>

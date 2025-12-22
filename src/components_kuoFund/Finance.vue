@@ -264,7 +264,16 @@
         Promise.all([chatPromise]).then((values) => {
             console.log("chatPromise.values=", values);
 
-            searchResult.value = values[0].message;
+            let ai_msg = values[0].message;
+            if(ai_msg.indexOf("ERROR:") === 0){
+                if(ai_msg.indexOf("ERROR:429 RESOURCE_EXHAUSTED") === 0){
+                    emit('popupMessage', false, "AI 忙碌中... 請稍等再查詢..."); // Emitting the event with data
+                    ai_msg = "AI 忙碌中... 請稍等再查詢...";
+                }else{
+                    emit('popupMessage', false, ai_msg); // Emitting the event with data
+                }
+            }
+            searchResult.value = ai_msg;
 
             searchStatus.value = "DONE";
         });
