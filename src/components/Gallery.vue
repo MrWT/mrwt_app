@@ -353,16 +353,26 @@
         }, "AI");
         Promise.all([reDownloadPromise]).then((values) => {
             console.log("reDownloadPromise.values=", values);
-            // 更新 UI 資料
-            fetchInitData();
-            // 重新點入關注方塊
-            setTimeout(() => {
-                topicList.forEach((t, t_i) => {
-                    if(topic_key === t["key"]){
-                        selectTopic(t, t_i);
-                    }
-                });
-            }, 1000);
+
+            let ai_msg = values[0];
+            if(ai_msg === "OK"){
+                // 更新 UI 資料
+                fetchInitData();
+                // 重新點入關注方塊
+                setTimeout(() => {
+                    topicList.forEach((t, t_i) => {
+                        if(topic_key === t["key"]){
+                            selectTopic(t, t_i);
+                        }
+                    });
+                }, 1000);
+            }else{
+                if(ai_msg.indexOf("ERROR:429 RESOURCE_EXHAUSTED") === 0){
+                    emit('popupMessage', false, "AI 忙碌中... 請稍等再下載..."); // Emitting the event with data
+                }else{
+                    emit('popupMessage', false, ai_msg); // Emitting the event with data
+                }
+            }
         });
     }
     // 另外搜尋新聞相關 keyword
@@ -474,7 +484,8 @@
         </button>
     </div>
 
-    <div v-if="appState === 'normal'" class="w-1/1 h-11/12 overflow-y-auto">
+    <div v-if="appState === 'normal'" class="w-1/1 overflow-y-auto"
+        :class="{'h-11/12': selTopicIndex === -1, 'h-1/1': selTopicIndex > -1 && !setSubscribe }">
         <!-- 主題方塊 -->
         <div v-if="selTopicIndex === -1" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
             <!-- 主題選單 -->
@@ -531,30 +542,30 @@
                 <div class="flex-1 flex flex-row items-center">
                     <div class="font-black text-xl mr-5 flex flex-col">
                         {{ selTopicObj.desc }}
-                        <span class="text-sm">
-                            ( 共 {{ newsList[selTopicObj.key].length }} 則 )
-                        </span>
-                        <span class="text-sm">
-                            ( 最近更新時間: {{ selTopicObj.time }} )
-                        </span>
+                        <div class="text-sm flex flex-row gap-2 items-center">
+                            <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                            </svg>
+                            {{ selTopicObj.time }}
+                        </div>
                     </div> 
                 </div>
-                <div class="flex-none grid grid-cols-2 gap-1">
-                    <button class="btn btn-ghost hover:bg-transparent" title="返回清單" @click="backToBlock">
+                <div class="flex-none flex flex-row gap-5">
+                    <a class="hover:bg-transparent hover:cursor-pointer hover:text-zinc-500" title="返回清單" @click="backToBlock">
                         <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"/>
                         </svg>
-                    </button>
-                    <button class="btn btn-ghost hover:bg-transparent" title="設定來源" @click="openModal_setting(selTopicObj)">
+                    </a>
+                    <a class="hover:bg-transparent hover:cursor-pointer hover:text-zinc-500" title="設定來源" @click="openModal_setting(selTopicObj)">
                         <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
                         </svg>
-                    </button>
-                    <button class="btn btn-ghost hover:bg-transparent" title="重新下載" @click="reDownloadSpecifyTopic(selTopicObj.key)">
+                    </a>
+                    <a class="hover:bg-transparent hover:cursor-pointer hover:text-zinc-500" title="重新下載" @click="reDownloadSpecifyTopic(selTopicObj.key)">
                         <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
                         </svg>
-                    </button>
+                    </a>
                 </div>
             </li>
             <li v-if="newsList[selTopicObj.key].length === 0" class="list-row">
