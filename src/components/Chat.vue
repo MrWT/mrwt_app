@@ -160,6 +160,16 @@
                 ai_role = "AI_ERROR";
                 speaker = "ERROR";
                 short_name = "E";
+
+            }else{
+                // 讓 user 可以直接重傳的機制
+                for(let msg_i = messages.length -1; msg_i >= 0; msg_i--){
+                    if(messages[msg_i] && messages[msg_i]["role"] === "user"){
+                        // AI 正確回覆, 視為"訊息傳遞成功"
+                        messages[msg_i]["sent_success"] = true; 
+                        break;
+                    }
+                }
             }
 
             messages.push({
@@ -195,9 +205,15 @@
             short_name: props.account.substr(0, 1),
             message: userMessage.value,
             time: moment().format("HH:mm:ss"),
+            sent_success: false, // 預設視為"訊息未傳遞成功"
         });
 
         chat();
+    }
+    // 重傳上一個訊息
+    function send_again(re_msg){
+        userMessage.value = re_msg;
+        send();
     }      
     // 傳送至 Line
     function sendToLine(){
@@ -423,7 +439,29 @@
                 {{ msgObj.speaker }}
                 <time class="text-xs opacity-70">{{ msgObj.time }}</time>
             </div>
-            <div class="chat-bubble">
+            <div class="chat-bubble  flex flex-row items-center">
+                <!-- 訊息傳遞中 -->
+                <a v-if="msgObj.role === 'user' && chatState === 'TALKING'">
+                    <span class="loading loading-ring loading-xs"></span>
+                </a>
+                <!-- 訊息傳遞失敗, 而且是 user 最新訊息 -->
+                <a v-if="msgObj.role === 'user' && chatState !== 'TALKING' && msgObj.sent_success === false && msg_i === (messages.length -2)" title="重傳" @click="send_again(msgObj.message)">
+                    <svg class="size-4 text-red-900 hover:cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 9H8a5 5 0 0 0 0 10h9m4-10-4-4m4 4-4 4"/>
+                    </svg>
+                </a>
+                <!-- 訊息傳遞失敗, 而且不是 user 最新訊息 -->
+                <a v-if="msgObj.role === 'user' && chatState !== 'TALKING' && msgObj.sent_success === false && msg_i < (messages.length -2)">
+                    <svg class="size-4 text-red-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                    </svg>
+                </a>
+                <!-- 訊息傳遞成功 -->
+                <a v-if="msgObj.role === 'user' && chatState !== 'TALKING' && msgObj.sent_success === true">
+                    <svg class="size-4 text-lime-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/>
+                    </svg>
+                </a>
                 <p style="white-space:pre-wrap;">
                     {{ msgObj.message }}
                 </p>
