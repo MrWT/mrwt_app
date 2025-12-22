@@ -168,7 +168,15 @@
         Promise.all([fetchPromise_writeStory]).then((values) => {
             console.log("fetchPromise_writeStory.values=", values);
 
-            write_story.content = values[0]["message"];
+            let ai_msg = values[0]["message"];
+            if(ai_msg.indexOf("ERROR:") === 0){
+                if(ai_msg.indexOf("ERROR:429 RESOURCE_EXHAUSTED") === 0){
+                    ai_msg = "AI 忙碌中... 請稍等再試試...";
+                }
+                emit('popupMessage', false, ai_msg); // Emitting the event with data
+            }
+
+            write_story.content = ai_msg;
             write_story.gen_time = values[0]["gen_time"];
             write_story.status = "DONE";
         });
@@ -215,7 +223,7 @@
 </div>
 
 <!-- story modal -->
-<dialog id="storyModal" class="modal">
+<dialog id="storyModal" class="modal modal-top">
     <div class="modal-box h-4/5 w-1/1 max-w-3xl flex flex-col bg-neutral-100">
         <div class="h-1/1 w-1/1 text-gray-900 font-black p-2">
             <span class="text-xl">
