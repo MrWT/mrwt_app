@@ -8,7 +8,6 @@
     import Gallery from './components/Gallery.vue'
     import Footmark from './components/Footmark.vue'
     import Readme from './components/Readme.vue'
-    import Setting from './components/Setting.vue'
     import Chat from './components/Chat.vue'
     import Imagen from './components/Imagen.vue'
     import PlanTrip from './components/PlanTrip.vue'
@@ -382,14 +381,6 @@
                         </svg>
                     </a>
                 </li>
-                <!-- setting -->
-                <li v-if="userInfo.funcs.indexOf('setting') !== -1" @click="gotoPage('setting')">
-                    <a class="tooltip tooltip-bottom" :data-tip="userInfo.languages.app_setting">
-                        <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M9.586 2.586A2 2 0 0 1 11 2h2a2 2 0 0 1 2 2v.089l.473.196.063-.063a2.002 2.002 0 0 1 2.828 0l1.414 1.414a2 2 0 0 1 0 2.827l-.063.064.196.473H20a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-.089l-.196.473.063.063a2.002 2.002 0 0 1 0 2.828l-1.414 1.414a2 2 0 0 1-2.828 0l-.063-.063-.473.196V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.089l-.473-.196-.063.063a2.002 2.002 0 0 1-2.828 0l-1.414-1.414a2 2 0 0 1 0-2.827l.063-.064L4.089 15H4a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h.09l.195-.473-.063-.063a2 2 0 0 1 0-2.828l1.414-1.414a2 2 0 0 1 2.827 0l.064.063L9 4.089V4a2 2 0 0 1 .586-1.414ZM8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" clip-rule="evenodd"/>
-                        </svg>
-                    </a>
-                </li>
                 <!-- userInfo -->
                 <li @click="openUserInfoModal">
                     <a class="tooltip tooltip-bottom" :data-tip="userInfo.languages.user_setting">
@@ -417,8 +408,7 @@
         <Gallery v-if="appSetting.contentComponent === 'gallery'" :title="appSetting.title" :account="userInfo.account" :cname="userInfo.cname" :user_role="userInfo.role" :focus_news_topic="userInfo.focus_news_topic" @popup-message="popupMessage" />
         <Readme v-else-if="appSetting.contentComponent === 'readme'" :title="appSetting.title" :reference="appSetting.reference"  @introduce-author="gotoIntroduceAuthor" />
         <Footmark v-else-if="appSetting.contentComponent === 'footmark'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
-        <Finance v-else-if="appSetting.contentComponent === 'finance'" :title="appSetting.title" :account="userInfo.account" />
-        <Setting v-else-if="appSetting.contentComponent === 'setting'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
+        <Finance v-else-if="appSetting.contentComponent === 'finance'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Chat v-else-if="appSetting.contentComponent === 'chat'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <Imagen v-else-if="appSetting.contentComponent === 'imagen'" :title="appSetting.title" :account="userInfo.account" :user_role="userInfo.role" @popup-message="popupMessage" />
         <PlanTrip v-else-if="appSetting.contentComponent === 'plan_trip'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
