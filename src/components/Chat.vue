@@ -23,6 +23,7 @@
 
     let appState = ref("");
     let userMessage = ref("");
+    let chatMode = ref("聊天");
     let chatState = ref("TALKING");
     // 聊天室 UUID
     let chat_room_uuid = ref("INIT");
@@ -190,6 +191,79 @@
                 chatBoxElement.scrollTop = chatBoxElement.scrollHeight;
             });
         });
+    }
+    // translate with ai
+    function translate(language, message){
+        console.log("translate.language=" + language);
+        console.log("translate.message=" + message);
+
+        // 關閉全部 modal
+        closeAllModal();
+        
+        chatState.value = "TALKING";
+        {
+            // 讓 app scroll 到底
+            let chatBoxElement = document.getElementById("chatBox");
+            chatBoxElement.scrollTop = chatBoxElement.scrollHeight;
+        }
+
+        let translatePromise = fetchData({
+            api: "translate",
+            data: {
+                language: language,
+                message: message,
+            }
+        }, "AI");
+        Promise.all([translatePromise]).then((values) => {
+            console.log("translatePromise.values=", values);
+
+            let ai_msg = values[0]["message"];
+            let ai_role = "AI_TRANSLATE";
+            let speaker = "TRANSLATE";
+            let short_name = "T";
+
+            // AI 出錯了
+            if(ai_msg.indexOf("ERROR:") === 0){
+                if(ai_msg.indexOf("ERROR:429 RESOURCE_EXHAUSTED") === 0){
+                    emit('popupMessage', false, "AI 忙碌中... 請稍等再聊..."); // Emitting the event with data
+                    ai_msg = "AI 忙碌中... 請稍等再聊...";
+                }else{
+                    emit('popupMessage', false, ai_msg); // Emitting the event with data
+                }
+
+                ai_role = "AI_ERROR";
+                speaker = "ERROR";
+                short_name = "E";
+
+            }else{
+                // 讓 user 可以直接重傳的機制
+                for(let msg_i = messages.length -1; msg_i >= 0; msg_i--){
+                    if(messages[msg_i] && messages[msg_i]["role"] === "user"){
+                        // AI 正確回覆, 視為"訊息傳遞成功"
+                        messages[msg_i]["sent_success"] = true; 
+                        break;
+                    }
+                }
+            }
+
+            messages.push({
+                role: ai_role,
+                speaker: speaker,
+                short_name: short_name,
+                message: ai_msg,
+                time: moment().format("HH:mm:ss"),
+            });
+
+            // Vue3 因資料改變 DOM 後觸發
+            nextTick(() => {
+                chatState.value = "DONE";
+                userMessage.value = "";
+
+                // 讓 app scroll 到底
+                let chatBoxElement = document.getElementById("chatBox");
+                chatBoxElement.scrollTop = chatBoxElement.scrollHeight;
+            });
+        });
 
     }
     // 送出 message
@@ -208,30 +282,18 @@
             sent_success: false, // 預設視為"訊息未傳遞成功"
         });
 
-        chat();
+        if(chatMode.value === "聊天"){
+            chat();
+        }else{
+            let language = chatMode.value.substr(2);
+            translate(language, userMessage.value);
+        }
     }
     // 重傳上一個訊息
     function send_again(re_msg){
         userMessage.value = re_msg;
         send();
     }      
-    // 傳送至 Line
-    function sendToLine(){
-        let linePromise = fetchData({
-            api: "send_to_line",
-            data: {
-                account: props.account,
-                messages: userMessage.value,
-            }
-        });
-        Promise.all([linePromise]).then((values) => {
-            console.log("linePromise.values=", values);
-            userMessage.value = "";
-
-            // 關閉全部 modal
-            closeAllModal();
-        });
-    }
     // 開啟 setting modal
     function openSettingModal(){
         document.getElementById("settingModal").showModal();
@@ -405,32 +467,47 @@
             </div>
             <div class="flex-none p-1 flex-col w-1/4 min-w-10 max-w-30 h-1/1 gap-1">
                 <button class="btn bg-blue-500/50 text-gray-900 hover:bg-gray-900 hover:text-gray-100 rounded-xl w-1/1 h-1/1" @click="send">
-                    <span v-if="chatState !== 'TALKING'">傳送</span>
+                    <span v-if="chatState !== 'TALKING' && chatMode === '聊天'">傳送</span>
+                    <span v-if="chatState !== 'TALKING' && chatMode !== '聊天'">翻譯</span>
                     <span v-if="chatState === 'TALKING'" class="loading loading-spinner loading-md"></span>
                 </button>
             </div>
         </div>
-        <div class="w-1/1 flex flex-row gap-1 p-1 overflow-x-auto">
+        <div v-if="chatMode === '聊天'" class="w-1/1 flex flex-row gap-1 p-1 overflow-x-auto">
+            <button class="btn rounded-xl bg-red-300 text-gray-900 hover:bg-blue-300" @click="openNewChatConfirmModal">
+                新對話
+            </button>
             <button class="btn rounded-xl bg-gray-300 hover:bg-blue-300" @click="openSettingModal">
                 AI 角色
             </button>
             <button class="btn rounded-xl bg-gray-900 text-white hover:bg-blue-300 hover:text-black" @click="openPromptModal">
                 提詞機
             </button>
-            <button class="btn rounded-xl bg-red-300 text-gray-900 hover:bg-blue-300" @click="openNewChatConfirmModal">
-                新對話
-            </button>
+        </div>
+        <div class="w-1/1 flex flex-row gap-1 p-1 overflow-x-auto">
+            <label>
+                <input type="radio" value="聊天" v-model="chatMode" />
+                聊天
+            </label>
+            <label>
+                <input type="radio" value="翻譯日文" v-model="chatMode" />
+                翻譯日文
+            </label>
+            <label>
+                <input type="radio" value="翻譯韓文" v-model="chatMode" />
+                翻譯韓文
+            </label>
         </div>
     </div>
 
     <!-- 聊天內容 -->
     <div id="chatBox" class="flex flex-col w-1/1 h-11/12 overflow-y-auto">
         <div v-for="(msgObj, msg_i) in messages" class="chat"
-            :class="{ 'chat-start': msgObj.role === 'AI' || msgObj.role === 'AI_ERROR', 'chat-end': msgObj.role === 'user' }">
+            :class="{ 'chat-start': msgObj.role === 'AI' || msgObj.role === 'AI_ERROR' || msgObj.role === 'AI_TRANSLATE', 'chat-end': msgObj.role === 'user' }">
             <div class="chat-image avatar">
                 <div class="avatar avatar-placeholder">
                     <div class="w-8 rounded-full border-5 bg-white text-gray-900"
-                        :class="{'border-rose-300': msgObj.role === 'AI', 'border-red-900': msgObj.role === 'AI_ERROR', 'border-lime-300': msgObj.role === 'user'}">
+                        :class="{'border-rose-300': msgObj.role === 'AI', 'border-red-900': msgObj.role === 'AI_ERROR', 'border-blue-900': msgObj.role === 'AI_TRANSLATE', 'border-lime-300': msgObj.role === 'user'}">
                         <span class="text-xs">{{ msgObj.short_name }}</span>
                     </div>
                 </div>
@@ -530,13 +607,13 @@
             </div>
         </div>
         <div class="divider divider-primary"></div>
-        <div class="modal-action">
-            <button class="btn btn-ghost w-5/10 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click="closeSettingModal">
-                關閉設定
+        <div class="modal-action px-10">
+            <button class="btn w-1/2 bg-gray-900 text-gray-200 hover:bg-yellow-300 hover:text-gray-900" @click="closeSettingModal">
+                關閉
             </button>
 
-            <button class="btn btn-ghost w-5/10 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click="changeAiRole">
-                儲存設定
+            <button class="btn w-1/2 bg-gray-200 text-gray-900 hover:bg-yellow-300" @click="changeAiRole">
+                儲存
             </button>
         </div>
     </div>
@@ -582,12 +659,12 @@
         <textarea class="textarea h-1/4 md:h-1/5 w-1/1 mt-1 bg-gray-900 text-gray-100" placeholder="想說點什麼嗎??" v-model="prompt"></textarea>
 
         <div class="divider divider-primary"></div>
-        <div class="modal-action">
-            <button class="btn btn-ghost w-5/10 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click.stop="closePromptModal">
+        <div class="modal-action px-10">
+            <button class="btn w-1/2 bg-gray-900 text-gray-200 hover:bg-yellow-300 hover:text-gray-900" @click.stop="closePromptModal">
                 關閉
             </button>
 
-            <button class="btn btn-ghost w-5/10 bg-gray-200 text-gray-900 hover:bg-yellow-100" @click.stop="sendPrompt">
+            <button class="btn w-1/2 bg-gray-200 text-gray-900 hover:bg-yellow-300" @click.stop="sendPrompt">
                 傳送
             </button>
         </div>
@@ -599,17 +676,18 @@
 
 <!-- newChatConfirm modal -->
 <dialog id="newChatConfirmModal" class="modal">
-    <div class="modal-box h-3/10 w-10/10 flex flex-col bg-neutral-500">
-        <div class="h-10/10 w-10/10 text-center text-black font-black">
+    <div class="modal-box h-3/10 w-1/1 flex flex-col bg-neutral-500">
+        <div class="w-1/1 text-center text-black font-black bg-white rounded-xl">
             <span class="text-2xl">再跟您確認一次~</span>
-            <div class="divider divider-primary"></div>
         </div>
-        <div class="modal-action">
-            <button class="btn btn-ghost w-1/2 text-gray-900 bg-gray-100 hover:bg-gray-500 hover:text-gray-100 hover:underline" @click="closeNewChatConfirmModal">
+
+        <div class="divider divider-primary"></div>
+        <div class="modal-action px-10">
+            <button class="btn w-1/2 text-gray-200 bg-gray-900 hover:bg-yellow-200 hover:text-gray-900" @click="closeNewChatConfirmModal">
                 話題繼續
             </button>
 
-            <button class="btn btn-ghost w-1/2 text-gray-900 bg-gray-100 hover:bg-gray-500 hover:text-gray-100 hover:underline" @click="newChat">
+            <button class="btn w-1/2 text-gray-900 bg-rose-200 hover:bg-yellow-200 hover:text-gray-900" @click="newChat">
                 新話題
             </button>
         </div>
