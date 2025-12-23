@@ -2,10 +2,14 @@
     import { ref, reactive, onMounted } from 'vue'
     import { fetchData } from "@/composables/fetchData"
 
+    import SettingFinance from '@/components/SettingFinance.vue'
+
+    const emit = defineEmits(['popupMessage']);
     const props = defineProps({
         title: String,
-        account: String
-    })
+        account: String,
+        user_role: String,
+    });
 
     onMounted(() => {
         console.log("Finance mounted.");
@@ -56,7 +60,9 @@
     // 初始化 component
     function init(){
         console.log("finance.init");
+        console.log("props.title=" + props.title);
         console.log("props.account=" + props.account);
+        console.log("props.user_role=" + props.user_role);
 
         if(props.account){
             // 取得使用者個人 finance 資料
@@ -243,22 +249,50 @@
         deposit_USD_fixed.value = new Intl.NumberFormat('en-US').format(depositData["value1"]);
         deposit_LikeTWD_fixed.value = new Intl.NumberFormat('en-US').format(depositData["value1"] * depositData["value2"]);
     }
+    // 開啟 setting modal
+    function openSettingModal(){
+        document.getElementById("settingModal").showModal();
+    }
+    // 關閉 setting modal
+    function closeSettingModal(){
+        document.getElementById("settingModal").close();
+    }
+    // 給 Setting Modal 使用的 function
+    function modalStatus(opMode, message){
+        if(opMode === "SAVE_SUCCESS"){
+            emit('popupMessage', true, message); // Emitting the event with data
+            // 更新資料
+            fetchFinance();
+        }else if(opMode === "SAVE_FAIL"){
+            emit('popupMessage', false, message); // Emitting the event with data
+        }
+
+        closeSettingModal();
+    }
 
 
 </script>
 
 <template>
 
-<div class="flex flex-col w-10/10 h-10/10">
+<div class="flex flex-col w-1/1 h-1/1 gap-2">
+    <div v-if="props.user_role === 'admin'" class="flex flex-row justify-end w-1/1 bg-transparent rounded-xl gap-2">
+        <a class="text-gray-900 hover:cursor-pointer" @click="openSettingModal">
+            <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z"/>
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+            </svg>
+        </a>
+    </div>
 
-    <div class="flex flex-col w-10/10 gap-2">
-        <div class="flex flex-row w-10/10 h-10/10">
+    <div class="flex flex-col w-1/1 gap-2">
+        <div class="flex flex-row w-1/1 h-1/1">
             <div class="card rounded-box grid h-1/1 w-1/1 p-5 place-items-center"
                  :class="{'bg-red-300': 12 <= progressSetting.speed.speed,
                           'bg-orange-300': 7 <= progressSetting.speed.speed && progressSetting.speed.speed < 12,
                           'bg-blue-300': 3 < progressSetting.speed.speed && progressSetting.speed.speed < 7,
                           'bg-green-300': progressSetting.speed.speed <= 3}">
-                <div class="w-10/10 text-xl text-center">
+                <div class="w-1/1 text-xl text-center">
                     約需 {{ progressSetting["speed"]["speed"] }} 期<br />
                     可以存到 {{ progressSetting["speed"]["target"] }} 萬
                 </div>
@@ -389,6 +423,13 @@
 
     <div class="divider"></div>
 </div>
+
+<!-- setting modal -->
+<dialog id="settingModal" class="modal">
+    <div class="modal-box h-1/1 w-1/1 flex flex-col bg-neutral-100">
+        <SettingFinance :title="props.title" :account="props.account" @modal-status="modalStatus" />
+    </div>
+</dialog>
 
 </template>
 

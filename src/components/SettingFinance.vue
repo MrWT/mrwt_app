@@ -3,9 +3,8 @@
     import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
 
-    const emit = defineEmits(['popupMessage']);
+    const emit = defineEmits(['modalStatus']);
     const props = defineProps({
-        app_state: String,
         title: String,
         account: String,
     })
@@ -144,9 +143,18 @@
                 opObj.message = values[0]["message"];
             }
             // 將 message 傳給 Setting.vue 
-            emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
+
+            if(opObj.status){
+                emit('modalStatus', "SAVE_SUCCESS", opObj.message); // Emitting the event with data
+            }else{
+                emit('modalStatus', "SAVE_FAIL", opObj.message); // Emitting the event with data
+            }
         });
     }   
+    // 關閉 setting modal
+    function closeSettingModal(){
+        emit('modalStatus', "CLOSE", ""); // Emitting the event with data
+    }
 </script>
 
 <template>
@@ -279,9 +287,12 @@
             </div>
         </div>
     </div>
-    <div class="w-10/10 flex flex-col md:flex-row-reverse mt-5 justify-center">
-        <button class="btn btn-neutral w-10/10 md:w-5/10" @click="saveFinance">
-            save
+    <div class="w-1/1 flex flex-row mt-5 gap-2">
+        <button class="btn bg-gray-900 text-gray-100 hover:bg-blue-200 hover:text-gray-900 w-1/2 " @click="closeSettingModal">
+            關閉
+        </button>
+        <button class="btn bg-gray-100 text-gray-900 hover:bg-blue-200 w-1/2" @click="saveFinance">
+            儲存
         </button>
     </div>
 
