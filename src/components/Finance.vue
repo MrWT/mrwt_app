@@ -426,7 +426,7 @@
 
 <!-- setting modal -->
 <dialog id="settingModal" class="modal">
-    <div class="modal-box h-1/1 w-1/1 flex flex-col bg-neutral-100">
+    <div class="modal-box h-9/10 w-1/1 flex flex-col bg-neutral-100">
         <SettingFinance :title="props.title" :account="props.account" @modal-status="modalStatus" />
     </div>
 </dialog>

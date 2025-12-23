@@ -145,149 +145,128 @@
             // 將 message 傳給 Setting.vue 
 
             if(opObj.status){
+                // 通知 Finance.vue 儲存成功, 並關閉 SettingFinance Modal
                 emit('modalStatus', "SAVE_SUCCESS", opObj.message); // Emitting the event with data
             }else{
+                // 通知 Finance.vue 儲存失敗, 並關閉 SettingFinance Modal
                 emit('modalStatus', "SAVE_FAIL", opObj.message); // Emitting the event with data
             }
         });
     }   
     // 關閉 setting modal
     function closeSettingModal(){
+        // 通知 Finance.vue 關閉 SettingFinance Modal
         emit('modalStatus', "CLOSE", ""); // Emitting the event with data
     }
 </script>
 
 <template>
 
-    <div class="w-10/10 flex flex-col">
+    <div class="w-1/1 flex flex-col overflow-y-auto">
         <div class="divider divider-warning">
             買房
         </div>
-        <div class="w-10/10 md:w-5/10">
-            <label class="label">目標房價</label>
-            <input type="number" min="0" class="input" placeholder="0" v-model="finance.house.target" />
+        <div class="w-1/1 flex flex-row gap-2">
+            <label class="label flex-none">目標房價:</label>
+            <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.house.target" />
         </div>
 
         <div class="divider divider-error">
-            信貸
+            台新信貸
         </div>
-        <div class="w-10/10 md:w-8/10 flex flex-row">
-            <div class="w-5/10">
-                <label class="label">目標</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.credit.target" />
-            </div>
-            <div class="w-5/10">
-                <label class="label">剩餘</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.credit.remain" />
-            </div>
+        <div class="w-1/1 flex flex-row gap-2">
+            <label class="label flex-none">剩餘款項:</label>
+            <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.credit.remain" />
         </div>
 
-        <div class="divider divider-success">存款</div>
         <div class="divider divider-success">
             存款速度( 以 3 個月為一期 )
         </div>
-        <div class="w-10/10 md:w-8/10 flex flex-row">
-            <div class="w-5/10">
-                <label class="label">台幣/期</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_Speed.value1" />
+        <div class="w-1/1 flex flex-col md:flex-row">
+            <div class="w-1/1 md:w-1/2 flex flex-row gap-1">
+                <label class="label flex-none">台幣/期:</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_Speed.value1" />
             </div>
-            <div class="w-5/10">
-                <label class="label">股息/期</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_Speed.value2" />
+            <div class="w-1/1 md:w-1/2 flex flex-row gap-1">
+                <label class="label flex-none">股息/期:</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_Speed.value2" />
             </div>
         </div>
 
         <div class="divider divider-success">
-            存款( TWD )
+            存款
         </div>
-        <div class="w-10/10 md:w-5/10 flex flex-row">
-            <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_TWD.value" />
-        </div>
-
-        <div class="divider divider-success">
-            存款( USD )
-        </div>
-        <div class="w-10/10 md:w-8/10 flex flex-row">
-            <div class="w-5/10">
-                <label class="label">保險價值</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_USD_insurance.value" />
-            </div>
-            <div class="w-5/10">
-                <label class="label">匯率</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_USD_insurance.currency" />
-            </div>
-        </div>
-        <div class="w-10/10 md:w-8/10 flex flex-row">
-            <div class="w-5/10">
-                <label class="label">定存價值</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_USD_fixed.value" />
-            </div>
-            <div class="w-5/10">
-                <label class="label">匯率</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.deposit_USD_fixed.currency" />
-            </div>
+        <div class="w-1/1 flex flex-row gap-2">
+            <label class="label flex-none">存款( TWD )</label>
+            <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_TWD.value" />
         </div>
 
-        <div class="divider divider-neutral">
-            存股
-        </div>
-        <div class="divider divider-neutral">
-            0056.TW
-        </div>
-        <div class="w-10/10 md:w-8/10 flex flex-row">
-            <div class="w-5/10">
-                <label class="label">股數</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.stock_tw0056.num" />
+        <div class="divider"></div>
+        <div class="w-1/1 flex flex-row gap-1">
+            <div class="w-2/3 flex flex-row gap-1">
+                <label class="label flex-none">保險( USD ):</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_USD_insurance.value" />
             </div>
-            <div class="w-5/10">
-                <label class="label">單價</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.stock_tw0056.price" />
+            <div class="w-1/3 flex flex-row gap-1">
+                <label class="label flex-none">匯率:</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_USD_insurance.currency" />
+            </div>
+        </div>
+        <div class="w-1/1 flex flex-row gap-1">
+            <div class="w-2/3 flex flex-row gap-1">
+                <label class="label flex-none">定存( USD ):</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_USD_fixed.value" />
+            </div>
+            <div class="w-1/3 flex flex-row gap-1">
+                <label class="label flex-none">匯率:</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_USD_fixed.currency" />
             </div>
         </div>
 
         <div class="divider divider-neutral">
-            00878.TW
+            存股: 0056.TW
         </div>
-        <div class="w-10/10 md:w-8/10 flex flex-row">
-            <div class="w-5/10">
-                <label class="label">股數</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.stock_tw00878.num" />
+        <div class="w-1/1 flex flex-row gap-1">
+            <div class="w-1/2 flex flex-row gap-1">
+                <label class="label flex-none">股數:</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_tw0056.num" />
             </div>
-            <div class="w-5/10">
-                <label class="label">單價</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.stock_tw00878.price" />
+            <div class="w-1/2 flex flex-row gap-1">
+                <label class="label flex-none">單價:</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_tw0056.price" />
             </div>
         </div>
 
         <div class="divider divider-neutral">
-            00919.TW
+            存股: 00878.TW
         </div>
-        <div class="w-10/10 md:w-8/10 flex flex-row">
-            <div class="w-5/10">
-                <label class="label">股數</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.stock_tw00919.num" />
+        <div class="w-1/1 flex flex-row gap-1">
+            <div class="w-1/2 flex flex-row gap-1">
+                <label class="label flex-none">股數:</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_tw00878.num" />
             </div>
-            <div class="w-5/10">
-                <label class="label">單價</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.stock_tw00919.price" />
+            <div class="w-1/2 flex flex-row gap-1">
+                <label class="label flex-none">單價:</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_tw00878.price" />
             </div>
         </div>
 
-        <div class="divider">
+        <div class="divider divider-neutral">
             奈米投
         </div>
-        <div class="w-10/10 md:w-8/10 flex flex-row">
-            <div class="w-5/10">
-                <label class="label">USD</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.stock_nano.value" />
+        <div class="w-1/1 flex flex-row gap-1">
+            <div class="w-1/2 flex flex-row gap-1">
+                <label class="label flex-none">USD</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_nano.value" />
             </div>
-            <div class="w-5/10">
-                <label class="label">匯率</label>
-                <input type="number" min="0" class="input" placeholder="0" v-model="finance.stock_nano.currency" />
+            <div class="w-1/2 flex flex-row gap-1">
+                <label class="label flex-none">匯率</label>
+                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_nano.currency" />
             </div>
         </div>
     </div>
-    <div class="w-1/1 flex flex-row mt-5 gap-2">
+    <div class="divider divider-primary"></div>
+    <div class="w-1/1 flex flex-row gap-2">
         <button class="btn bg-gray-900 text-gray-100 hover:bg-blue-200 hover:text-gray-900 w-1/2 " @click="closeSettingModal">
             關閉
         </button>
