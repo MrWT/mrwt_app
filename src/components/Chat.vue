@@ -9,7 +9,7 @@
         title: String,
         account: String,
         user_role: String,
-    })
+    });
 
     onMounted(() => {
         console.log("Chat mounted.");

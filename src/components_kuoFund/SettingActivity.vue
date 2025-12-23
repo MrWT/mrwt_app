@@ -150,7 +150,7 @@
                 <input type="text" class="input w-10/10" placeholder="" v-model="manual.memo" />
             </label>
         </div>
-         <button class="btn btn-neutral w-10/10 md:w-5/10" @click="new_manual_page">
+        <button class="btn btn-neutral w-10/10 md:w-5/10" @click="new_manual_page">
             NEW
         </button>
     </div>
