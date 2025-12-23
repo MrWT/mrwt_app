@@ -3,6 +3,8 @@
     import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
 
+    import SettingFinance from '@/components_kuoFund/SettingFinance.vue'
+
     const emit = defineEmits(['popupMessage']);
     const props = defineProps({
         title: String,
@@ -15,7 +17,6 @@
         init();
     });
 
-    let userRole = ref("");
     let appState = ref("");
 
     let funds_total = ref(0);
@@ -52,13 +53,14 @@
         console.log("Finance.props.title", props.title);
         console.log("Finance.props.account", props.account);
         console.log("Finance.props.user_role", props.user_role);
-        userRole.value = props.user_role;
         
         // 取得初始資料
         fetchInitData();
     }    
     // 取得初始資料
     function fetchInitData(){
+        sel_dataMN.value = "";
+
         //console.log("fetchInitData");
         // 清空結餘
         funds_total.value = 0;
@@ -224,6 +226,7 @@
             opObj.status = values[0]["result"];
             if(values[0]["result"] === true){
                 opObj.message = "失效成功";
+                // 更新資料
                 fetchInitData();
             }else{
                 opObj.message = values[0]["message"];
@@ -278,12 +281,34 @@
             searchStatus.value = "DONE";
         });
     }
+    // 開啟 setting modal
+    function openSettingModal(){
+        document.getElementById("settingModal").showModal();
+    }
+    // 關閉 setting modal
+    function closeSettingModal(){
+        document.getElementById("settingModal").close();
+    }
+    // 給 Setting Modal 使用的 function
+    function modalStatus(opMode, message){
+        if(opMode === "SAVE_SUCCESS"){
+            emit('popupMessage', true, message); // Emitting the event with data
+            // 更新資料
+            fetchInitData();
+        }else if(opMode === "SAVE_FAIL"){
+            emit('popupMessage', false, message); // Emitting the event with data
+        }
+
+        closeSettingModal();
+    }
 
     // 監聽 sel_dataMN
     watch(sel_dataMN, (newDataMN, oldDataMN) => {
         console.log("watch.sel_dataMN.newDataMN=", newDataMN);
 
-        fetchFunds(newDataMN);
+        if(newDataMN){
+            fetchFunds(newDataMN);
+        }
     });
 </script>
 
@@ -292,6 +317,13 @@
 <button class="absolute top-35 right-5 cursor-pointer text-gray-400 hover:text-gray-900" @click="openSearchModal">
     <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
         <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+    </svg>
+</button>
+
+<button v-if="props.user_role === 'admin_kf'" class="absolute top-35 right-15 cursor-pointer text-gray-400 hover:text-gray-900" @click="openSettingModal">
+    <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z"/>
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
     </svg>
 </button>
 
@@ -319,7 +351,7 @@
             <time class="text-base opacity-50">{{ fundObj.date }}</time>
         </div>
         <div class="chat-bubble">
-            <span v-if="userRole === 'admin_kf' && todayMN <= sel_dataMN" class="mr-2 font-black text-red-900 cursor-pointer" @click="popupDelConfirmModal(fundObj)">X</span>
+            <span v-if="props.user_role === 'admin_kf' && todayMN <= sel_dataMN" class="mr-2 font-black text-red-900 cursor-pointer" @click="popupDelConfirmModal(fundObj)">X</span>
             $ {{ new Intl.NumberFormat().format( fundObj.money ) }}
             <span v-if="fundObj.memo !== ''">( {{ fundObj.memo }} )</span>
         </div>
@@ -421,6 +453,13 @@
             </div>
         </div>
         <div class="divider divider-primary"></div>
+    </div>
+</dialog>
+
+<!-- setting modal -->
+<dialog id="settingModal" class="modal">
+    <div class="modal-box h-4/5 w-1/1 flex flex-col bg-neutral-100">
+        <SettingFinance :title="props.title" :account="props.account" @modal-status="modalStatus" />
     </div>
 </dialog>
 
