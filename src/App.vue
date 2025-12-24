@@ -386,9 +386,12 @@
     <!-- 功能 component -->
     <div class="navbar bg-yellow-800/50 h-[10px] fixed top-0 left-0 z-[51]">
         <div class="flex-1">
-            <a class="btn rounded-xl bg-transparent border-transparent hover:border-yellow-900 hover:shadow-3xl text-xl" @click="gotoPage('gallery')">
+            <a v-if="userInfo.account && userInfo.account.toUpperCase() !== 'KUOFAMILY'" class="btn rounded-xl bg-transparent border-transparent hover:border-yellow-900 hover:shadow-3xl text-xl" @click="gotoPage('gallery')">
                 <span>{{ appSetting.title }}</span>
             </a>
+            <span v-if="userInfo.account && userInfo.account.toUpperCase() === 'KUOFAMILY'">
+                {{ appSetting.title }}
+            </span>
         </div>
         <div class="flex-none">
             <ul class="menu menu-horizontal bg-slate-200/100 rounded-box w-10/10">
