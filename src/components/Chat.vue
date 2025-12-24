@@ -25,6 +25,7 @@
     let userMessage = ref("");
     let chatMode = ref("聊天");
     let chatState = ref("TALKING");
+    let functionBarStatus = ref("OPEN");
     // 聊天室 UUID
     let chat_room_uuid = ref("INIT");
     let messages = reactive([]);
@@ -435,6 +436,10 @@
         closePromptModal();
         closeSettingModal();
     }
+    // 開啟/關閉 function bar
+    function toggleFunctionBar(){
+        functionBarStatus.value = functionBarStatus.value === "OPEN" ? "CLOSE" : "OPEN"; 
+    }
 
     // 監聽
     watch(promptAction, (newValue, oldValue) => {
@@ -473,24 +478,36 @@
 
     <!-- function button bar -->
     <div class="w-1/1 shadow-2xl flex flex-col bg-white rounded-xl">
-        <div class="w-1/1 flex flex-row gap-1 p-1 overflow-x-auto">
-            <label>
-                模式:
-            </label>
-            <label>
-                <input type="radio" value="聊天" v-model="chatMode" />
-                聊天
-            </label>
-            <label>
-                <input type="radio" value="翻譯日文" v-model="chatMode" />
-                翻譯日文
-            </label>
-            <label>
-                <input type="radio" value="翻譯韓文" v-model="chatMode" />
-                翻譯韓文
-            </label>
+        <div class="w-1/1 flex flex-row gap-1 p-1 items-center">
+            <div class="flex-1 flex flex-row gap-1 p-1 overflow-x-auto items-center">
+                <label>
+                    模式:
+                </label>
+                <label>
+                    <input type="radio" value="聊天" v-model="chatMode" />
+                    聊天
+                </label>
+                <label>
+                    <input type="radio" value="翻譯日文" v-model="chatMode" />
+                    翻譯日文
+                </label>
+                <label>
+                    <input type="radio" value="翻譯韓文" v-model="chatMode" />
+                    翻譯韓文
+                </label>
+            </div>
+            <div class="flex-none items-center">
+                <a class="cursor-pointer" @click="toggleFunctionBar">
+                    <svg v-if="functionBarStatus === 'OPEN'" class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/>
+                    </svg>
+                    <svg v-if="functionBarStatus === 'CLOSE'" class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                    </svg>
+                </a>
+            </div>
         </div>
-        <div class="w-1/1 flex flex-row">
+        <div v-if="functionBarStatus === 'OPEN'" class="w-1/1 flex flex-row">
             <div class="flex-1 p-1">
                 <textarea class="textarea w-1/1 h-1/1 md:h-1/1" v-model="userMessage" placeholder="想說點什麼呢?" :disabled="chatState === 'TALKING'"></textarea>
             </div>
@@ -502,7 +519,7 @@
                 </button>
             </div>
         </div>
-        <div v-if="chatMode === '聊天'" class="w-1/1 flex flex-row gap-1 p-1 overflow-x-auto">
+        <div v-if="chatMode === '聊天' && functionBarStatus === 'OPEN'" class="w-1/1 flex flex-row gap-1 p-1 overflow-x-auto">
             <button class="btn rounded-xl bg-red-300 text-gray-900 hover:bg-blue-300" @click="openNewChatConfirmModal">
                 新對話
             </button>

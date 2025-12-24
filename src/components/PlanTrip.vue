@@ -19,6 +19,7 @@
     let appState = ref("");
     let chatState = ref("TALKING");
     let userMessage = ref("");    
+    let functionBarStatus = ref("OPEN");
     // 聊天室 UUID
     let chat_room_uuid = ref("INIT");
     let messages = reactive([]);
@@ -522,7 +523,6 @@
         let json_onScheduleTrip = JSON.stringify(schObj);
         // 清空先前聊天內容, 並列出已排定的旅行
         replanTrip(json_onScheduleTrip);
-     
     }
     // 開啟 adjust schedule modal
     function openAdjustScheduleModal(){
@@ -532,11 +532,35 @@
     function closeAdjustScheduleModal(){
         document.getElementById("adjustScheduleModal").close();
     }
+    // 開啟 sample modal
+    function openSampleModal(){
+        document.getElementById("sampleModal").showModal();
+    }
+    // 關閉 sample modal
+    function closeSampleModal(){
+        document.getElementById("sampleModal").close();
+    }
+    // 選擇 sample 
+    function selectSample(spObj){
+        console.log("selectSample.spObj=", spObj);
+        // 清空聊天室內容
+        messages.splice(0, messages.length);
+        // 重新 chat
+        chat_room_uuid.value = "INIT";
+        userMessage.value = spObj.content;
+
+        closeSampleModal();
+    }
     // 關閉全部 modal
     function closeAllModal(){
         closeReplanConfirmModal();
         closeSumupModal();
         closeAdjustScheduleModal();
+        closeSampleModal();
+    }
+    // 開啟/關閉 function bar
+    function toggleFunctionBar(){
+        functionBarStatus.value = functionBarStatus.value === "OPEN" ? "CLOSE" : "OPEN"; 
     }
 
 </script>
@@ -546,7 +570,7 @@
 <div class="w-1/1 h-1/1 flex flex-col rounded-xl border p-2 bg-gray-900">
     <!-- function button bar -->
     <div class="w-1/1 shadow-2xl flex flex-col bg-white rounded-xl">
-        <div class="w-1/1 flex flex-row">
+        <div v-if="functionBarStatus === 'OPEN'" class="w-1/1 flex flex-row">
             <div class="flex-1 p-1">
                 <textarea class="textarea w-1/1 h-1/1 md:h-1/1" v-model="userMessage" placeholder="想說點什麼呢?" :disabled="chatState === 'TALKING'"></textarea>
             </div>
@@ -557,19 +581,35 @@
                 </button>
             </div>
         </div>
-        <div class="w-1/1 flex flex-row gap-1 p-1 overflow-x-auto">
-            <button class="btn rounded-xl bg-gray-300 hover:bg-blue-300" @click="remindPlan">
-                回顧聊天
-            </button>
-            <button class="btn rounded-xl bg-stone-300/70 text-black hover:bg-blue-300 hover:text-gray-900" @click="openSumupModal">
-                統整行程
-            </button>
-            <button class="btn rounded-xl bg-stone-400/70 text-black hover:bg-blue-300 hover:text-gray-900" @click="openAdjustScheduleModal">
-                已排定的旅行
-            </button>
-            <button class="btn rounded-xl bg-red-300 text-gray-900 hover:bg-blue-300" @click="openReplanConfirmModal">
-                新對話
-            </button>
+        <div class="w-1/1 flex flex-row gap-1 p-1 overflow-x-auto items-center"
+             :class="{'justify-end': functionBarStatus === 'CLOSE'}">
+            <div v-if="functionBarStatus === 'OPEN'" class="flex-1 flex flex-row gap-1 p-1 overflow-x-auto items-center">
+                <button class="btn rounded-xl bg-red-300 text-gray-900 hover:bg-yellow-300" @click="openReplanConfirmModal">
+                    新對話
+                </button>
+                <button class="btn rounded-xl bg-gray-300 hover:bg-yellow-300" @click="remindPlan">
+                    回顧聊天
+                </button>
+                <button class="btn rounded-xl bg-fuchsia-300 hover:bg-yellow-300" @click="openSampleModal">
+                    選擇範本
+                </button>
+                <button class="btn rounded-xl bg-indigo-300/70 text-black hover:bg-yellow-300 hover:text-gray-900" @click="openSumupModal">
+                    統整行程
+                </button>
+                <button class="btn rounded-xl bg-emerald-400/70 text-black hover:bg-yellow-300 hover:text-gray-900" @click="openAdjustScheduleModal">
+                    已排定的旅行
+                </button>
+            </div>
+            <div class="flex-none p-1 items-center">
+                <a class="cursor-pointer" @click="toggleFunctionBar">
+                    <svg v-if="functionBarStatus === 'OPEN'" class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/>
+                    </svg>
+                    <svg v-if="functionBarStatus === 'CLOSE'" class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                    </svg>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -616,6 +656,34 @@
     </div>
 </div>
 
+<!-- sample modal -->
+<dialog id="sampleModal" class="modal modal-end md:modal-middle">
+    <div class="modal-box h-1/1 w-1/1 flex flex-col bg-neutral-100">
+        <div class="flex flex-col justify-center">
+            <span class="text-xl text-gray-900 text-center">選擇範本</span>
+        </div>
+        <div class="h-7/10 w-10/10 flex flex-col overflow-y-auto gap-2">
+            <div class="divider divider-primary"></div>
+
+            <div class="w-1/1 bg-yellow-100 text-gray-900 p-1 flex flex-col rounded-xl">
+                <div class="text-base md:text-lg">注意!</div>
+                <div class="text-base md:text-lg">選擇範本會清空現有聊天內容!</div>
+            </div>
+
+            <div class="w-1/1 flex flex-col gap-2">
+                <button v-for="(spObj, sp_i) in samplePromptList" class="btn hover:bg-yellow-200" @click="selectSample(spObj)">
+                    <div>{{ spObj.title }}</div>
+                </button>
+            </div>
+        </div>
+        <div class="divider divider-primary"></div>
+        <div class="modal-action">
+            <button class="btn btn-ghost w-1/1 bg-gray-900 text-gray-100 hover:bg-gray-100 hover:text-gray-900" @click="closeSampleModal">
+                關閉
+            </button>
+        </div>
+    </div>
+</dialog>
 
 <!-- adjust schedule modal -->
 <dialog id="adjustScheduleModal" class="modal modal-end md:modal-middle">
