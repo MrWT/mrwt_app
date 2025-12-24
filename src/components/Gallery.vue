@@ -3,11 +3,6 @@
     import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
 
-    import { gsap } from "gsap"
-    import { DrawSVGPlugin } from "gsap/DrawSVGPlugin"
-    import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
-    import { getRandomNumber } from "@/composables/random"
-
     const emit = defineEmits(['popupMessage']);
     const props = defineProps({
         title: String,
@@ -27,41 +22,40 @@
 
     });
 
-    let appState = ref("");
     let yesterday = ref("");
     let topicList = reactive([]);
     let topicBgColorCount = ref(10);
     let newsList = reactive({});
 
-    let countryOptions = reactive([
-        "台灣",
-        "韓國",
-        "日本",
-        "中國",
-        "美國",
-        "國際",
-    ]);
-    let dataSourceOptions = reactive([
+    let dsOptions_health = reactive([
         "康健雜誌", 
         "heho健康", 
+    ]);
+    let dsOptions_normal = reactive([
         "經濟日報",
         "自由時報", 
         "聯合報", 
         "三立新聞網", 
         "TVBS新聞網", 
+    ]);
+    let dsOptions_sport = reactive([
         "Yahoo 奇摩運動",
+    ]);
+    let dsOptions_car = reactive([
         "CARNEWS車訊網", 
         "U-CAR", 
         "國王車訊", 
         "小老婆汽機車資訊網",
-        "交通部中央氣象署",
     ]);
+
     let selTopicObj = reactive({
         id: "",
         key: "",
         desc: "",
         seq: "",
         prompt: "",
+        prompt_start_date: "",
+        prompt_end_date: "",
         data_source: "",
         dataSourceList: [],
         max_news_count: "",
@@ -79,9 +73,10 @@
         kind: "",
         seq: "",
         prompt: "",
+        prompt_start_date: moment().format("YYYY-MM-DD"),
+        prompt_end_date: moment().format("YYYY-MM-DD"),
         data_source: "",
         dataSourceList: [],
-        country: "台灣",
         max_news_count: "",
     });
 
@@ -93,82 +88,11 @@
         console.log("gallery.props.cname=", props.cname);
         console.log("gallery.props.user_role=", props.user_role);
         console.log("gallery.props.focus_news_topic=", props.focus_news_topic);
-        if(props.account && props.user_role){
-            appState.value = props.account === "KUOFAMILY" || props.user_role === "admin_kf" ? "k_funds" : "normal";
-        }
 
         yesterday.value = moment().add(-1, "d").format("YYYY-MM-DD");
 
-        if(appState.value === "k_funds"){
-            initGsap();
-        }else{
-            fetchInitData();
-        }
+        fetchInitData();
     }    
-    // 初始化 - 動畫效果
-    function initGsap(){
-        gsap.registerPlugin(DrawSVGPlugin);
-        gsap.registerPlugin(MotionPathPlugin);
-
-        // 候選顏色
-        let candidateColors = ["green", "blue", "purple", "gold", "peru", "blanchedalmond", "blueviolet", "goldenrod"];
-        let durations = [];
-        for(let d_i = 0; d_i < 10; d_i++){
-            durations.push( getRandomNumber(10, 20)/10 );
-        }
-
-        setTimeout(() => {
-            let tl_back = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
-            let tl_word = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
-
-            for(let c_i = 0; c_i < candidateColors.length; c_i++){
-                // 郭字背景
-                tl_back.to("#" + "kuoBack", {
-                    id: "tween_" + "kuoBack",
-                    duration: getRandomNumber(30, 40)/10,
-                    background: candidateColors[c_i],
-                    ease: "bounce.inOut",
-                });
-
-                // 郭字
-                tl_word.to("#" + "kuoWord", {
-                    id: "tween_" + "kuoWord",
-                    duration: getRandomNumber(20, 30)/10,
-                    color: candidateColors[ candidateColors.length - 1 - c_i],
-                    //ease: "bounce.inOut",
-                });
-            }
-
-            // 玩 SVG
-            let tl_path = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
-            let tl_circle = gsap.timeline({ yoyo: true, repeat: -1, repeatDelay: 3, });
-            {
-                tl_path.from("#myPath", {
-                    drawSVG: false, 
-                    duration: 2, 
-                    repeat: -1,
-                    repeatDelay: 3,
-                    yoyo: true,
-                    ease: "power1.inOut"
-                });
-                for(let c_i = 1; c_i <= 5; c_i++){
-                    tl_circle.to("#myCircle" + c_i, {
-                        duration: 2, 
-                        repeat: -1,
-                        repeatDelay: 3,
-                        yoyo: true,
-                        ease: "power1.inOut",
-                        motionPath:{
-                            path: "#myPath",
-                            align: "#myPath",
-                            autoRotate: true,
-                            alignOrigin: [0.5, 0.5]
-                        }
-                    });
-                }
-            }
-        }, 100);
-    }
     // 取得初始資料 - 取得新聞資訊
     function fetchInitData(){
         // 清空資料
@@ -193,6 +117,8 @@
                     kind: topicObj["kind"],
                     time: topicObj["time"],
                     prompt: topicObj["prompt"],
+                    prompt_start_date: topicObj["prompt_start_date"],
+                    prompt_end_date: topicObj["prompt_end_date"],
                     data_source: topicObj["data_source"],
                     max_news_count: topicObj["max_news_count"],
                     seq: topicObj["seq"],
@@ -243,7 +169,7 @@
                     }
                 });
 
-                //console.log("new_userFocusTopic=" + new_userFocusTopic);
+                console.log("new_userFocusTopic=" + new_userFocusTopic);
                 let fetchPromise_setUserTopic = fetchData({
                     api: "set_user_topic",
                     data: {
@@ -266,6 +192,8 @@
                 selTopicObj["seq"] = theTopic["seq"];
                 selTopicObj["time"] = theTopic["time"];
                 selTopicObj["prompt"] = theTopic["prompt"];
+                selTopicObj["prompt_start_date"] = theTopic["prompt_start_date"];
+                selTopicObj["prompt_end_date"] = theTopic["prompt_end_date"];
                 selTopicObj["data_source"] = theTopic["data_source"];
                 selTopicObj["dataSourceList"] = theTopic["data_source"].split(",");
                 selTopicObj["max_news_count"] = theTopic["max_news_count"];
@@ -277,6 +205,8 @@
                 setTopicObj["kind"] = theTopic["kind"];
                 setTopicObj["seq"] = theTopic["seq"];
                 setTopicObj["prompt"] = theTopic["prompt"];
+                setTopicObj["prompt_start_date"] = theTopic["prompt_start_date"];
+                setTopicObj["prompt_end_date"] = theTopic["prompt_end_date"];
                 setTopicObj["data_source"] = theTopic["data_source"];
                 setTopicObj["dataSourceList"] = theTopic["data_source"].split(",");
                 setTopicObj["max_news_count"] = theTopic["max_news_count"];
@@ -403,11 +333,23 @@
     function combineSetting(){
         setTopicObj.data_source = setTopicObj.dataSourceList.join(",");
 
-        let prompt = "";
-        prompt += "'" + setTopicObj.dataSourceList.join(" / ") + "'的"
-        prompt += setTopicObj.country;
-        prompt += setTopicObj.kind + "資訊";
-        prompt += "( 最多" + setTopicObj.max_news_count + "則摘要 )";
+        // 檢查 prompt date 順序
+        {
+            let prompt_stDate = setTopicObj.prompt_start_date.replace(/-/g, "");
+            let prompt_edDate = setTopicObj.prompt_end_date.replace(/-/g, "");
+
+            if(parseInt(prompt_stDate) > parseInt(prompt_edDate)){
+                let tmp_date = setTopicObj.prompt_start_date;
+                setTopicObj.prompt_start_date = setTopicObj.prompt_end_date;
+                setTopicObj.prompt_end_date = tmp_date;
+            }
+        }
+        
+        let prompt = "幫我收集以下資料, 並以條列式呈現資料\n";
+        prompt += "<資料主題>" + setTopicObj.kind + "</資料主題>\n";
+        prompt += "<時間>(台灣時間)" + setTopicObj.prompt_start_date + "~" + setTopicObj.prompt_end_date + "</時間>\n";
+        prompt += "<資料來源>" + setTopicObj.dataSourceList.join(" / ") + "</資料來源>\n";
+        prompt += "<最多則數>" + setTopicObj.max_news_count + "<最多則數>\n";
         setTopicObj.prompt = prompt;
     }
     // 檢查 setting 內容
@@ -444,6 +386,7 @@
         let checkRst = checkSetting();
         if(checkRst.result){
             backToBlock();
+            closeModal_setting();
             // 更新主題新聞取得資料條件
             let fetchPromise_updPrompt = fetchData({
                 api: "update_topic_prompt",
@@ -451,7 +394,6 @@
             });
             Promise.all([fetchPromise_updPrompt]).then((values) => {
                 console.log("fetchPromise_updPrompt.values=", values);
-                closeModal_setting();
                 // 請 AI 重新取得指定 topic 的新聞資料
                 reDownloadSpecifyTopic(setTopicObj.key);
             });
@@ -463,8 +405,8 @@
 </script>
 
 <template>
-    <!-- 一般使用者 -->
-    <div v-if="appState === 'normal' && topicList.length > 0 && selTopicIndex === -1" 
+    <!-- 訂閱設定 -->
+    <div v-if="topicList.length > 0 && selTopicIndex === -1" 
         class="text-3xl w-1/1 bg-zinc-500/50 rounded-lg mb-2 text-end p-1">
         <button v-if="!setSubscribe" class="btn btn-ghost rounded-xl hover:bg-yellow-200 group" @click="toggleSubscribe">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -483,8 +425,9 @@
             </span>
         </button>
     </div>
-
-    <div v-if="appState === 'normal'" class="w-1/1 overflow-y-auto"
+    
+    <!-- 主題方塊 & 資料清單 -->
+    <div class="w-1/1 overflow-y-auto"
         :class="{'h-11/12': selTopicIndex === -1, 'h-1/1': selTopicIndex > -1 && !setSubscribe }">
         <!-- 主題方塊 -->
         <div v-if="selTopicIndex === -1" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
@@ -655,86 +598,121 @@
 
     <!-- setting modal -->
     <dialog id="settingModal" class="modal modal-top">
-        <div class="modal-box h-5/6 w-1/1 md:w-1/2 md:h-1/1 flex flex-col bg-neutral-100">
-            <div class="flex flex-col justify-center">
-                <span class="text-xl text-gray-900 text-center">{{ setTopicDesc }}</span>
-                <div class="divider divider-primary"></div>
+        <div class="modal-box h-1/1 w-1/1 md:w-1/2 flex flex-col bg-neutral-100">
+            <div class="w-1/1 text-center text-xl text-gray-900">
+                目前方塊名稱: {{ setTopicDesc }}
             </div>
-            <div class="h-1/1 w-1/1 flex flex-col overflow-y-auto gap-4 md:gap-1">
-                <div class="w-1/1 h-1/1 flex flex-col gap-3">
-                    <div class="w-1/1 flex flex-col">
-                        <span class="w-1/1 bg-zinc-200/50 p-2">
-                            方塊名稱(呈現在方塊的名稱):
+            <div class="divider divider-primary"></div>
+
+            <div class="h-1/1 w-1/1 flex flex-col overflow-y-auto gap-2">
+                <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
+                    <span class="w-1/1 text-white">
+                        方塊名稱:
+                    </span>
+                    <input type="text" class="w-1/1 border rounded-xl bg-white px-2" v-model="setTopicObj.desc" @keyup="combineSetting" />
+                </div>
+                <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
+                    <span class="w-1/1 text-white">
+                        資料主題:
+                    </span>
+                    <input type="text" class="w-1/1 border rounded-xl bg-white px-2" v-model="setTopicObj.kind" @keyup="combineSetting" />
+                </div>
+                <div class="w-1/1 flex flex-col bg-gray-300 rounded-xl p-2 gap-2">
+                    <span class="w-1/1 text-black">
+                        資料來源:
+                    </span>
+                    <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
+                        <span class="w-1/1 text-white">
+                            資料來源-健康類:
                         </span>
-                        <input type="text" class="w-1/1 border" v-model="setTopicObj.desc" @keyup="combineSetting" />
-                    </div>
-                    <div class="w-1/1 flex flex-col">
-                        <span class="w-1/1 bg-rose-200/50 p-2">
-                            新聞區域:
-                        </span>
-                        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1">
-                            <label v-for="(option, option_i) in countryOptions">
-                                <input type="radio" :value="option" v-model="setTopicObj.country" @change="combineSetting" />
-                                {{ option }}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="w-1/1 flex flex-col">
-                        <span class="w-1/1 bg-rose-200/50 p-2">
-                            新聞分類:
-                        </span>
-                        <input type="text" class="w-1/1 border" v-model="setTopicObj.kind" @keyup="combineSetting" />
-                    </div>
-                    <div class="w-1/1 flex flex-col">
-                        <span class="w-1/1 bg-rose-200/50 p-2">
-                            資料來源:
-                        </span>
-                        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1">
-                            <label v-for="(option, option_i) in dataSourceOptions">
+                        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1 bg-white rounded-xl p-2">
+                            <label v-for="(option, option_i) in dsOptions_health">
                                 <input type="checkbox" :value="option" v-model="setTopicObj.dataSourceList" @change="combineSetting" />
                                 {{ option }}
                             </label>
                         </div>
                     </div>
-                    <div class="w-1/1 flex flex-col">
-                        <span class="w-1/1 bg-rose-200/50 p-2">
-                            最多則數:
+                    <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
+                        <span class="w-1/1 text-white">
+                            資料來源-一般類:
                         </span>
-                        <div class="w-1/1">
-                            <input type="range" min="1" max="10" value="10" class="range w-1/1" step="1" v-model="setTopicObj.max_news_count" @change="combineSetting" />
-                            <div class="flex justify-between px-2.5 mt-2 text-xs">
-                                <span>1</span>
-                                <span>2</span>
-                                <span>3</span>
-                                <span>4</span>
-                                <span>5</span>
-                                <span>6</span>
-                                <span>7</span>
-                                <span>8</span>
-                                <span>9</span>
-                                <span>10</span>
-                            </div>
+                        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1 bg-white rounded-xl p-2">
+                            <label v-for="(option, option_i) in dsOptions_normal">
+                                <input type="checkbox" :value="option" v-model="setTopicObj.dataSourceList" @change="combineSetting" />
+                                {{ option }}
+                            </label>
                         </div>
                     </div>
-                    <div class="w-1/1 flex flex-col">
-                        <span class="w-1/1 bg-rose-200/50 p-2">
-                            預覽要給予 AI 的指令:
+                    <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
+                        <span class="w-1/1 text-white">
+                            資料來源-運動類:
                         </span>
-                        <textarea class="w-1/1 h-1/1 border" disabled>{{ setTopicObj.prompt }}</textarea>
+                        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1 bg-white rounded-xl p-2">
+                            <label v-for="(option, option_i) in dsOptions_sport">
+                                <input type="checkbox" :value="option" v-model="setTopicObj.dataSourceList" @change="combineSetting" />
+                                {{ option }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
+                        <span class="w-1/1 text-white">
+                            資料來源-汽/機車類:
+                        </span>
+                        <div class="w-1/1 grid grid-cols-2 md:grid-cols-3 gap-1 bg-white rounded-xl p-2">
+                            <label v-for="(option, option_i) in dsOptions_car">
+                                <input type="checkbox" :value="option" v-model="setTopicObj.dataSourceList" @change="combineSetting" />
+                                {{ option }}
+                            </label>
+                        </div>
                     </div>
                 </div>
+                <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
+                    <span class="w-1/1 text-white">
+                        最多則數: {{ setTopicObj.max_news_count }} 則
+                    </span>
+                    <div class="w-1/1">
+                        <input type="range" min="1" max="10" value="10" class="range w-1/1" step="1" v-model="setTopicObj.max_news_count" @change="combineSetting" />
+                        <div class="flex justify-between px-2.5 mt-2 text-xs text-white">
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                            <span>6</span>
+                            <span>7</span>
+                            <span>8</span>
+                            <span>9</span>
+                            <span>10</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
+                    <span class="w-1/1 text-white">
+                        查詢日期:
+                    </span>
+                    <div class="w-1/1 flex flex-row gap-2">
+                        <input type="date" class="border rounded-xl bg-white flex-1 px-2" v-model="setTopicObj.prompt_start_date" @change="combineSetting" />
+                        <span class="flex-none text-white">~</span>
+                        <input type="date" class="border rounded-xl bg-white flex-1 px-2" v-model="setTopicObj.prompt_end_date" @change="combineSetting" />
+                    </div>
+                </div>
+                <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
+                    <span class="w-1/1 text-white">
+                        預覽要給予 AI 的指令:
+                    </span>
+                    <textarea class="w-1/1 h-80 border rounded-xl bg-white p-2" disabled>{{ setTopicObj.prompt }}</textarea>
+                </div>
             </div>
+
             <div class="divider divider-primary"></div>
             <div class="modal-action">
-                <button class="btn btn-ghost bg-gray-900 text-gray-100 hover:bg-gray-100 hover:text-gray-900 w-1/2" 
-                        @click="closeModal_setting">
+                <button class="btn bg-gray-900 text-gray-100 hover:bg-yellow-300 hover:text-gray-900 w-1/2" @click="closeModal_setting">
                     <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                     </svg>
                     關閉
                 </button>
-                <button class="btn btn-ghost bg-gray-300 hover:bg-blue-300 w-1/2"
-                        @click="saveSetting">
+                <button class="btn bg-gray-200 text-gray-900 hover:bg-yellow-300 w-1/2" @click="saveSetting">
                     <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m4 6 2 2 4-4m4-8v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
                     </svg>
@@ -747,20 +725,6 @@
         </form>
     </dialog>
 
-    <!-- 郭家基金 - 使用者 -->
-    <div v-if="appState === 'k_funds'" id="kuoBack" class="w-10/10 h-10/10 flex flex-col justify-center items-center bg-gray-950">
-        <div id="kuoWord" class="text-9xl text-yellow-500">{{ "郭" }}</div>
-
-        <svg width="300" height="100" viewBox="0 0 300 100">
-            <path id="myPath" d="M0 0 Q150 100,300 0" fill="none" stroke="#88ce02" stroke-width="3px" />
-            <circle id="myCircle1" cx="0" cy="0" r="10" fill="#88ce02" />
-            <circle id="myCircle2" cx="0" cy="0" r="10" fill="#88ce02" />
-            <circle id="myCircle3" cx="0" cy="0" r="10" fill="#88ce02" />
-            <circle id="myCircle4" cx="0" cy="0" r="10" fill="#88ce02" />
-            <circle id="myCircle5" cx="0" cy="0" r="10" fill="#88ce02" />
-        </svg>
-    </div>
-    
 </template>
 
 <style scoped>
