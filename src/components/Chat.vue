@@ -452,6 +452,18 @@
     watch(promptType, (newValue, oldValue) => {
         combinePrompt();
     });
+    watch(chatMode, (newValue, oldValue) => {
+        console.log("watch.chatMode.newValue=" + newValue);
+
+        if(newValue === "聊天"){
+            newChat();
+        }else{
+            // 關閉再確認 modal
+            closeNewChatConfirmModal();
+            // 清空對話錄
+            messages.splice(0, messages.length);
+        }
+    });
 
 </script>
 
@@ -461,6 +473,23 @@
 
     <!-- function button bar -->
     <div class="w-1/1 shadow-2xl flex flex-col bg-white rounded-xl">
+        <div class="w-1/1 flex flex-row gap-1 p-1 overflow-x-auto">
+            <label>
+                模式:
+            </label>
+            <label>
+                <input type="radio" value="聊天" v-model="chatMode" />
+                聊天
+            </label>
+            <label>
+                <input type="radio" value="翻譯日文" v-model="chatMode" />
+                翻譯日文
+            </label>
+            <label>
+                <input type="radio" value="翻譯韓文" v-model="chatMode" />
+                翻譯韓文
+            </label>
+        </div>
         <div class="w-1/1 flex flex-row">
             <div class="flex-1 p-1">
                 <textarea class="textarea w-1/1 h-1/1 md:h-1/1" v-model="userMessage" placeholder="想說點什麼呢?" :disabled="chatState === 'TALKING'"></textarea>
@@ -483,20 +512,6 @@
             <button class="btn rounded-xl bg-gray-900 text-white hover:bg-blue-300 hover:text-black" @click="openPromptModal">
                 提詞機
             </button>
-        </div>
-        <div class="w-1/1 flex flex-row gap-1 p-1 overflow-x-auto">
-            <label>
-                <input type="radio" value="聊天" v-model="chatMode" />
-                聊天
-            </label>
-            <label>
-                <input type="radio" value="翻譯日文" v-model="chatMode" />
-                翻譯日文
-            </label>
-            <label>
-                <input type="radio" value="翻譯韓文" v-model="chatMode" />
-                翻譯韓文
-            </label>
         </div>
     </div>
 
