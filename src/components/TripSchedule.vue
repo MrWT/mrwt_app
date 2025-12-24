@@ -354,12 +354,13 @@
 
 <!-- removeConfirm modal -->
 <dialog id="removeConfirmModal" class="modal">
-    <div class="modal-box h-5/10 w-10/10 flex flex-col bg-neutral-500">
-        <div class="h-2/10 w-10/10 text-center text-gray-100 font-black">
+    <div class="modal-box h-5/10 w-10/10 flex flex-col bg-gray-200">
+        <div class="h-2/10 w-10/10 text-center text-gray-900 font-black">
             <span class="text-2xl">刪除前, 再跟您確認一次~</span>
-            <div class="divider divider-error"></div>
         </div>
-        <div class="h-3/10 w-10/10 text-left text-xl text-gray-100 flex flex-col p-2">
+        <div class="divider divider-error"></div>
+
+        <div class="h-3/10 w-10/10 text-left text-xl text-gray-900 flex flex-col p-2">
             <div>
                 目的地: {{ selRemove_destination }}
             </div>
@@ -367,13 +368,14 @@
                 日期: {{ selRemove_trip_start_date }} - {{ selRemove_trip_end_date }}
             </div>
         </div>
+
         <div class="divider divider-error"></div>
-        <div class="modal-action">
-            <button class="btn btn-ghost w-1/2 text-gray-100 hover:bg-gray-100 hover:text-gray-900 hover:underline" @click="closeRemoveConfirmModal">
+        <div class="modal-action gap-2 px-5">
+            <button class="btn w-1/2 bg-gray-900 text-gray-200 hover:bg-yellow-200 hover:text-gray-900" @click="closeRemoveConfirmModal">
                 取消
             </button>
 
-            <button class="btn btn-ghost w-1/2 text-gray-100 hover:bg-gray-100 hover:text-gray-900 hover:underline" @click="removeTrip">
+            <button class="btn w-1/2 bg-gray-400 text-gray-900 hover:bg-yellow-200 " @click="removeTrip">
                 確認
             </button>
         </div>
