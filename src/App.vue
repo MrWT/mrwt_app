@@ -16,6 +16,7 @@
     import Recollection from './components/Recollection.vue'
     import Achievement from './components/Achievement.vue'
     import PopupMessage from './components/PopupMessage.vue'
+    import SettingPersonal from './components/SettingPersonal.vue'
 
     // 郭家基金相關 component - 先寄生於此專案, 待成熟後, 再分家出去
     import QA from './components_kuoFund/QA.vue'
@@ -356,6 +357,24 @@
             document.getElementById("alertMsg").classList.add("hidden");
         }, 5000);
     }
+    // 開啟 set user data modal
+    function openSetUserDataModal(){
+        document.getElementById("setUserDataModal").showModal();
+    }
+    // 關閉 set user data modal
+    function closeSetUserDataModal(){
+        document.getElementById("setUserDataModal").close();
+    }
+    // 給 set user data Modal 使用的 function
+    function modalStatus(opMode, message){
+        if(opMode === "SAVE_SUCCESS"){
+            popupMessage(true, message);
+        }else if(opMode === "SAVE_FAIL"){
+            popupMessage(false, message);
+        }
+
+        closeSetUserDataModal();
+    }
 
 </script>
 
@@ -455,16 +474,23 @@
             <li class="text-white text-lg">{{ userInfo.cname }}</li>
             <li v-if="userInfo.mail" class="text-white text-lg">{{ userInfo.mail }}</li>
             <div class="divider divider-primary"></div>
-            <li class="flex flex-row gap-2 w-10/10">
-                <button class="btn w-10/10" @click="signout">
+            <li class="flex flex-row gap-2 w-1/1 px-2">
+                <button class="btn w-1/2 hover:bg-yellow-300 text-black" @click="openSetUserDataModal">
+                    <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z"/>
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                    </svg>
+                    {{ "設定資料" }}
+                </button>
+                <button class="btn w-1/2 hover:bg-yellow-300 text-black" @click="signout">
                     <span v-if="userInfo.account">
                         {{ userInfo.languages["signout"] }}
                     </span>
-                    <svg v-if="userInfo.account" class="w-6 h-6 text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <svg v-if="userInfo.account" class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H8m12 0-4 4m4-4-4-4M9 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h2"/>
                     </svg>
 
-                    <svg v-if="!userInfo.account" class="w-6 h-6 text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <svg v-if="!userInfo.account" class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12H4m12 0-4 4m4-4-4-4m3-4h2a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-2"/>
                     </svg>
                     <span v-if="!userInfo.account">
@@ -476,6 +502,12 @@
         <form method="dialog" class="modal-backdrop">
             <button>close</button>
         </form>
+    </dialog>
+    <!-- set user data modal -->
+    <dialog v-if="userInfo.account" id="setUserDataModal" class="modal modal-top">
+        <div class="modal-box bg-white rounded-box p-2 w-1/1 h-4/5">
+            <SettingPersonal :account="userInfo.account" @modal-status="modalStatus" />
+        </div>
     </dialog>
 
     <PopupMessage id="alertMsg" class="hidden z-[999]" :status="opObj.status" :message="opObj.message" />

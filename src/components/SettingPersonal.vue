@@ -3,15 +3,13 @@
     import moment from 'moment'
     import { fetchData } from "@/composables/fetchData"
 
-    const emit = defineEmits(['popupMessage']);
+    const emit = defineEmits(['modalStatus']);
     const props = defineProps({
-        app_state: String,
-        title: String,
         account: String,
     })
 
     onMounted(() => {
-        console.log("Setting_Personal mounted.");
+        console.log("SettingPersonal mounted.");
         init();
     });
 
@@ -35,14 +33,12 @@
 
     // 初始化 component
     function init(){
-        //console.log("Setting_Personal.init");
-        //console.log("props.app_state", props.app_state);
-        //console.log("props.title", props.title);
-        //console.log("props.account", props.account);
+        console.log("SettingPersonal.init");
+        console.log("props.account=" + props.account);
 
+        // 取得使用者個人資料
         fetchUser();
-    }
-    
+    }    
     // 取得使用者個人資料
     function fetchUser(){
         let fetchUserPromise = fetchData({
@@ -86,52 +82,64 @@
         });
         Promise.all([saveUserPromise]).then((values) => {
             console.log("saveUserPromise.values=", values);
-            
-            let opObj = {
-                status: true,
-                message: "",
-            };
 
-            opObj.status = values[0]["result"];
             if(values[0]["result"] === true){
-                opObj.message = "儲存成功";
-                // 更新資料
-                fetchUser();
+                // 將 message 傳給 App.vue 
+                emit('modalStatus', "SAVE_SUCCESS", "儲存成功( 重新登入後, UI 上的個人資料才會換新 )"); // Emitting the event with data
             }else{
-                opObj.message = values[0]["message"];
+                // 將 message 傳給 App.vue 
+                emit('modalStatus', "SAVE_FAIL", values[0]["message"]); // Emitting the event with data
             }
-            // 將 message 傳給 Setting.vue 
-            emit('popupMessage', opObj.status, opObj.message); // Emitting the event with data
         });
+    }
+    // 跟 parent 說, 把我關閉
+    function closeModal(){
+        // 將 message 傳給 App.vue 
+        emit('modalStatus', "CLOSE", ""); // Emitting the event with data
     }
 </script>
 
 <template>
 
-    <div class="flex w-10/10 flex-col place-items-center gap-5">
-        <div class="w-10/10 md:w-5/10">
-            <label class="label mr-1">Name: </label><br />
-            <input type="text" class="input" v-model="userObj.name" />
+    <div class="w-1/1 text-center text-3xl">
+        個人資料設定
+    </div>
+    <div class="divider divider-primary"></div>
+
+    <div class="w-1/1 flex flex-col gap-2 p-5">
+        <div class="w-1/1 flex flex-row gap-2">
+            <label class="label flex-none">姓名:</label>
+            <input type="text" class="input flex-1" v-model="userObj.name" />
         </div>
-        <div class="w-10/10 md:w-5/10">
-            <label class="label mr-1">Mail: </label><br />
-            <input type="text" class="input" v-model="userObj.mail" />
+
+        <div class="w-1/1 flex flex-row gap-2">
+            <label class="label flex-none">Mail:</label>
+            <input type="text" class="input flex-1" v-model="userObj.mail" />
         </div>
-        <div class="w-10/10 md:w-5/10">
-            <label class="label mr-1">Language: </label><br />
-            <label v-for="option in languageRadioParam.options" :key="option.value" class="mr-2">
-                <input type="radio" class="radio" :value="option.value" :name="languageRadioParam.radioGroupName" v-model="languageRadioParam.selectedOption">
-                {{ option.label }}
-            </label>
+
+        <div class="w-1/1 flex flex-row gap-2">
+            <label class="label flex-none">App 名稱: </label>
+            <input type="text" class="input flex-1" v-model="userObj.app_title" />
         </div>
-        <div class="w-10/10 md:w-5/10">
-            <label class="label mr-1">App Title: </label><br />
-            <input type="text" class="input" v-model="userObj.app_title" />
+
+        <div class="w-1/1 flex flex-col">
+            <label class="label">慣用語言:</label>
+            <div class="w-1/1 flex flex-row gap-2">
+                <label v-for="option in languageRadioParam.options" :key="option.value">
+                    <input type="radio" class="radio" :value="option.value" :name="languageRadioParam.radioGroupName" v-model="languageRadioParam.selectedOption">
+                    {{ option.label }}
+                </label>
+            </div>
         </div>
     </div>
-    <div class="w-10/10 flex flex-col md:flex-row-reverse mt-5 justify-center">
-        <button class="btn btn-neutral w-10/10 md:w-5/10" @click="saveUser">
-            save
+
+    <div class="divider divider-primary"></div>
+    <div class="w-1/1 flex flex-row gap-2 px-10">
+        <button class="btn bg-gray-900 text-gray-100 hover:bg-yellow-200 hover:text-gray-900 w-1/2" @click="closeModal">
+            關閉
+        </button>
+        <button class="btn bg-gray-200 text-gray-900 w-1/2 hover:bg-yellow-200" @click="saveUser">
+            儲存
         </button>
     </div>
 
