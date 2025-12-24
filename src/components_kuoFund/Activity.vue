@@ -16,7 +16,6 @@
         init();
     });
 
-    let isBuilding = ref(true);
     let appState = ref("");
 
     let selActivityMonth = ref("");
@@ -29,10 +28,10 @@
 
     let annoucement = reactive({
         thoughts: [
-            "莫忘世上苦人多, 一起愛大眾",
-            "馬路如虎口, 一起愛自己",
-            "又過了一年, 一起愛家人",
-            "詞窮, 就是一起愛地球",
+            "一起做公益",
+            "一起 do something...",
+            "又過了一年, 一起聚聚",
+            "一起...",
             "一緒に...",
             "같이...",
         ],
@@ -43,22 +42,17 @@
                 time: "即日起", 
             }, 
             { 
-                title: "一起愛大眾(公益捐贈)", 
+                title: "一起做公益(公益捐贈)", 
                 memo: "(預計)透過「臺南市政府公益平台」或是其他公益團體", 
                 time: "(預計)2026/02( 農曆年前 )", 
             }, 
             { 
-                title: "一起愛地球(淨灘)", 
-                memo: "(預計)參與南部淨灘團體活動", 
-                time: "(預計)2026/04( 世界地球日422 )", 
-            },
-            { 
-                title: "一起愛自己(交通安全)", 
-                memo: "(預計)與「YAMAHA 親子機車教室」合作", 
-                time: "(預計)2026/06 或 2026/07", 
+                title: "一起 do something", 
+                memo: "(預計)...", 
+                time: "(預計)...", 
             }, 
             { 
-                title: "一起愛家人(中秋烤肉活動)", 
+                title: "一起聚聚(中秋烤肉活動)", 
                 memo: "土城烤肉歡聚", 
                 time: "(預計)2026/09/26( 晚 )", 
             }, 
@@ -77,19 +71,12 @@
         get_activity_months();
         
         // 發出 annoucement
-        if(props.user_role !== "admin_kf"){
+        {
             let now_date = moment().format("YYYY-MM-DD");
             if(props.annouce_period_start && props.annouce_period_start <= now_date 
               && props.annouce_period_end && now_date <= props.annouce_period_end ){
                 openAnnouceModal();
             }
-
-            if(props.annouce_period_start && props.annouce_period_start <= now_date){
-                isBuilding.value = false;
-            }
-        }else{
-            openAnnouceModal();
-            isBuilding.value = false;
         }
     }   
     // 取得活動月份
@@ -185,7 +172,7 @@
 
 <template>
 
-<div v-if="isBuilding === false" class="w-1/1 overflow-x-auto overflow-y-hidden flex flex-row gap-2 shadow-3xl mb-5">
+<div class="w-1/1 overflow-x-auto overflow-y-hidden flex flex-row gap-2 shadow-3xl mb-5">
     <button v-for="(am, am_i) in activityMonthList" @click="sel_activity_month(am)"
         class="btn btn-ghost rounded-none border-0 border-b-2 hover:border-rose-500"
         :class="{'border-amber-600': am === selActivityMonth, 'border-gray-500': am !== selActivityMonth}">
@@ -193,7 +180,7 @@
     </button>
 </div>
 
-<div v-if="isBuilding === false" class="w-1/1 h-9/10 flex flex-col gap-2 overflow-y-auto">
+<div class="w-1/1 h-9/10 flex flex-col gap-2 overflow-y-auto">
     <div class="w-1/1 h-3/10 p-1">
         <div class="w-1/1 flex flex-col font-black rounded-2xl sticky top-0"
             :class="{
@@ -232,17 +219,6 @@
                 <img :src="pageObj.src" :alt="pageObj.alt" class="w-fit" />
             </div>
         </div>
-    </div>
-</div>
-
-<div v-if="isBuilding === true" class="w-10/10 h-9/10 flex flex-col gap-2 mt-5">
-    <div class="w-1/1 h-1/2 justify-items-center">
-        <svg class="size-full text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15v3c0 .5523.44772 1 1 1h4v-4m-5 0v-4m0 4h5m-5-4V6c0-.55228.44772-1 1-1h16c.5523 0 1 .44772 1 1v1.98935M3 11h5v4m9.4708 4.1718-.8696-1.4388-2.8164-.235-2.573-4.2573 1.4873-2.8362 1.4441 2.3893c.3865.6396 1.2183.8447 1.8579.4582.6396-.3866.8447-1.2184.4582-1.858l-1.444-2.38925h3.1353l2.6101 4.27715-1.0713 2.5847.8695 1.4388"/>
-        </svg>
-    </div>
-    <div class="w-1/1 text-center text-5xl">
-        活動規劃中
     </div>
 </div>
 
@@ -285,9 +261,6 @@
                                 </span>
                             </span>
                             <br /><br />
-                            也期待透過這些活動, <br />
-                            試著留給郭家孩子一生受用的好觀念, <br />
-                            讓郭家的孩子們, 健康成長, 快樂茁壯. <br />
                             透過大家的力量, 匯聚小愛, 發揮大愛 !<br />
                         </p>
                     </div>
