@@ -394,7 +394,7 @@
             </span>
         </div>
         <div class="flex-none">
-            <ul class="menu menu-horizontal bg-slate-200/100 rounded-box w-10/10">
+            <ul class="menu menu-horizontal bg-slate-200/100 rounded-box w-1/1">
                 <!-- readme -->
                 <li @click="gotoPage('readme')">
                     <a class="tooltip tooltip-bottom" :data-tip="userInfo.languages.readme">
@@ -419,7 +419,7 @@
     </div>
     <!-- 功能 menu -->
     <div class="navbar shadow-lg h-[10px] fixed top-15 left-0 z-50 flex flex-row justify-start content-center gap-5 overflow-x-auto overflow-y-hidden">
-        <button v-for="(fbObj, fb_i) in appSetting.funButtons" class="btn btn-soft btn-primary text-black font-black rounded-md hover:bg-violet-200/30" 
+        <button v-for="(fbObj, fb_i) in appSetting.funButtons" class="btn btn-soft btn-primary text-gray-500 font-black rounded-md hover:bg-violet-200/30 hover:text-gray-900" 
                 :class="{'bg-violet-200/50':appSetting.contentComponent === fbObj.key, 'btn-ghost': appSetting.contentComponent !== fbObj.key}" 
                 @click="gotoPage(fbObj.key)">
             {{ fbObj.display_text }}

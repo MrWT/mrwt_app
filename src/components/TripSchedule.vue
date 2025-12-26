@@ -269,7 +269,7 @@
 
 <div class="w-1/1 h-1/1">
     <ul v-if="scheduleList.length > 0" class="list rounded-box shadow-md">
-        <li v-for="(sObj, s_i) in scheduleList" class="list-row hover:bg-yellow-100">
+        <li v-for="(sObj, s_i) in scheduleList" class="list-row hover:bg-yellow-100 items-center">
             <div class="text-4xl font-thin opacity-30 tabular-nums">{{ ((s_i + 1) < 10 ? "0" : "") + (s_i + 1) }}</div>
             <div class="list-col-grow">
                 <div class="text-lg">
@@ -277,16 +277,16 @@
                 </div>
                 <div class="text-md uppercase font-semibold">{{ sObj.trip_start_date }} - {{ sObj.trip_end_date }}</div>
             </div>
-            <button class="btn btn-square btn-ghost text-red-900" title="刪除規劃" @click="openRemoveConfirmModal(sObj)">
+            <a class="cursor-pointer text-red-500 hover:text-red-900" title="刪除規劃" @click="openRemoveConfirmModal(sObj)">
                 <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                 </svg>
-            </button>
-            <button class="btn btn-square btn-ghost" title="規劃內容" @click="openTripDetailModal(sObj)">
+            </a>
+            <a class="cursor-pointer text-gray-500 hover:text-gray-900" title="規劃內容" @click="openTripDetailModal(sObj)">
                 <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
                 </svg>
-            </button>
+            </a>
         </li>
     </ul>
     <div class="w-1/1 text-center bg-gray-300">

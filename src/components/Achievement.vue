@@ -171,23 +171,23 @@
             待解鎖清單
         </li>
 
-        <li v-for="(naObj, na_i) in nonAchieveEvents" class="list-row">
+        <li v-for="(naObj, na_i) in nonAchieveEvents" class="list-row items-center">
             <div class="text-4xl font-thin opacity-30 tabular-nums">
                 {{ ((na_i+1) < 10 ? "0" : "") + (na_i+1) }}
             </div>
             <div class="list-col-grow text-xl">
                 <div>{{ naObj.description }}</div>
             </div>
-            <button class="btn btn-square btn-ghost text-red-900 bg-white hover:text-white hover:bg-red-900" @click="openDeleteModal(naObj)">
-                <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <a class="text-red-500 hover:text-red-900 cursor-pointer" @click="openDeleteModal(naObj)">
+                <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
                 </svg>
-            </button>
-            <button class="btn btn-square btn-ghost text-black bg-white hover:text-white hover:bg-black" @click="openEditModal(naObj)">
-                <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            </a>
+            <a class="text-gray-500 hover:text-gray-900 cursor-pointer" @click="openEditModal(naObj)">
+                <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
                 </svg>
-            </button>
+            </a>
         </li>
     </ul>
     <!-- 已解鎖清單 -->
@@ -197,7 +197,7 @@
             已解鎖清單
         </li>
 
-        <li v-for="(aeObj, ae_i) in achieveEvents" class="list-row">
+        <li v-for="(aeObj, ae_i) in achieveEvents" class="list-row items-center">
             <div class="text-4xl font-thin opacity-30 tabular-nums">
                 {{ ((ae_i+1) < 10 ? "0" : "") + (ae_i+1) }}
             </div>
@@ -205,16 +205,16 @@
                 <div>{{ aeObj.description }}</div>
                 <div class="text-base">{{ aeObj.achieve_time }}</div>
             </div>
-            <button class="btn btn-square btn-ghost text-red-900 bg-white hover:text-white hover:bg-red-900" @click="openDeleteModal(aeObj)">
-                <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <a class="text-red-500 hover:text-red-900 cursor-pointer" @click="openDeleteModal(aeObj)">
+                <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
                 </svg>
-            </button>
-            <button class="btn btn-square btn-ghost text-black bg-white hover:text-white hover:bg-black" @click="openEditModal(aeObj)">
-                <svg class="size-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            </a>
+            <a class="text-gray-500 hover:text-gray-900 cursor-pointer" @click="openEditModal(aeObj)">
+                <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
                 </svg>
-            </button>
+            </a>
         </li>
     </ul>
 </div>
