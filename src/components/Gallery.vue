@@ -268,12 +268,12 @@
         selTopicObj["desc"] = "";
         selTopicObj["seq"] = "";
     }
-    // 請 AI 重新取得指定 topic 的新聞資料
+    // 請 AI 重新取得指定 topic 的資料
     function reDownloadSpecifyTopic(topic_key){
         console.log("reDownloadSpecifyTopic.topic_key=", topic_key);
         reDlTopicKey.value = topic_key;
 
-        // 請 AI 重新取得指定 topic 的新聞資料
+        // 請 AI 重新取得指定 topic 的資料
         let reDownloadPromise = fetchData({
             api: "fetch_daily_news",
             data: {
@@ -304,6 +304,15 @@
                 }
             }
         });
+    }
+    // 請 AI 重新取得指定 topic 的當天資料
+    function reDownloadSpecifyTopic_today(topic_key){
+        console.log("reDownloadSpecifyTopic_today.topic_key=", topic_key);
+
+        setTopicObj.prompt_start_date = moment().format("YYYY-MM-DD");
+        setTopicObj.prompt_end_date = moment().format("YYYY-MM-DD");
+        combineSetting();
+        saveSetting();
     }
     // 另外搜尋新聞相關 keyword
     function browseNewsKeyword(selNewsObj){
@@ -433,7 +442,7 @@
         <div v-if="selTopicIndex === -1" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
             <!-- 主題選單 -->
             <div v-for="(topicObj, topic_i) in topicList" 
-                class="h-50 cursor-pointer rounded-2xl text-2xl text-center content-center" 
+                class="h-50 cursor-pointer rounded-2xl grid grid-cols-1 place-items-center gap-1" 
                 :class="{
                     'bg-gray-200/70 text-gray-500': setSubscribe && !topicObj.sel || reDlTopicKey === topicObj.key,
                     'hidden': !setSubscribe && !topicObj.sel,
@@ -449,20 +458,32 @@
                     'bg-rose-200/80': topicObj.sel && topic_i % topicBgColorCount === 9, 
                 }"                
                 @click="selectTopic(topicObj, topic_i)" >
-                {{ topicObj.desc }}
-                <span>
-                    <br /><span class="text-xs">( {{ topicObj.time }} )</span>
-                </span>
-                <span v-if="reDlTopicKey === topicObj.key">
-                    <br /><span class="loading loading-infinity loading-xl"></span>
-                </span>
-                <!-- 設定訂閱時, 才會出現 -->
-                <span v-if="setSubscribe && !topicObj.sel" class="text-base">
-                    <br />{{ "( 按一下完成訂閱 )" }}
-                </span>
-                <span v-if="setSubscribe && topicObj.sel" class="text-base">
-                    <br />{{ "( 按一下取消訂閱 )" }}
-                </span>
+                <div class="w-1/1 text-2xl text-center">
+                    {{ topicObj.desc }}
+                </div>
+                <div class="w-1/1 text-center text-sm">
+                    <div v-if="topicObj.prompt_start_date === topicObj.prompt_end_date && !setSubscribe" class="flex flex-row md:flex-col justify-center gap-1">
+                        <span>資料時間:</span>
+                        <span>{{ topicObj.prompt_end_date }}</span>
+                    </div>
+                    <div v-if="topicObj.prompt_start_date !== topicObj.prompt_end_date && !setSubscribe" class="flex flex-row md:flex-col justify-center gap-1">
+                        <span>資料時間:</span>
+                        <span>{{ topicObj.prompt_start_date }}</span>
+                        <span class="md:hidden">~</span>
+                        <span>{{ topicObj.prompt_end_date }}</span>
+                    </div>
+
+                    <!-- downloading -->
+                    <span v-if="reDlTopicKey === topicObj.key" class="loading loading-infinity loading-xl"></span>
+
+                    <!-- 設定訂閱時, 才會出現 -->
+                    <span v-if="setSubscribe && !topicObj.sel" class="text-base">
+                        {{ "( 按一下完成訂閱 )" }}
+                    </span>
+                    <span v-if="setSubscribe && topicObj.sel" class="text-base">
+                        {{ "( 按一下取消訂閱 )" }}
+                    </span>
+                </div>
             </div>
         </div>
         <!-- 新聞清單 -->
@@ -489,24 +510,35 @@
                             <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                             </svg>
-                            {{ selTopicObj.time }}
+                            <span v-if="selTopicObj.prompt_start_date === selTopicObj.prompt_end_date">
+                                {{ selTopicObj.prompt_end_date }}
+                            </span>
+                            <span v-if="selTopicObj.prompt_start_date !== selTopicObj.prompt_end_date">
+                                {{ selTopicObj.prompt_start_date }} ~ {{ selTopicObj.prompt_end_date }}
+                            </span>
                         </div>
                     </div> 
                 </div>
                 <div class="flex-none flex flex-row gap-5">
-                    <a class="hover:bg-transparent hover:cursor-pointer hover:text-zinc-500" title="返回清單" @click="backToBlock">
+                    <a class="text-gray-500 cursor-pointer hover:text-gray-900" title="返回清單" @click="backToBlock">
                         <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"/>
                         </svg>
                     </a>
-                    <a class="hover:bg-transparent hover:cursor-pointer hover:text-zinc-500" title="設定來源" @click="openModal_setting(selTopicObj)">
+                    <a class="text-gray-500 cursor-pointer hover:text-gray-900" title="設定來源" @click="openModal_setting(selTopicObj)">
                         <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
                         </svg>
                     </a>
-                    <a class="hover:bg-transparent hover:cursor-pointer hover:text-zinc-500" title="重新下載" @click="reDownloadSpecifyTopic(selTopicObj.key)">
+                    <a class="text-gray-500 cursor-pointer hover:text-gray-900" title="重新下載資料" @click="reDownloadSpecifyTopic(selTopicObj.key)">
                         <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
+                        </svg>
+                    </a>
+                    <a class="text-gray-500 cursor-pointer hover:text-gray-900" title="重新下載當天資料" @click="reDownloadSpecifyTopic_today(selTopicObj.key)">
+                        <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
                         </svg>
                     </a>
                 </div>
@@ -581,12 +613,29 @@
                 <div class="list-col-grow">
                     <div class="bg-gray-200 text-black text-lg flex flex-row items-center">                        
                         <div class="flex-1 text-center ">
-                            <div>{{ "點擊'下載', 重新下載'新聞清單'" }}</div>
+                            <div>{{ "點擊'下載', 重新下載資料" }}</div>
                         </div>
                         <div class="flex-none">
-                            <button class="btn btn-ghost hover:bg-transparent" title="重新下載" @click="reDownloadSpecifyTopic(selTopicObj.key)">
+                            <button class="btn btn-ghost hover:bg-transparent" title="重新下載資料" @click="reDownloadSpecifyTopic(selTopicObj.key)">
                                 <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="list-row">
+                <div class="list-col-grow">
+                    <div class="bg-gray-200 text-black text-lg flex flex-row items-center">                        
+                        <div class="flex-1 text-center ">
+                            <div>{{ "點擊'下載', 重新下載當天資料" }}</div>
+                        </div>
+                        <div class="flex-none">
+                            <button class="btn btn-ghost hover:bg-transparent" title="重新下載當天資料" @click="reDownloadSpecifyTopic_today(selTopicObj.key)">
+                                <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
                                 </svg>
                             </button>
                         </div>
