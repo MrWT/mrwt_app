@@ -411,28 +411,59 @@
             emit('popupMessage', false, checkRst.message); // Emitting the event with data
         }
     }
+    // 開啟 prompt date modal
+    function openModal_promptDate(){
+        console.log("openModal_promptDate.setTopicObj=", setTopicObj);
+        document.getElementById("promptDateModal").showModal();
+    }
+    // 關閉 prompt date modal
+    function closeModal_promptDate(){
+        document.getElementById("promptDateModal").close();
+    }
+    // 儲存 prompt date
+    function savePromptDate(){
+        // 組合給予 AI 的指令
+        combineSetting();
+        console.log("saveSetting.setTopicObj=", setTopicObj);
+
+        {
+            backToBlock();
+            closeModal_promptDate();
+            // 更新主題新聞取得資料條件
+            let fetchPromise_updPrompt = fetchData({
+                api: "update_topic_prompt",
+                data: setTopicObj
+            });
+            Promise.all([fetchPromise_updPrompt]).then((values) => {
+                console.log("fetchPromise_updPrompt.values=", values);
+                // 請 AI 重新取得指定 topic 的新聞資料
+                reDownloadSpecifyTopic(setTopicObj.key);
+            });
+        }
+    }
+
 </script>
 
 <template>
     <!-- 訂閱設定 -->
     <div v-if="topicList.length > 0 && selTopicIndex === -1" 
-        class="text-3xl w-1/1 bg-zinc-500/50 rounded-lg mb-2 text-end p-1">
-        <button v-if="!setSubscribe" class="btn btn-ghost rounded-xl hover:bg-yellow-200 group" @click="toggleSubscribe">
+        class="text-lg w-1/1 bg-transparent rounded-lg mb-2 text-end p-1">
+        <a v-if="!setSubscribe" class="cursor-pointer rounded-xl text-gray-500 hover:text-gray-900 group flex flex-row justify-end items-center" @click="toggleSubscribe">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 4v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2m6-16v2m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v10m6-16v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2"/>
             </svg>
             <span class="md:hidden group-hover:md:block">
                 訂閱調整
             </span>
-        </button>
-        <button v-if="setSubscribe" class="btn btn-ghost rounded-xl hover:bg-yellow-200 group" @click="toggleSubscribe">
+        </a>
+        <a v-if="setSubscribe" class="cursor-pointer rounded-xl text-gray-500 hover:text-gray-900 group flex flex-row justify-end items-center" @click="toggleSubscribe">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-6 7 2 2 4-4m-5-9v4h4V3h-4Z"/>
             </svg>
             <span class="md:hidden group-hover:md:block">
                 完成調整
             </span>
-        </button>
+        </a>
     </div>
     
     <!-- 主題方塊 & 資料清單 -->
@@ -530,15 +561,9 @@
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
                         </svg>
                     </a>
-                    <a class="text-gray-500 cursor-pointer hover:text-gray-900" title="重新下載資料" @click="reDownloadSpecifyTopic(selTopicObj.key)">
+                    <a class="text-gray-500 cursor-pointer hover:text-gray-900" title="重新下載資料" @click="openModal_promptDate">
                         <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
-                        </svg>
-                    </a>
-                    <a class="text-gray-500 cursor-pointer hover:text-gray-900" title="重新下載當天資料" @click="reDownloadSpecifyTopic_today(selTopicObj.key)">
-                        <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
-                            <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
                         </svg>
                     </a>
                 </div>
@@ -579,65 +604,48 @@
             </li>
             <li class="list-row">
                 <div class="list-col-grow">
-                    <div class="bg-gray-200 text-black text-lg flex flex-row items-center">                        
+                    <div class="bg-gray-200 text-black text-lg flex flex-row items-center p-2 rounded-xl">                        
                         <div class="flex-1 text-center ">
                             <div>{{ "點擊'方塊', 返回'清單'" }}</div>
                         </div>
                         <div class="flex-none">
-                            <button class="btn btn-ghost hover:bg-transparent" title="主題清單" @click="backToBlock">
+                            <a class="cursor-pointer text-gray-500 hover:text-gray-900" title="主題清單" @click="backToBlock">
                                 <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"/>
                                 </svg>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             </li>
             <li class="list-row">
                 <div class="list-col-grow">
-                    <div class="bg-gray-200 text-black text-lg flex flex-row items-center">                        
+                    <div class="bg-gray-200 text-black text-lg flex flex-row items-center p-2 rounded-xl">                        
                         <div class="flex-1 text-center ">
                             <div>{{ "點擊'鉛筆', 設定新聞來源條件" }}</div>
                         </div>
                         <div class="flex-none">
-                            <button class="btn btn-ghost hover:bg-transparent" title="設定內容" @click="openModal_setting(selTopicObj)">
+                            <a class="cursor-pointer text-gray-500 hover:text-gray-900" title="設定內容" @click="openModal_setting(selTopicObj)">
                                 <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
                                 </svg>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             </li>
             <li class="list-row">
                 <div class="list-col-grow">
-                    <div class="bg-gray-200 text-black text-lg flex flex-row items-center">                        
+                    <div class="bg-gray-200 text-black text-lg flex flex-row items-center p-2 rounded-xl">                        
                         <div class="flex-1 text-center ">
                             <div>{{ "點擊'下載', 重新下載資料" }}</div>
                         </div>
                         <div class="flex-none">
-                            <button class="btn btn-ghost hover:bg-transparent" title="重新下載資料" @click="reDownloadSpecifyTopic(selTopicObj.key)">
+                            <a class="cursor-pointer text-gray-500 hover:text-gray-900" title="重新下載資料" @click="openModal_promptDate">
                                 <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
                                 </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="list-row">
-                <div class="list-col-grow">
-                    <div class="bg-gray-200 text-black text-lg flex flex-row items-center">                        
-                        <div class="flex-1 text-center ">
-                            <div>{{ "點擊'下載', 重新下載當天資料" }}</div>
-                        </div>
-                        <div class="flex-none">
-                            <button class="btn btn-ghost hover:bg-transparent" title="重新下載當天資料" @click="reDownloadSpecifyTopic_today(selTopicObj.key)">
-                                <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                    <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
-                                    <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
-                                </svg>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -737,7 +745,7 @@
                 </div>
                 <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
                     <span class="w-1/1 text-white">
-                        查詢日期:
+                        日期區間:
                     </span>
                     <div class="w-1/1 flex flex-row gap-2">
                         <input type="date" class="border rounded-xl bg-white flex-1 px-2" v-model="setTopicObj.prompt_start_date" @change="combineSetting" />
@@ -766,6 +774,48 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m4 6 2 2 4-4m4-8v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
                     </svg>
                     儲存
+                </button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <!-- prompt date modal -->
+    <dialog id="promptDateModal" class="modal">
+        <div class="modal-box h-70 w-1/1 md:w-1/2 flex flex-col bg-neutral-100">
+            <div class="w-1/1 text-center text-xl text-gray-900">
+                重新下載的日期區間
+            </div>
+            <div class="divider divider-primary"></div>
+
+            <div class="h-1/1 w-1/1 flex flex-col overflow-y-auto gap-2">
+                <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
+                    <span class="w-1/1 text-white">
+                        日期區間:
+                    </span>
+                    <div class="w-1/1 flex flex-row gap-2">
+                        <input type="date" class="border rounded-xl bg-white flex-1 px-2" v-model="setTopicObj.prompt_start_date" @change="combineSetting" />
+                        <span class="flex-none text-white">~</span>
+                        <input type="date" class="border rounded-xl bg-white flex-1 px-2" v-model="setTopicObj.prompt_end_date" @change="combineSetting" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider divider-primary"></div>
+            <div class="modal-action">
+                <button class="btn bg-gray-900 text-gray-100 hover:bg-yellow-300 hover:text-gray-900 w-1/2" @click="closeModal_promptDate">
+                    <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                    </svg>
+                    取消
+                </button>
+                <button class="btn bg-gray-200 text-gray-900 hover:bg-yellow-300 w-1/2" @click="savePromptDate">
+                    <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
+                    </svg>
+                    重新下載
                 </button>
             </div>
         </div>
