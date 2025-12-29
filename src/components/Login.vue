@@ -1,7 +1,7 @@
 <script setup>
     import { ref, reactive, onMounted } from 'vue'
     
-    const emit = defineEmits(['signin']);
+    const emit = defineEmits(['signin', 'popupMessage']);
     const props = defineProps({
         title: String,
     })
@@ -19,7 +19,11 @@
     }
     // 登入
     function signin(){
-        emit('signin', account.value.toUpperCase().trim()); // Emitting the event with data
+        if(account.value.toUpperCase().trim()){
+            emit('signin', account.value.toUpperCase().trim()); // Emitting the event with data
+        }else{
+            emit('popupMessage', false, "請提供帳號~~!!"); // Emitting the event with data
+        }
     }
 
 </script>
