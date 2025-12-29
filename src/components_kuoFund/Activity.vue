@@ -245,13 +245,14 @@
                             <br />
                             <span class="font-black text-blue-900">
                                 基金經費目前處於重建階段, <br />
-                                想為基金建立一定的基礎, 試著壯大基金,<br />
-                                也方便後續繼任代管人好應用.
+                                想讓基金能夠建立一定的基礎, 試著壯大基金,<br />
+                                方便後續好應用.
                             </span><br />
                             在這樣的思維下, 這一年我們還可以有什麼方式呢 ?<br />
                             <br />
 
-                            思考了好一陣子後, 心想或許我們還可以這麼做 <br /><br />
+                            今年的活動規劃, 將以小活動為主 <br />
+                            匯聚小愛, 發揮大愛 !<br /><br />
                             <span class="text-rotate text-xl duration-10000 w-1/1">
                                 <span class="w-1/1 justify-items-center ">
                                     <span v-for="(thought, th_i) in annoucement.thoughts" 
@@ -260,8 +261,6 @@
                                     </span>
                                 </span>
                             </span>
-                            <br /><br />
-                            透過大家的力量, 匯聚小愛, 發揮大愛 !<br />
                         </p>
                     </div>
                 </li>
