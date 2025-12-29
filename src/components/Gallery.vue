@@ -441,6 +441,11 @@
             });
         }
     }
+    // 設定 prompt date 為指定日期
+    function setPromptDateToSpecify(startDate, endDate){
+        setTopicObj.prompt_start_date = startDate;
+        setTopicObj.prompt_end_date = endDate;
+    }
 
 </script>
 
@@ -784,14 +789,14 @@
 
     <!-- prompt date modal -->
     <dialog id="promptDateModal" class="modal">
-        <div class="modal-box h-70 w-1/1 md:w-1/2 flex flex-col bg-neutral-100">
+        <div class="modal-box h-100 w-1/1 md:w-1/2 flex flex-col bg-neutral-100">
             <div class="w-1/1 text-center text-xl text-gray-900">
                 重新下載的日期區間
             </div>
             <div class="divider divider-primary"></div>
 
             <div class="h-1/1 w-1/1 flex flex-col overflow-y-auto gap-2">
-                <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
+                <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2 gap-2">
                     <span class="w-1/1 text-white">
                         日期區間:
                     </span>
@@ -799,6 +804,17 @@
                         <input type="date" class="border rounded-xl bg-white flex-1 px-2" v-model="setTopicObj.prompt_start_date" @change="combineSetting" />
                         <span class="flex-none text-white">~</span>
                         <input type="date" class="border rounded-xl bg-white flex-1 px-2" v-model="setTopicObj.prompt_end_date" @change="combineSetting" />
+                    </div>
+                    <div class="w-1/1 flex flex-row gap-2">
+                        <a class="cursor-pointer bg-transparent text-black hover:text-white hover:underline" @click="setPromptDateToSpecify(moment().add(-3, 'd').format('YYYY-MM-DD'), moment().add(-3, 'd').format('YYYY-MM-DD'))">
+                            <span>設定為前天</span>
+                        </a>
+                        <a class="cursor-pointer bg-transparent text-black hover:text-white hover:underline" @click="setPromptDateToSpecify(moment().add(-1, 'd').format('YYYY-MM-DD'), moment().add(-1, 'd').format('YYYY-MM-DD'))">
+                            <span>設定為昨天</span>
+                        </a>
+                        <a class="cursor-pointer bg-transparent text-black hover:text-white hover:underline" @click="setPromptDateToSpecify(moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'))">
+                            <span>設定為今天</span>
+                        </a>
                     </div>
                 </div>
             </div>
