@@ -64,11 +64,8 @@
 
 <template>
 
-<div class="w-1/1">
+<div class="w-1/1 h-1/1 overlow-y-auto flex flex-col gap-2">
     <div class="text-lg">作者簡介</div>
-</div>
-
-<div class="w-1/1 flex flex-col md:flex-row gap-2">
     <div class="w-1/1 md:w-1/3 h-[300px] border border-gray-300 p-5 rounded-box">
         <div class="w-1/1 h-1/1 skeleton">
 
@@ -90,9 +87,8 @@
             <hr />
         </li>
     </ul>
-
+    <div class="divider"></div>
 </div>
-<div class="divider"></div>
 
 </template>
 
