@@ -43,11 +43,15 @@
 <template>
 
     <div class="w-1/1 h-1/1 overflow-y-auto">
+        <div class="w-1/1 flex flex-col p-2 bg-blue-900 text-3xl text-center text-white font-blak rounded-xl sticky top-0 z-[50]">
+            <span>K-Assistant</span>
+            <span>您的資料管理助理</span>
+        </div>
+        <div class="divider divider-primary"></div>
 
         <div class="w-1/1 h-fit p-2 text-2xl text-center text-black bg-yellow-300/50 rounded-ss-xl rounded-se-xl">
             系統架構
         </div>
-
         <div class="flex flex-col w-1/1 h-fit justify-center">
             <div class="divider">Frontend</div>
 
