@@ -268,7 +268,7 @@
 <template>
 
 <div class="w-1/1 h-1/1">
-    <ul v-if="scheduleList.length > 0" class="list rounded-box shadow-md">
+    <ul v-if="scheduleList.length > 0" class="list rounded-box shadow-md h-1/1">
         <li v-for="(sObj, s_i) in scheduleList" class="list-row hover:bg-yellow-100 items-center">
             <div class="text-4xl font-thin opacity-30 tabular-nums">{{ ((s_i + 1) < 10 ? "0" : "") + (s_i + 1) }}</div>
             <div class="list-col-grow">

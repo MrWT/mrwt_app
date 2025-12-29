@@ -452,12 +452,12 @@
 <template>
     <!-- 訂閱設定 -->
     <div v-if="topicList.length > 0 && selTopicIndex === -1" 
-        class="text-lg w-1/1 bg-transparent rounded-lg mb-2 text-end p-1">
+        class="text-lg w-1/1 bg-transparent rounded-lg mb-2 text-end p-1 fixed top-16 right-8">
         <a v-if="!setSubscribe" class="cursor-pointer rounded-xl text-gray-500 hover:text-gray-900 group flex flex-row justify-end items-center" @click="toggleSubscribe">
             <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 4v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2m6-16v2m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v10m6-16v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2"/>
             </svg>
-            <span class="md:hidden group-hover:md:block">
+            <span class="hidden group-hover:block">
                 訂閱調整
             </span>
         </a>
@@ -472,8 +472,7 @@
     </div>
     
     <!-- 主題方塊 & 資料清單 -->
-    <div class="w-1/1 overflow-y-auto"
-        :class="{'h-11/12': selTopicIndex === -1, 'h-1/1': selTopicIndex > -1 && !setSubscribe }">
+    <div class="w-1/1 h-1/1 overflow-y-auto">
         <!-- 主題方塊 -->
         <div v-if="selTopicIndex === -1" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
             <!-- 主題選單 -->

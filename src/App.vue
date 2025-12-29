@@ -383,50 +383,46 @@
     <div id="loading" class="w-full h-full flex justify-center items-center bg-gray-700/70 absolute top-0 left-0 z-[9999]" style="display:none;">
         <span class="loading loading-bars loading-xl"></span>
     </div>
-    <!-- 功能 component -->
-    <div class="navbar bg-yellow-800/50 h-[10px] fixed top-0 left-0 z-[51]">
-        <div class="flex-1">
-            <a v-if="userInfo.account && userInfo.account.toUpperCase() !== 'KUOFAMILY'" class="btn rounded-xl bg-transparent border-transparent hover:border-yellow-900 hover:shadow-3xl text-xl" @click="gotoPage('gallery')">
-                <span>{{ appSetting.title }}</span>
+
+    <div class="navbar bg-base-100 shadow-sm z-[51] sticky top-0">
+        <div class="navbar-start">
+            <div class="dropdown">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /> </svg>
+                </div>
+                <ul tabindex="-1" class="menu menu-sm dropdown-content bg-gray-300 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                    <li v-for="(fbObj, fb_i) in appSetting.funButtons" @click="gotoPage(fbObj.key)" class="rounded-xl hover:bg-gray-900 hover:text-gray-100">
+                        <a class='text-lg'>{{ fbObj.display_text }}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="navbar-center">
+            <a v-if="userInfo.account && userInfo.account.toUpperCase() !== 'KUOFAMILY'" class="cursor-pointer bg-transparent border-0 border-yellow-300 hover:border-b-2" @click="gotoPage('gallery')">
+                <span class="text-2xl">{{ appSetting.title }}</span>
             </a>
-            <span v-if="userInfo.account && userInfo.account.toUpperCase() === 'KUOFAMILY'">
+            <span v-if="userInfo.account && userInfo.account.toUpperCase() === 'KUOFAMILY'" class="text-2xl">
                 {{ appSetting.title }}
             </span>
         </div>
-        <div class="flex-none">
-            <ul class="menu menu-horizontal bg-slate-200/100 rounded-box w-1/1">
-                <!-- readme -->
-                <li @click="gotoPage('readme')">
-                    <a class="tooltip tooltip-bottom" :data-tip="userInfo.languages.readme">
-                        <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                        </svg>
-                    </a>
-                </li>
-                <!-- userInfo -->
-                <li @click="openUserInfoModal">
-                    <a class="tooltip tooltip-bottom" :data-tip="userInfo.languages.user_setting">
-                        <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M4 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4Zm10 5a1 1 0 0 1 1-1h3a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h3a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h3a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1Zm-8-5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm1.942 4a3 3 0 0 0-2.847 2.051l-.044.133-.004.012c-.042.126-.055.167-.042.195.006.013.02.023.038.039.032.025.08.064.146.155A1 1 0 0 0 6 17h6a1 1 0 0 0 .811-.415.713.713 0 0 1 .146-.155c.019-.016.031-.026.038-.04.014-.027 0-.068-.042-.194l-.004-.012-.044-.133A3 3 0 0 0 10.059 14H7.942Z" clip-rule="evenodd"/>
-                        </svg>
-                    </a>
-                </li>
-            </ul>
+        <div class="navbar-end gap-2">
+            <!-- readme -->
+            <a class="cursor-pointer tooltip tooltip-bottom" :data-tip="userInfo.languages.readme" @click="gotoPage('readme')">
+                <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                </svg>
+            </a>
+            <!-- userInfo -->
+            <a class="cursor-pointer tooltip tooltip-bottom" :data-tip="userInfo.languages.user_setting" @click="openUserInfoModal">
+                <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4Zm10 5a1 1 0 0 1 1-1h3a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h3a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h3a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1Zm-8-5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm1.942 4a3 3 0 0 0-2.847 2.051l-.044.133-.004.012c-.042.126-.055.167-.042.195.006.013.02.023.038.039.032.025.08.064.146.155A1 1 0 0 0 6 17h6a1 1 0 0 0 .811-.415.713.713 0 0 1 .146-.155c.019-.016.031-.026.038-.04.014-.027 0-.068-.042-.194l-.004-.012-.044-.133A3 3 0 0 0 10.059 14H7.942Z" clip-rule="evenodd"/>
+                </svg>
+            </a>
         </div>
     </div>
-    <!-- 為了製造出"功能 menu 白霧底效果" -->
-    <div class="navbar bg-white opacity-80 h-[10px] fixed top-15 left-0 z-50">
-    </div>
-    <!-- 功能 menu -->
-    <div class="navbar shadow-lg h-[10px] fixed top-15 left-0 z-50 flex flex-row justify-start content-center gap-5 overflow-x-auto overflow-y-hidden">
-        <button v-for="(fbObj, fb_i) in appSetting.funButtons" class="btn btn-soft btn-primary text-gray-500 font-black rounded-md hover:bg-violet-200/30 hover:text-gray-900" 
-                :class="{'bg-violet-200/50':appSetting.contentComponent === fbObj.key, 'btn-ghost': appSetting.contentComponent !== fbObj.key}" 
-                @click="gotoPage(fbObj.key)">
-            {{ fbObj.display_text }}
-        </button>
-    </div>
+
     <!-- 功能 component -->
-    <div class="p-4 h-8/10 mt-30">
+    <div class="p-4 h-11/12">
         <Gallery v-if="appSetting.contentComponent === 'gallery'" :title="appSetting.title" :account="userInfo.account" :cname="userInfo.cname" :user_role="userInfo.role" :focus_news_topic="userInfo.focus_news_topic" @popup-message="popupMessage" />
         <Readme v-else-if="appSetting.contentComponent === 'readme'" :title="appSetting.title" :reference="appSetting.reference"  @introduce-author="gotoIntroduceAuthor" />
         <Footmark v-else-if="appSetting.contentComponent === 'footmark'" :title="appSetting.title" :account="userInfo.account" :googleMapApiKey="appSetting.googleMapApiKey" @popup-message="popupMessage" />
@@ -471,6 +467,7 @@
             </div>
         </div>
     </dialog>
+
     <!-- userInfo modal -->
     <dialog id="userInfoModal" class="modal">
         <div class="modal-box bg-gray-800/80 rounded-box p-2 w-80 md:w-120">
@@ -506,6 +503,7 @@
             <button>close</button>
         </form>
     </dialog>
+
     <!-- set user data modal -->
     <dialog v-if="userInfo.account" id="setUserDataModal" class="modal modal-top">
         <div class="modal-box bg-white rounded-box p-2 w-1/1 h-4/5">

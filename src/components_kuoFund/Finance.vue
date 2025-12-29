@@ -314,55 +314,61 @@
 
 <template>
 
-<button class="absolute top-35 right-5 cursor-pointer text-gray-400 hover:text-gray-900" @click="openSearchModal">
-    <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
-    </svg>
-</button>
-
-<button v-if="props.user_role === 'admin_kf'" class="absolute top-35 right-15 cursor-pointer text-gray-400 hover:text-gray-900" @click="openSettingModal">
-    <svg class="size-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z"/>
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
-    </svg>
-</button>
-
-<div class="w-1/1 overflow-x-auto overflow-y-hidden shadow-2xl">
-    <button v-for="(f_mn, f_mn_i) in funds_months" @click="clickDataMN(f_mn)"
-                class="btn btn-ghost rounded-none border-0 border-b-2 hover:border-rose-500 mx-1"
-                :class="{'border-amber-600': f_mn === sel_dataMN, 'border-gray-500': f_mn !== sel_dataMN}">
-        {{ f_mn }}
-    </button>
-</div>
-<div class="w-1/1 h-4/6 mt-2 flex flex-col overflow-y-auto">
-    <div v-for="(fundObj, fund_i) in funds" class="chat"
-        :class="{ 'chat-start': fundObj.type === 'IN', 'chat-end': fundObj.type === 'OUT' }">
-        <div class="chat-image avatar">
-            <div class="avatar avatar-placeholder">
-                <div class="w-12 rounded-full"
-                    :class="{'bg-green-900': fundObj.type === 'IN', 'bg-red-900': fundObj.type === 'OUT'}">
-                    <span v-if="fundObj.type === 'IN'" class="text-lg text-white">儲值</span>
-                    <span v-if="fundObj.type === 'OUT'" class="text-lg text-white">提領</span>
-                </div>
+<div class="w-1/1 h-11/12">
+    <div class="flex-none w-1/1 flex flex-col">
+        <div class="w-1/1 flex flex-row">
+            <div class="w-3/4 text-3xl text-center p-2 rounded-xl" 
+                 :class="{'bg-gray-200': funds_total === 0, 'bg-green-200': funds_total > 0, 'bg-red-200': funds_total < 0}">
+                結餘：$ {{ new Intl.NumberFormat().format( funds_total ) }}
+            </div>
+            <div class="w-1/4 flex flex-row justify-end items-center gap-2">
+                <a class="cursor-pointer text-gray-400 hover:text-gray-900" @click="openSearchModal">
+                    <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+                    </svg>
+                </a>
+                <a v-if="props.user_role === 'admin_kf'" class="cursor-pointer text-gray-400 hover:text-gray-900" @click="openSettingModal">
+                    <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z"/>
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                    </svg>
+                </a>
             </div>
         </div>
-        <div class="chat-header">
-            <span class="text-base">{{ fundObj.name }}</span>
-            <time class="text-base opacity-50">{{ fundObj.date }}</time>
-        </div>
-        <div class="chat-bubble">
-            <span v-if="props.user_role === 'admin_kf' && todayMN <= sel_dataMN" class="mr-2 font-black text-red-900 cursor-pointer" @click="popupDelConfirmModal(fundObj)">X</span>
-            $ {{ new Intl.NumberFormat().format( fundObj.money ) }}
-            <span v-if="fundObj.memo !== ''">( {{ fundObj.memo }} )</span>
+        <div class="w-1/1 flex flex-row overflow-x-auto overflow-y-hidden shadow-2xl">
+            <button v-for="(f_mn, f_mn_i) in funds_months" @click="clickDataMN(f_mn)"
+                        class="btn btn-ghost rounded-none border-0 border-b-2 hover:border-rose-500 mx-1"
+                        :class="{'border-amber-600': f_mn === sel_dataMN, 'border-gray-500': f_mn !== sel_dataMN}">
+                {{ f_mn }}
+            </button>
         </div>
     </div>
-    <div v-if="funds.length === 0" class="text-3xl text-center w-1/1">
-        請稍等, 查詢資料中<span class="loading loading-dots loading-xs"></span>
+    <div class="flex-1 w-1/1 h-11/12 flex flex-col overflow-y-auto">
+        <div v-for="(fundObj, fund_i) in funds" class="chat"
+            :class="{ 'chat-start': fundObj.type === 'IN', 'chat-end': fundObj.type === 'OUT' }">
+            <div class="chat-image avatar">
+                <div class="avatar avatar-placeholder">
+                    <div class="w-12 rounded-full"
+                        :class="{'bg-green-900': fundObj.type === 'IN', 'bg-red-900': fundObj.type === 'OUT'}">
+                        <span v-if="fundObj.type === 'IN'" class="text-lg text-white">儲值</span>
+                        <span v-if="fundObj.type === 'OUT'" class="text-lg text-white">提領</span>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-header">
+                <span class="text-base">{{ fundObj.name }}</span>
+                <time class="text-base opacity-50">{{ fundObj.date }}</time>
+            </div>
+            <div class="chat-bubble">
+                <span v-if="props.user_role === 'admin_kf' && todayMN <= sel_dataMN" class="mr-2 font-black text-red-900 cursor-pointer" @click="popupDelConfirmModal(fundObj)">X</span>
+                $ {{ new Intl.NumberFormat().format( fundObj.money ) }}
+                <span v-if="fundObj.memo !== ''">( {{ fundObj.memo }} )</span>
+            </div>
+        </div>
+        <div v-if="funds.length === 0" class="text-3xl text-center w-1/1">
+            請稍等, 查詢資料中<span class="loading loading-dots loading-xs"></span>
+        </div>
     </div>
-</div>
-
-<div class="w-10/10 h-1/6 mt-1 flex flex-col text-3xl justify-center items-center rounded-full shadow-xl" :class="{'bg-gray-200': funds_total === 0, 'bg-green-200': funds_total > 0, 'bg-red-200': funds_total < 0}">
-    結餘：$ {{ new Intl.NumberFormat().format( funds_total ) }}
 </div>
 
 <!-- 失效再確認 -->
@@ -446,19 +452,29 @@
                         </button>
                     </div>
                 </div>
-                <div>&nbsp;</div>
             </div>
+            <div class="divider divider-primary"></div>
             <div class="w-1/1 h-80 p-5">
-                <textarea class="textarea w-1/1 h-1/1" readonly>{{ searchResult }}</textarea>
+                <label class="h-1/1">
+                    查詢結果:
+                    <textarea class="textarea w-1/1 h-4/5" readonly>{{ searchResult }}</textarea>
+                </label>
             </div>
         </div>
-        <div class="divider divider-primary"></div>
     </div>
 </dialog>
 
 <!-- setting modal -->
 <dialog id="settingModal" class="modal">
-    <div class="modal-box h-4/5 w-1/1 flex flex-col bg-neutral-100">
+    <div class="modal-box h-5/6 w-1/1 flex flex-col bg-neutral-100">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
+        <div class="w-1/1 flex flex-col justify-center">
+            <span class="text-xl text-gray-900 text-center">調整帳務</span>
+            <div class="divider divider-primary"></div>
+        </div>
+
         <SettingFinance :title="props.title" :account="props.account" @modal-status="modalStatus" />
     </div>
 </dialog>
