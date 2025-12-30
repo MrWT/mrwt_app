@@ -33,7 +33,7 @@
     <div class="w-1/1 h-1/1 flex flex-col gap-2 place-content-center">
         <div class="w-1/1 h-1/3 border border-2 border-blue-300 bg-blue-900 text-white rounded-xl p-2 flex flex-col justify-center items-center">
             <span class="text-5xl underline px-10">K-Assistant</span>
-            <span class="text-2xl">您的資料管理助理</span>
+            <span class="text-2xl">您的個人助理</span>
         </div>
 
         <div class="w-1/1 flex flex-row items-center gap-2">
