@@ -46,6 +46,8 @@
     let stock_USD = ref(0);
     let stock_LikeTWD = ref(0);
 
+    let usd_currency = ref(0);
+
     let stockTW = reactive({
         totalValue: "",
         totalTWD: "",
@@ -71,14 +73,33 @@
     }
     // 取得使用者個人 finance 資料
     function fetchFinance(){
-        let fetchFinancePromise = fetchData({
+
+        let fetchPromise_currency = fetchData({
+            api: "get_answer",
+            data: {
+                question: "美元兌台幣的匯率, 只給我匯率數字就好",
+            }
+        }, "AI");
+        let fetchPromise_finance = fetchData({
             api: "get_finance",
             data: {
                 account: props.account,
             }
         });
-        Promise.all([fetchFinancePromise]).then((values) => {
-            console.log("fetchFinancePromise.values=", values);
+        Promise.all([fetchPromise_finance, fetchPromise_currency]).then((values) => {
+            console.log("fetchFinance.values=", values);
+
+            let currency = 0;
+            try
+            {
+                let jsonStr_ans = values[1].replace(/```json/g, "");
+                let jsonObj_ans = JSON.parse(jsonStr_ans);
+                currency = parseFloat( jsonObj_ans["answer"] );
+            }
+            catch(ex){
+                currency = 30.0;
+            }
+            usd_currency.value = currency;
 
             let stockDatas_TWD = [];
             let stockData_USD = null;
@@ -101,15 +122,18 @@
                 } else if(finObj["name"] === "stock_nano"){
                     // 奈米投資訊
                     stockData_USD = finObj;
+                    stockData_USD["value2"] = currency;
                 } else if(finObj["name"] === "deposit" && finObj["currency"] === "TWD"){
                     // 台幣存款資訊
                     depositObj_TWD = finObj;
                 } else if(finObj["name"] === "deposit_insurance" && finObj["currency"] === "USD"){
                     // 美金存款資訊 - 保險
                     depositObj_USD_insurance = finObj;
+                    depositObj_USD_insurance["value2"] = currency;
                 } else if(finObj["name"] === "deposit_fixed" && finObj["currency"] === "USD"){
                     // 美金存款資訊 - 定存
                     depositObj_USD_fixed = finObj;
+                    depositObj_USD_fixed["value2"] = currency;
                 } else if(finObj["name"] === "speed"){
                     // 存款速度資訊
                     depositObj_Speed = finObj;
@@ -131,6 +155,7 @@
         let currentValue = depositObj_USD_insurance["value1"] * depositObj_USD_insurance["value2"] 
                         + depositObj_USD_fixed["value1"] * depositObj_USD_fixed["value2"] 
                         + stockData_USD["value1"] * stockData_USD["value2"];
+        currentValue = Math.floor( currentValue );
 
         progressSetting.house.max = 100;
         progressSetting.house.value = Math.floor( currentValue * 100 / (targetValue * 0.3) );
@@ -226,10 +251,11 @@
     }
     // 建立"全球股票"區塊
     function buildStockGlobal(stockData){
-        console.log("buildStockGlobal.stockData=", stockData);
-
+        //console.log("buildStockGlobal.stockData=", stockData);
         stock_USD.value = new Intl.NumberFormat('en-US').format(stockData["value1"]);
-        stock_LikeTWD.value = new Intl.NumberFormat('en-US').format(stockData["value1"] * stockData["value2"]);
+
+        let likeTWD = Math.floor( stockData["value1"] * stockData["value2"] );
+        stock_LikeTWD.value = new Intl.NumberFormat('en-US').format(likeTWD);
     }
     // 建立"台幣存款"區塊
     function buildDepositTWD(depositData){
@@ -239,15 +265,19 @@
     }
     // 建立"美金存款"區塊-保險
     function buildDepositUSD_insurance(depositData){
-        console.log("buildDepositUSD_insurance.depositData=", depositData);
+        //console.log("buildDepositUSD_insurance.depositData=", depositData);
         deposit_USD_insurance.value = new Intl.NumberFormat('en-US').format(depositData["value1"]);
-        deposit_LikeTWD_insurance.value = new Intl.NumberFormat('en-US').format(depositData["value1"] * depositData["value2"]);
+
+        let likeTWD = Math.floor( depositData["value1"] * depositData["value2"] );
+        deposit_LikeTWD_insurance.value = new Intl.NumberFormat('en-US').format(likeTWD);
     }
     // 建立"美金存款"區塊-定存
     function buildDepositUSD_fixed(depositData){
-        console.log("buildDepositUSD_fixed.depositData=", depositData);
+        //console.log("buildDepositUSD_fixed.depositData=", depositData);
         deposit_USD_fixed.value = new Intl.NumberFormat('en-US').format(depositData["value1"]);
-        deposit_LikeTWD_fixed.value = new Intl.NumberFormat('en-US').format(depositData["value1"] * depositData["value2"]);
+
+        let likeTWD = Math.floor( depositData["value1"] * depositData["value2"] );
+        deposit_LikeTWD_fixed.value = new Intl.NumberFormat('en-US').format(likeTWD);
     }
     // 開啟 setting modal
     function openSettingModal(){
@@ -278,7 +308,7 @@
 <div class="flex flex-col w-1/1 h-1/1 gap-2 overflow-y-auto">
     <div v-if="props.user_role === 'admin'" class="flex flex-row justify-end w-1/1 bg-transparent rounded-xl gap-2">
         <a class="text-gray-500 hover:text-gray-900 cursor-pointer fixed top-20 right-8 z-[50]" @click="openSettingModal">
-            <svg class="size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <svg class="size-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z"/>
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
             </svg>
@@ -407,17 +437,17 @@
     <div class="flex flex-col md:flex-row w-10/10 h-10/10 gap-2">
         <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
             <div class="w-10/10 text-2xl">保險 USD: {{ deposit_USD_insurance }}</div>
-            <div class="w-10/10 text-lg">TWD( 1:30 ): {{ deposit_LikeTWD_insurance }}</div>
+            <div class="w-10/10 text-lg">匯率:{{ usd_currency }} / 約 TWD: {{ deposit_LikeTWD_insurance }}</div>
         </div>
 
         <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
             <div class="w-10/10 text-2xl">定存 USD: {{ deposit_USD_fixed }}</div>
-            <div class="w-10/10 text-lg">TWD( 1:30 ): {{ deposit_LikeTWD_fixed }}</div>
+            <div class="w-10/10 text-lg">匯率:{{ usd_currency }} / 約 TWD: {{ deposit_LikeTWD_fixed }}</div>
         </div>
 
         <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
             <div class="w-10/10 text-2xl">奈米投 USD: {{ stock_USD }}</div>
-            <div class="w-10/10 text-lg">TWD( 1:30 ): {{ stock_LikeTWD }}</div>
+            <div class="w-10/10 text-lg">匯率:{{ usd_currency }} / 約 TWD: {{ stock_LikeTWD }}</div>
         </div>
     </div>
 
