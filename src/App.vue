@@ -63,6 +63,8 @@
             term:"",
         },
     });
+    // 選擇的 component
+    let selComponentName = ref("");
     // 登入狀態
     let signinStatus = ref(false);
     // 使用者資訊
@@ -116,9 +118,23 @@
     function resetAppSetting(){
         appSetting.contentComponent = "login";
         appSetting.title = "K-Assistant";
+
+        selComponentName = "";
     }
     // 置換 component
-    function gotoPage(page) {
+    function gotoPage(selComponent) {
+        let page = "";
+        if(typeof selComponent === "string"){
+            page = selComponent;
+        }else{
+            selComponentName = selComponent.display_text;
+            page = selComponent.key;
+        }
+
+        if(page === "gallery"){
+            selComponentName = "";
+        }
+
         // close userInfoModal
         document.getElementById("userInfoModal").close();
 
@@ -331,16 +347,17 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /> </svg>
                 </div>
                 <ul tabindex="-1" class="menu menu-sm dropdown-content bg-gray-300 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                    <li v-for="(fbObj, fb_i) in appSetting.funButtons" @click="gotoPage(fbObj.key)" class="rounded-xl hover:bg-gray-900 hover:text-gray-100">
+                    <li v-for="(fbObj, fb_i) in appSetting.funButtons" @click="gotoPage(fbObj)" class="rounded-xl hover:bg-gray-900 hover:text-gray-100">
                         <a class='text-lg'>{{ fbObj.display_text }}</a>
                     </li>
                 </ul>
             </div>
         </div>
-        <div class="navbar-center">
+        <div class="navbar-center items-center">
             <a v-if="userInfo.account && userInfo.account.toUpperCase() !== 'KUOFAMILY'" class="cursor-pointer bg-transparent border-0 border-yellow-300 hover:border-b-2" @click="gotoPage('gallery')">
                 <span class="text-2xl">{{ appSetting.title }}</span>
             </a>
+            <span v-if="selComponentName" class="text-2xl ml-2">> {{ selComponentName }}</span>
             <span v-if="userInfo.account && userInfo.account.toUpperCase() === 'KUOFAMILY'" class="text-2xl">
                 {{ appSetting.title }}
             </span>
