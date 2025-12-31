@@ -131,7 +131,7 @@
             page = selComponent.key;
         }
 
-        if(page === "gallery"){
+        if(page === "readme" || page === "gallery"){
             selComponentName = "";
         }
 
@@ -357,7 +357,7 @@
             <a v-if="userInfo.account && userInfo.account.toUpperCase() !== 'KUOFAMILY'" class="cursor-pointer bg-transparent border-0 border-yellow-300 hover:border-b-2" @click="gotoPage('gallery')">
                 <span class="text-2xl">{{ appSetting.title }}</span>
             </a>
-            <span v-if="selComponentName" class="text-2xl ml-2">> {{ selComponentName }}</span>
+            <span v-if="selComponentName" class="text-2xl ml-2"><span class="text-xs">></span> {{ selComponentName }}</span>
             <span v-if="userInfo.account && userInfo.account.toUpperCase() === 'KUOFAMILY'" class="text-2xl">
                 {{ appSetting.title }}
             </span>
