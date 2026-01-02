@@ -92,6 +92,7 @@
             api: "ai_gen_image",
             data: {
                 prompt: promptImg.prompt,
+                word: setPrompt.text,
                 account: props.account,
                 gen_image_count: promptOptions.gen_image_count,
             }
@@ -200,10 +201,6 @@
                 prompt += ", 圖片背景為'" + setPrompt.specifyView + "' ";
                 break;
         }
-        // word
-        if(setPrompt.text){
-            prompt += ", 並且在圖片中題字'" + setPrompt.text + "' ";
-        }
         // paint style
         switch(setPrompt.paintStyle){
             case "無": 
@@ -277,12 +274,12 @@
         </select>
         <input v-if="setPrompt.paintStyle === '其他'" type="text" placeholder="e.g., 仿鬼滅之刃風格" class="input flex-1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.paintStyleOther" @keyup.stop="combinePrompt" />
     </div>
-    <div class="w-1/1 flex flex-row hidden">
-        <span class="flex-none bg-stone-400/50 p-2 text-start rounded-ss-xl rounded-es-xl">
-            畫中題字:
+    <div class="w-1/1 flex flex-col">
+        <span class="w-1/1 bg-stone-400/50 p-2 text-start rounded-ss-xl rounded-se-xl">
+            畫中題字<br />(圖中只會呈現英文! 若打入中文, 會先翻譯成英文後, 再呈現在圖片上!):
         </span>
-        <div class="flex-1">
-            <input type="text" placeholder="e.g., 早安" class="input w-1/1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.text" @keyup.stop="combinePrompt" />
+        <div class="w-1/1">
+            <input type="text" placeholder="e.g., Good Morning" class="input w-1/1 rounded-none rounded-es-xl rounded-ee-xl" v-model="setPrompt.text" @keyup.stop="combinePrompt" />
         </div>
     </div>
 
