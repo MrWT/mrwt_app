@@ -275,10 +275,14 @@
 
                 if(userInfoObj["account"].toUpperCase() === "KUOFAMILY" || userInfoObj["role"] === "admin_kf"){
                     // 郭家基金成員 - 預設開啟基金明細 component
-                    gotoPage("finance_kf");
+                    appSetting.funButtons.forEach((fbObj, fb_i) => {
+                        if(fbObj["key"] === "finance_kf"){
+                            gotoPage(fbObj);
+                        }
+                    });
                 }else{
                     // 預設開啟 gallery component
-                    gotoPage('gallery');
+                    gotoPage("gallery");
                 }
             });
         }
@@ -357,10 +361,18 @@
             <a v-if="userInfo.account && userInfo.account.toUpperCase() !== 'KUOFAMILY'" class="cursor-pointer bg-transparent border-0 border-yellow-300 hover:border-b-2" @click="gotoPage('gallery')">
                 <span class="text-2xl">{{ appSetting.title }}</span>
             </a>
-            <span v-if="selComponentName" class="text-2xl ml-2"><span class="text-xs">></span> {{ selComponentName }}</span>
+
             <span v-if="userInfo.account && userInfo.account.toUpperCase() === 'KUOFAMILY'" class="text-2xl">
                 {{ appSetting.title }}
             </span>
+
+            <span v-if="selComponentName" class="text-2xl ml-2">
+                <span class="text-xs">
+                    >
+                </span> 
+                {{ selComponentName }}
+            </span>
+
         </div>
         <div class="navbar-end gap-2">
             <!-- readme -->
