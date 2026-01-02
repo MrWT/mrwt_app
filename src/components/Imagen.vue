@@ -82,6 +82,7 @@
     }
     // 開始生成圖片
     function makePromptImg(){
+        promptImg.prompt += ". 在圖片中只能出現英文!";
         console.log("makePromptImg.prompt=" + promptImg.prompt);
 
         // 增加 gen_image_count
@@ -97,17 +98,22 @@
         }, "AI");
         Promise.all([promptImgPromise]).then((values) => {
             console.log("promptImgPromise.values=", values);
-            promptImg.src = values[0];
 
-            openImageModal();
+            if(values[0].startsWith("ERROR")){
+                emit('popupMessage', false, "AI 發生錯誤, 請稍後再試試~~"); // Emitting the event with data
+            }else{
+                promptImg.src = values[0];
 
-            /*
-            {
-                let image = new Image(60, 45); 
-                image.onload = drawImageActualSize; 
-                image.src = promptImg.src;
+                openImageModal();
+
+                /*
+                {
+                    let image = new Image(60, 45); 
+                    image.onload = drawImageActualSize; 
+                    image.src = promptImg.src;
+                }
+                */
             }
-            */
 
             // 紀錄 log
             newLog("N");
@@ -271,7 +277,7 @@
         </select>
         <input v-if="setPrompt.paintStyle === '其他'" type="text" placeholder="e.g., 仿鬼滅之刃風格" class="input flex-1 rounded-none rounded-se-xl rounded-ee-xl" v-model="setPrompt.paintStyleOther" @keyup.stop="combinePrompt" />
     </div>
-    <div class="w-1/1 flex flex-row">
+    <div class="w-1/1 flex flex-row hidden">
         <span class="flex-none bg-stone-400/50 p-2 text-start rounded-ss-xl rounded-es-xl">
             畫中題字:
         </span>
