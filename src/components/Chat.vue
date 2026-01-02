@@ -289,6 +289,8 @@
             let language = chatMode.value.substr(2);
             translate(language, userMessage.value);
         }
+        // 關閉 function bar
+        functionBarStatus.value = "CLOSE";
     }
     // 重傳上一個訊息
     function send_again(re_msg){
