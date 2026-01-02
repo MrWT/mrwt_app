@@ -756,6 +756,17 @@
                         <span class="flex-none text-white">~</span>
                         <input type="date" class="border rounded-xl bg-white flex-1 px-2" v-model="setTopicObj.prompt_end_date" @change="combineSetting" />
                     </div>
+                    <div class="w-1/1 flex flex-row gap-2">
+                        <a class="cursor-pointer bg-transparent text-black hover:text-white hover:underline" @click="setPromptDateToSpecify(moment().add(-3, 'd').format('YYYY-MM-DD'), moment().add(-3, 'd').format('YYYY-MM-DD'))">
+                            <span>設定為前天</span>
+                        </a>
+                        <a class="cursor-pointer bg-transparent text-black hover:text-white hover:underline" @click="setPromptDateToSpecify(moment().add(-1, 'd').format('YYYY-MM-DD'), moment().add(-1, 'd').format('YYYY-MM-DD'))">
+                            <span>設定為昨天</span>
+                        </a>
+                        <a class="cursor-pointer bg-transparent text-black hover:text-white hover:underline" @click="setPromptDateToSpecify(moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'))">
+                            <span>設定為今天</span>
+                        </a>
+                    </div>
                 </div>
                 <div class="w-1/1 flex flex-col bg-gray-500 rounded-xl p-2">
                     <span class="w-1/1 text-white">
