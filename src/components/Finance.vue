@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, reactive, onMounted } from 'vue'
+    import { ref, reactive, onMounted, watch } from 'vue'
     import { fetchData } from "@/composables/fetchData"
 
     import SettingFinance from '@/components/SettingFinance.vue'
@@ -73,81 +73,217 @@
     }
     // 取得使用者個人 finance 資料
     function fetchFinance(){
+        // 當下匯率
+        {
+            let fetchPromise_currency = fetchData({
+                api: "get_answer",
+                data: {
+                    question: "美元兌台幣的匯率, 只給我匯率數字就好",
+                }
+            }, "AI");
+            Promise.all([fetchPromise_currency]).then((values) => {
+                console.log("當下匯率=", values);
 
-        let fetchPromise_currency = fetchData({
-            api: "get_answer",
-            data: {
-                question: "美元兌台幣的匯率, 只給我匯率數字就好",
-            }
-        }, "AI");
-        let fetchPromise_finance = fetchData({
-            api: "get_finance",
-            data: {
-                account: props.account,
-            }
-        });
-        Promise.all([fetchPromise_finance, fetchPromise_currency]).then((values) => {
-            console.log("fetchFinance.values=", values);
+                let currency = 0;
+                try
+                {
+                    let jsonStr_ans = values[0].replace(/```json/g, "");
+                    let jsonObj_ans = JSON.parse(jsonStr_ans);
+                    currency = parseFloat( jsonObj_ans["answer"] );
+                }
+                catch(ex){
+                    currency = 30.0;
+                }
+                usd_currency.value = currency;
+            });
+        }
 
-            let currency = 0;
-            try
-            {
-                let jsonStr_ans = values[1].replace(/```json/g, "");
-                let jsonObj_ans = JSON.parse(jsonStr_ans);
-                currency = parseFloat( jsonObj_ans["answer"] );
-            }
-            catch(ex){
-                currency = 30.0;
-            }
-            usd_currency.value = currency;
-
-            let stockDatas_TWD = [];
-            let stockData_USD = null;
-            let houseObj = null;
-            let creditObj = null;
-            let depositObj_TWD = null;
-            let depositObj_USD_insurance = null;
-            let depositObj_USD_fixed = null;
-            let depositObj_Speed = null;
-            values[0].forEach((finObj, fin_i) => {
-                if(finObj["name"] === "house"){
-                    // 購屋資訊
-                    houseObj = finObj;
-                } else if(finObj["name"] === "credit"){
-                    // 信貸資訊
-                    creditObj = finObj;
-                } else if(finObj["name"].indexOf("stock_") >= 0 && finObj["name"] !== "stock_nano"){
-                    // 台股資訊
-                    stockDatas_TWD.push( finObj  );
-                } else if(finObj["name"] === "stock_nano"){
-                    // 奈米投資訊
-                    stockData_USD = finObj;
-                    stockData_USD["value2"] = currency;
-                } else if(finObj["name"] === "deposit" && finObj["currency"] === "TWD"){
-                    // 台幣存款資訊
-                    depositObj_TWD = finObj;
-                } else if(finObj["name"] === "deposit_insurance" && finObj["currency"] === "USD"){
-                    // 美金存款資訊 - 保險
-                    depositObj_USD_insurance = finObj;
-                    depositObj_USD_insurance["value2"] = currency;
-                } else if(finObj["name"] === "deposit_fixed" && finObj["currency"] === "USD"){
-                    // 美金存款資訊 - 定存
-                    depositObj_USD_fixed = finObj;
-                    depositObj_USD_fixed["value2"] = currency;
-                } else if(finObj["name"] === "speed"){
-                    // 存款速度資訊
-                    depositObj_Speed = finObj;
+        // 台股資訊
+        {
+            // 0056
+            let fetchPromise_0056 = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "stock_0056",
                 }
             });
-            buildStockTW(stockDatas_TWD);
-            buildStockGlobal(stockData_USD);
-            buildDepositTWD(depositObj_TWD);
-            buildDepositUSD_insurance(depositObj_USD_insurance);
-            buildDepositUSD_fixed(depositObj_USD_fixed);
-            buildCreditBlock(creditObj, depositObj_TWD);
-            buildHouseBlock(houseObj, depositObj_USD_insurance, depositObj_USD_fixed,  stockData_USD);
-            buildSpeedBlock(depositObj_Speed);
-        });
+            // 00878
+            let fetchPromise_00878 = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "stock_00878",
+                }
+            });
+            Promise.all([fetchPromise_0056, fetchPromise_00878]).then((values) => {
+                console.log("台股資訊=", values);
+
+                let stockDatas_TWD = [values[0], values[1]];
+                buildStockTW(stockDatas_TWD);
+            });
+        }
+
+        // 台幣存款資訊
+        {
+            let fetchPromise_deposit = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "deposit",
+                }
+            });
+            Promise.all([fetchPromise_deposit]).then((values) => {
+                console.log("台幣存款資訊=", values);
+                buildDepositTWD(values[0]);
+            });    
+        }
+
+        // 存款速度資訊
+        {
+            let fetchPromise_speed = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "speed",
+                }
+            });
+            Promise.all([fetchPromise_speed]).then((values) => {
+                console.log("存款速度資訊=", values);
+                buildSpeedBlock(values[0]);
+            });
+        }
+
+        // 信貸資訊
+        {
+            let fetchPromise_credit = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "credit",
+                }
+            });
+            let fetchPromise_deposit = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "deposit",
+                }
+            });
+            Promise.all([fetchPromise_credit, fetchPromise_deposit]).then((values) => {
+                console.log("信貸資訊=", values);
+                buildCreditBlock(values[0], values[1]);
+            });
+        }
+        
+    }
+    // 取得使用者個人 finance 資料 - 美金相關
+    function fetchFinance_usd(){
+        // 奈米投資訊
+        {
+            let fetchPromise_nano = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "stock_nano",
+                }
+            });
+            Promise.all([fetchPromise_nano]).then((values) => {
+                console.log("奈米投資訊=", values);
+                
+                let finObj = values[0];
+                // 當下匯率
+                finObj["value2"] = usd_currency.value;
+                buildStockGlobal(finObj);
+            });
+        }
+
+        // 美金存款資訊 - 保險
+        {
+            let fetchPromise_insurance = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "deposit_insurance",
+                }
+            });
+            Promise.all([fetchPromise_insurance]).then((values) => {
+                console.log("美金存款資訊 - 保險=", values);
+
+                let finObj = values[0];
+                // 當下匯率
+                finObj["value2"] = usd_currency.value;
+                buildDepositUSD_insurance(finObj);
+            });
+        }
+
+        // 美金存款資訊 - 定存
+        {
+            let fetchPromise_fixed = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "deposit_fixed",
+                }
+            });
+            Promise.all([fetchPromise_fixed]).then((values) => {
+                console.log("美金存款資訊 - 定存=", values);
+
+                let finObj = values[0];
+                // 當下匯率
+                finObj["value2"] = usd_currency.value;
+                buildDepositUSD_fixed(finObj);
+            });
+        }
+
+        // 購屋資訊
+        {
+            // 購屋目標
+            let fetchPromise_house = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "house",
+                }
+            });
+            // 保險 - 美金計價
+            let fetchPromise_insurance = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "deposit_insurance",
+                }
+            });
+            // 定存 - 美金計價
+            let fetchPromise_fixed = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "deposit_fixed",
+                }
+            });
+            // 奈米投 - 美金計價
+            let fetchPromise_nano = fetchData({
+                api: "get_finance",
+                data: {
+                    account: props.account,
+                    f_name: "stock_nano",
+                }
+            });
+            Promise.all([fetchPromise_house, fetchPromise_insurance, fetchPromise_fixed, fetchPromise_nano]).then((values) => {
+                console.log("購屋資訊=", values);
+
+                let finObj_insurance = values[1];
+                let finObj_fixed = values[2];
+                let finObj_nano = values[3];
+
+                finObj_insurance["value2"] = usd_currency.value;
+                finObj_fixed["value2"] = usd_currency.value;
+                finObj_nano["value2"] = usd_currency.value;
+
+                buildHouseBlock(values[0], finObj_insurance, finObj_fixed, finObj_nano);
+            });
+        }
     }
     // 建立"購屋進度"區塊
     function buildHouseBlock(houseObj, depositObj_USD_insurance, depositObj_USD_fixed, stockData_USD){
@@ -300,6 +436,10 @@
         closeSettingModal();
     }
 
+    // 監聽
+    watch(usd_currency, (newValue, oldValue) => {
+        fetchFinance_usd();
+    });
 
 </script>
 
