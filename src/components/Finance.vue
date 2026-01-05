@@ -108,6 +108,12 @@
                     f_name: "stock_0056",
                 }
             });
+            let fetchPromise_price_0056 = fetchData({
+                api: "get_answer",
+                data: {
+                    question: "台股ETF 0056 的股價, 只給我股價數字就好",
+                }
+            }, "AI");
             // 00878
             let fetchPromise_00878 = fetchData({
                 api: "get_finance",
@@ -116,10 +122,51 @@
                     f_name: "stock_00878",
                 }
             });
-            Promise.all([fetchPromise_0056, fetchPromise_00878]).then((values) => {
+            let fetchPromise_price_00878 = fetchData({
+                api: "get_answer",
+                data: {
+                    question: "台股ETF 00878 的股價, 只給我股價數字就好",
+                }
+            }, "AI");
+            Promise.all([fetchPromise_0056, fetchPromise_price_0056, fetchPromise_00878, fetchPromise_price_00878]).then((values) => {
                 console.log("台股資訊=", values);
 
-                let stockDatas_TWD = [values[0], values[1]];
+                // 0056
+                let finObj_0056 = values[0][0];
+                // 0056 的即時股價
+                {
+                    let price_0056 = 0;
+                    try
+                    {
+                        let jsonStr_ans = values[1].replace(/```json/g, "");
+                        let jsonObj_ans = JSON.parse(jsonStr_ans);
+                        price_0056 = parseFloat( jsonObj_ans["answer"] );
+                    }
+                    catch(ex){
+                        price_0056 = 0;
+                    }
+
+                    finObj_0056["value2"] = price_0056;
+                }
+
+                // 00878
+                let finObj_00878 = values[2][0];
+                // 00878 的即時股價
+                {
+                    let price_00878 = 0;
+                    try
+                    {
+                        let jsonStr_ans = values[3].replace(/```json/g, "");
+                        let jsonObj_ans = JSON.parse(jsonStr_ans);
+                        price_00878 = parseFloat( jsonObj_ans["answer"] );
+                    }
+                    catch(ex){
+                        price_00878 = 0;
+                    }
+                    finObj_00878["value2"] = price_00878;
+                }
+
+                let stockDatas_TWD = [finObj_0056, finObj_00878];
                 buildStockTW(stockDatas_TWD);
             });
         }
@@ -135,7 +182,7 @@
             });
             Promise.all([fetchPromise_deposit]).then((values) => {
                 console.log("台幣存款資訊=", values);
-                buildDepositTWD(values[0]);
+                buildDepositTWD(values[0][0]);
             });    
         }
 
@@ -150,7 +197,7 @@
             });
             Promise.all([fetchPromise_speed]).then((values) => {
                 console.log("存款速度資訊=", values);
-                buildSpeedBlock(values[0]);
+                buildSpeedBlock(values[0][0]);
             });
         }
 
@@ -172,7 +219,7 @@
             });
             Promise.all([fetchPromise_credit, fetchPromise_deposit]).then((values) => {
                 console.log("信貸資訊=", values);
-                buildCreditBlock(values[0], values[1]);
+                buildCreditBlock(values[0][0], values[1][0]);
             });
         }
         
@@ -191,7 +238,7 @@
             Promise.all([fetchPromise_nano]).then((values) => {
                 console.log("奈米投資訊=", values);
                 
-                let finObj = values[0];
+                let finObj = values[0][0];
                 // 當下匯率
                 finObj["value2"] = usd_currency.value;
                 buildStockGlobal(finObj);
@@ -210,7 +257,7 @@
             Promise.all([fetchPromise_insurance]).then((values) => {
                 console.log("美金存款資訊 - 保險=", values);
 
-                let finObj = values[0];
+                let finObj = values[0][0];
                 // 當下匯率
                 finObj["value2"] = usd_currency.value;
                 buildDepositUSD_insurance(finObj);
@@ -229,7 +276,7 @@
             Promise.all([fetchPromise_fixed]).then((values) => {
                 console.log("美金存款資訊 - 定存=", values);
 
-                let finObj = values[0];
+                let finObj = values[0][0];
                 // 當下匯率
                 finObj["value2"] = usd_currency.value;
                 buildDepositUSD_fixed(finObj);
@@ -273,15 +320,15 @@
             Promise.all([fetchPromise_house, fetchPromise_insurance, fetchPromise_fixed, fetchPromise_nano]).then((values) => {
                 console.log("購屋資訊=", values);
 
-                let finObj_insurance = values[1];
-                let finObj_fixed = values[2];
-                let finObj_nano = values[3];
+                let finObj_insurance = values[1][0];
+                let finObj_fixed = values[2][0];
+                let finObj_nano = values[3][0];
 
                 finObj_insurance["value2"] = usd_currency.value;
                 finObj_fixed["value2"] = usd_currency.value;
                 finObj_nano["value2"] = usd_currency.value;
 
-                buildHouseBlock(values[0], finObj_insurance, finObj_fixed, finObj_nano);
+                buildHouseBlock(values[0][0], finObj_insurance, finObj_fixed, finObj_nano);
             });
         }
     }

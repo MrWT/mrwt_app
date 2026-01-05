@@ -70,6 +70,7 @@
             api: "get_finance",
             data: {
                 account: props.account,
+                f_name: "All",
             }
         });
         Promise.all([fetchFinancePromise]).then((values) => {
@@ -86,19 +87,19 @@
                 } else if(finObj["name"] === "stock_0056"){
                     // 台股資訊
                     finance.stock_tw0056.num = finObj["value1"];
-                    finance.stock_tw0056.price = finObj["value2"];
+                    finance.stock_tw0056.price = 0;
                 } else if(finObj["name"] === "stock_00878"){
                     // 台股資訊
                     finance.stock_tw00878.num = finObj["value1"];
-                    finance.stock_tw00878.price = finObj["value2"];
+                    finance.stock_tw00878.price = 0;
                 } else if(finObj["name"] === "stock_00919"){
                     // 台股資訊
                     finance.stock_tw00919.num = finObj["value1"];
-                    finance.stock_tw00919.price = finObj["value2"];
+                    finance.stock_tw00919.price = 0;
                 } else if(finObj["name"] === "stock_nano"){
                     // 奈米投資訊
                     finance.stock_nano.value = finObj["value1"];
-                    finance.stock_nano.currency = finObj["value2"];
+                    finance.stock_nano.currency = 0;
                 } else if(finObj["name"] === "speed"){
                     // 台幣存款速度
                     finance.deposit_Speed.value1 = finObj["value1"];
@@ -109,11 +110,11 @@
                 } else if(finObj["name"] === "deposit_insurance" && finObj["currency"] === "USD"){
                     // 美金存款資訊 - 保險
                     finance.deposit_USD_insurance.value = finObj["value1"];
-                    finance.deposit_USD_insurance.currency = finObj["value2"];
+                    finance.deposit_USD_insurance.currency = 0;
                 } else if(finObj["name"] === "deposit_fixed" && finObj["currency"] === "USD"){
                     // 美金存款資訊 - 定存
                     finance.deposit_USD_fixed.value = finObj["value1"];
-                    finance.deposit_USD_fixed.currency = finObj["value2"];
+                    finance.deposit_USD_fixed.currency = 0;
                 }
             });
         });
@@ -203,66 +204,36 @@
 
         <div class="divider"></div>
         <div class="w-1/1 flex flex-row gap-1">
-            <div class="w-2/3 flex flex-row gap-1">
-                <label class="label flex-none">保險( USD ):</label>
-                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_USD_insurance.value" />
-            </div>
-            <div class="w-1/3 flex flex-row gap-1">
-                <label class="label flex-none">匯率:</label>
-                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_USD_insurance.currency" />
-            </div>
+            <label class="label flex-none">保險( USD ):</label>
+            <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_USD_insurance.value" />
         </div>
         <div class="w-1/1 flex flex-row gap-1">
-            <div class="w-2/3 flex flex-row gap-1">
-                <label class="label flex-none">定存( USD ):</label>
-                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_USD_fixed.value" />
-            </div>
-            <div class="w-1/3 flex flex-row gap-1">
-                <label class="label flex-none">匯率:</label>
-                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_USD_fixed.currency" />
-            </div>
+            <label class="label flex-none">定存( USD ):</label>
+            <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.deposit_USD_fixed.value" />
         </div>
 
         <div class="divider divider-neutral">
             存股: 0056.TW
         </div>
         <div class="w-1/1 flex flex-row gap-1">
-            <div class="w-1/2 flex flex-row gap-1">
-                <label class="label flex-none">股數:</label>
-                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_tw0056.num" />
-            </div>
-            <div class="w-1/2 flex flex-row gap-1">
-                <label class="label flex-none">單價:</label>
-                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_tw0056.price" />
-            </div>
+            <label class="label flex-none">股數:</label>
+            <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_tw0056.num" />
         </div>
 
         <div class="divider divider-neutral">
             存股: 00878.TW
         </div>
         <div class="w-1/1 flex flex-row gap-1">
-            <div class="w-1/2 flex flex-row gap-1">
-                <label class="label flex-none">股數:</label>
-                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_tw00878.num" />
-            </div>
-            <div class="w-1/2 flex flex-row gap-1">
-                <label class="label flex-none">單價:</label>
-                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_tw00878.price" />
-            </div>
+            <label class="label flex-none">股數:</label>
+            <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_tw00878.num" />
         </div>
 
         <div class="divider divider-neutral">
             奈米投
         </div>
         <div class="w-1/1 flex flex-row gap-1">
-            <div class="w-1/2 flex flex-row gap-1">
-                <label class="label flex-none">USD</label>
-                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_nano.value" />
-            </div>
-            <div class="w-1/2 flex flex-row gap-1">
-                <label class="label flex-none">匯率</label>
-                <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_nano.currency" />
-            </div>
+            <label class="label flex-none">USD</label>
+            <input type="number" min="0" class="input flex-1" placeholder="0" v-model="finance.stock_nano.value" />
         </div>
     </div>
     <div class="divider divider-primary"></div>
