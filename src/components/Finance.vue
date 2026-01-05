@@ -59,6 +59,17 @@
         tw00919_TWD: "",
     });
 
+    let areaBlockStatus = reactive({
+        speed: false,
+        stock_twd: false,
+        credit: false,
+        house: false,
+        deposit_usd: false,
+        insurance_usd: false,
+        fixed_usd: false,
+        stock_usd: false,
+    });
+
     // 初始化 component
     function init(){
         console.log("finance.init");
@@ -100,6 +111,7 @@
 
         // 台股資訊
         {
+            areaBlockStatus.stock_twd = false;
             // 0056
             let fetchPromise_0056 = fetchData({
                 api: "get_finance",
@@ -188,6 +200,7 @@
 
         // 存款速度資訊
         {
+            areaBlockStatus.speed = false;
             let fetchPromise_speed = fetchData({
                 api: "get_finance",
                 data: {
@@ -203,6 +216,8 @@
 
         // 信貸資訊
         {
+            areaBlockStatus.credit = false;
+
             let fetchPromise_credit = fetchData({
                 api: "get_finance",
                 data: {
@@ -228,6 +243,8 @@
     function fetchFinance_usd(){
         // 奈米投資訊
         {
+            areaBlockStatus.stock_usd = false;
+
             let fetchPromise_nano = fetchData({
                 api: "get_finance",
                 data: {
@@ -247,6 +264,7 @@
 
         // 美金存款資訊 - 保險
         {
+            areaBlockStatus.insurance_usd = false;
             let fetchPromise_insurance = fetchData({
                 api: "get_finance",
                 data: {
@@ -266,6 +284,7 @@
 
         // 美金存款資訊 - 定存
         {
+            areaBlockStatus.fixed_usd = false;
             let fetchPromise_fixed = fetchData({
                 api: "get_finance",
                 data: {
@@ -285,6 +304,8 @@
 
         // 購屋資訊
         {
+            areaBlockStatus.house = false;
+
             // 購屋目標
             let fetchPromise_house = fetchData({
                 api: "get_finance",
@@ -349,6 +370,8 @@
         progressSetting.house.progressText += (new Intl.NumberFormat().format(currentValue)) + " / ";
         progressSetting.house.progressText += (new Intl.NumberFormat().format(targetValue * 0.3)) + "( 粗估三成 )";
         progressSetting.house.progressText += " = " + progressSetting.house.value + "%";
+
+        areaBlockStatus.house = true;
     }
     // 建立"還款進度"區塊
     function buildCreditBlock(creditObj, depositObj_TWD){
@@ -372,6 +395,8 @@
                                                 + "-" + (new Intl.NumberFormat().format(depositValue))
                                                 + "=" + (new Intl.NumberFormat().format(currentValue - depositValue)) + "";
         progressSetting.credit.remainText += "( " + progressSetting.credit.remainValue + "% )";
+
+        areaBlockStatus.credit = true;
     }
     // 建立"存款速度"區塊
     function buildSpeedBlock(depositData){
@@ -396,6 +421,8 @@
         progressSetting["speed"]["per3Month"] = (new Intl.NumberFormat().format(valuePer3Month)); 
         progressSetting["speed"]["twdValuePer3Month"] = (new Intl.NumberFormat().format(twdValuePer3Month));
         progressSetting["speed"]["stockValuePer3Month"] = (new Intl.NumberFormat().format(stockValuePer3Month));
+
+        areaBlockStatus.speed = true;
     }
     // 建立"台灣股票"區塊
     function buildStockTW(stockDatas){
@@ -431,6 +458,8 @@
         });
         stockTW.totalValue = new Intl.NumberFormat().format(stockTotalValue);
         stockTW.totalTWD = new Intl.NumberFormat().format(stockTotalTWD);
+
+        areaBlockStatus.stock_twd = true;
     }
     // 建立"全球股票"區塊
     function buildStockGlobal(stockData){
@@ -439,6 +468,9 @@
 
         let likeTWD = Math.floor( stockData["value1"] * stockData["value2"] );
         stock_LikeTWD.value = new Intl.NumberFormat('en-US').format(likeTWD);
+
+        areaBlockStatus.stock_usd = true;
+
     }
     // 建立"台幣存款"區塊
     function buildDepositTWD(depositData){
@@ -453,6 +485,8 @@
 
         let likeTWD = Math.floor( depositData["value1"] * depositData["value2"] );
         deposit_LikeTWD_insurance.value = new Intl.NumberFormat('en-US').format(likeTWD);
+
+        areaBlockStatus.insurance_usd = true;
     }
     // 建立"美金存款"區塊-定存
     function buildDepositUSD_fixed(depositData){
@@ -461,7 +495,10 @@
 
         let likeTWD = Math.floor( depositData["value1"] * depositData["value2"] );
         deposit_LikeTWD_fixed.value = new Intl.NumberFormat('en-US').format(likeTWD);
+
+        areaBlockStatus.fixed_usd = true;
     }
+
     // 開啟 setting modal
     function openSettingModal(){
         document.getElementById("settingModal").showModal();
@@ -504,7 +541,7 @@
 
     <div class="flex flex-col w-1/1 gap-2">
         <div class="flex flex-row w-1/1 h-1/1">
-            <div class="card rounded-box grid h-1/1 w-1/1 p-5 place-items-center"
+            <div v-if="areaBlockStatus.speed" class="card rounded-box grid h-1/1 w-1/1 p-5 place-items-center"
                  :class="{'bg-red-300': 12 <= progressSetting.speed.speed,
                           'bg-orange-300': 7 <= progressSetting.speed.speed && progressSetting.speed.speed < 12,
                           'bg-blue-300': 3 < progressSetting.speed.speed && progressSetting.speed.speed < 7,
@@ -514,9 +551,10 @@
                     可以存到 {{ progressSetting["speed"]["target"] }} 萬
                 </div>
             </div>
+            <div v-if="!areaBlockStatus.speed" class="skeleton h-32 w-1/1"></div>
         </div>
         <div class="flex flex-col md:flex-row w-10/10 h-10/10 gap-2">        
-            <div class="card rounded-box grid h-1/1 w-1/1 md:w-1/2 p-5 place-items-center"
+            <div v-if="areaBlockStatus.speed" class="card rounded-box grid h-1/1 w-1/1 md:w-1/2 p-5 place-items-center"
                  :class="{'bg-red-300': 12 <= progressSetting.speed.speed,
                           'bg-orange-300': 7 <= progressSetting.speed.speed && progressSetting.speed.speed < 12,
                           'bg-blue-300': 3 < progressSetting.speed.speed && progressSetting.speed.speed < 7,
@@ -525,25 +563,28 @@
                     每期(薪資+股利)約可存<br />
                     TWD ${{ progressSetting["speed"]["per3Month"] }}
                 </div>
+                <div v-if="!areaBlockStatus.speed" class="skeleton h-32 w-1/1"></div>
             </div>
             <div class="h-1/1 flex content-center hidden md:block">
                 <div>=</div>
             </div>
             <div class="flex flex-row w-1/1 md:w-1/2 gap-2">
                 <div class="card rounded-box grid h-1/1 w-1/2 p-5 place-items-center bg-base-300 ">
-                    <div class="w-10/10 text-md text-center">
+                    <div v-if="areaBlockStatus.speed" class="w-10/10 text-md text-center">
                         每期(薪資)約可存<br />
                         TWD ${{ progressSetting["speed"]["twdValuePer3Month"] }}
                     </div>
+                    <div v-if="!areaBlockStatus.speed" class="skeleton h-32 w-1/1"></div>
                 </div>
                 <div class="h-1/1 flex items-center">
                     <div>+</div>
                 </div>
                 <div class="card rounded-box grid h-1/1 w-1/2 p-5 place-items-center bg-base-300 ">
-                    <div class="w-10/10 text-md text-center">
+                    <div v-if="areaBlockStatus.speed" class="w-10/10 text-md text-center">
                         每期(股利)約可存<br />
                         TWD ${{ progressSetting["speed"]["stockValuePer3Month"] }}
                     </div>
+                    <div v-if="!areaBlockStatus.speed" class="skeleton h-32 w-1/1"></div>
                 </div>
             </div>
         </div>
@@ -552,27 +593,30 @@
     <div class="divider">股票</div>
     <div class="flex flex-col md:flex-row w-1/1 h-1/1 gap-2">
         <div class="bg-base-300 rounded-box flex flex-col p-5 h-10/10 w-1/1 md:w-1/2 items-center">
-            <span class="h-1/1 inline-block align-middle">
+            <span v-if="areaBlockStatus.stock_twd" class="h-1/1 inline-block align-middle">
                 <span class="text-2xl">總價值(TWD): {{ stockTW.totalTWD }}</span>
             </span>
+            <div v-if="!areaBlockStatus.stock_twd" class="skeleton h-32 w-1/1"></div>
         </div>
         <div class="h-1/1 flex content-center hidden md:block">
             <div>=</div>
         </div>
         <div class="flex flex-row gap-1 w-1/1 md:w-1/2">
-            <div class="card bg-gray-300 rounded-box grid p-5 h-10/10 w-1/2 place-items-start">
+            <div v-if="areaBlockStatus.stock_twd" class="card bg-gray-300 rounded-box grid p-5 h-10/10 w-1/2 place-items-start">
                 <span class="text-2xl">0056 </span> 
                 <span class="text-lg">股數: {{ stockTW.tw0056 }}</span>
                 <span class="text-lg">TWD: {{ stockTW.tw0056_TWD }}</span>
             </div>
+            <div v-if="!areaBlockStatus.stock_twd" class="skeleton h-32 w-1/2"></div>
             <div class="h-1/1 flex items-center">
                 <div>+</div>
             </div>
-            <div class="card bg-gray-300 rounded-box grid p-5 h-10/10 w-1/2 place-items-start">
+            <div v-if="areaBlockStatus.stock_twd" class="card bg-gray-300 rounded-box grid p-5 h-10/10 w-1/2 place-items-start">
                 <span class="text-2xl">00878 </span>
                 <span class="text-lg">股數: {{ stockTW.tw00878 }}</span>
                 <span class="text-lg">TWD: {{ stockTW.tw00878_TWD }}</span>
             </div>
+            <div v-if="!areaBlockStatus.stock_twd" class="skeleton h-32 w-1/2"></div>
         </div>
     </div>
 
@@ -581,7 +625,7 @@
         <div class="w-1/1 text-2xl text-center">存款: {{ deposit_TWD }}</div>
     </div>
 
-    <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 p-5 place-items-center mt-1">
+    <div v-if="areaBlockStatus.credit" class="card bg-base-300 rounded-box grid h-10/10 w-10/10 p-5 place-items-center mt-1">
         <div class="flex flex-col w-10/10">
             <span class="text-2xl">{{ progressSetting.credit.targetText }}</span>
             <span class="text-lg">{{ progressSetting.credit.progressText }}</span>
@@ -604,8 +648,9 @@
                 :value="progressSetting.credit.remainValue" :max="progressSetting.credit.max">
         </progress>
     </div>
+    <div v-if="!areaBlockStatus.credit" class="skeleton h-32 w-1/1"></div>
 
-    <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 p-5 place-items-center mt-1">
+    <div v-if="areaBlockStatus.house" class="card bg-base-300 rounded-box grid h-10/10 w-10/10 p-5 place-items-center mt-1">
         <div class="flex flex-col w-10/10">
             <span class="text-2xl">{{ progressSetting.house.targetText }}</span>
             <span class="text-lg">{{ progressSetting.house.progressText }}</span>
@@ -618,24 +663,28 @@
                 :value="progressSetting.house.value" :max="progressSetting.house.max">
         </progress>
     </div>
+    <div v-if="!areaBlockStatus.house" class="skeleton h-32 w-1/1"></div>
 
     <div class="divider">USD 計價</div>
     
     <div class="flex flex-col md:flex-row w-10/10 h-10/10 gap-2">
-        <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
+        <div v-if="areaBlockStatus.insurance_usd === true" class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
             <div class="w-10/10 text-2xl">保險 USD: {{ deposit_USD_insurance }}</div>
             <div class="w-10/10 text-lg">匯率:{{ usd_currency }} / 約 TWD: {{ deposit_LikeTWD_insurance }}</div>
         </div>
+        <div v-if="areaBlockStatus.insurance_usd === false" class="skeleton h-32 w-1/1"></div>
 
-        <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
+        <div v-if="areaBlockStatus.fixed_usd === true" class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
             <div class="w-10/10 text-2xl">定存 USD: {{ deposit_USD_fixed }}</div>
             <div class="w-10/10 text-lg">匯率:{{ usd_currency }} / 約 TWD: {{ deposit_LikeTWD_fixed }}</div>
         </div>
+        <div v-if="areaBlockStatus.fixed_usd === false" class="skeleton h-32 w-1/1"></div>
 
-        <div class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
+        <div v-if="areaBlockStatus.stock_usd === true" class="card bg-base-300 rounded-box grid h-10/10 w-10/10 md:w-5/10 p-5 place-items-center">
             <div class="w-10/10 text-2xl">奈米投 USD: {{ stock_USD }}</div>
             <div class="w-10/10 text-lg">匯率:{{ usd_currency }} / 約 TWD: {{ stock_LikeTWD }}</div>
         </div>
+        <div v-if="areaBlockStatus.stock_usd === false" class="skeleton h-32 w-1/1"></div>
     </div>
 
     <div class="divider"></div>
